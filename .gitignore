@@ -1,0 +1,16 @@
+#Executáveis e Arquivos Objetos
+*.o
+*.exe
+*.out
+*.app
+*.xml
+
+#Arquivos/Pastas do Clion
+.idea/
+debug-version/
+CMakeLists.txt
+cmake-build-*/
+
+#Arquivos/Pastas Notepad
+
+#Arquivos/Pastas DevC++
