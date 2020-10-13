@@ -16,7 +16,7 @@ void inputHandler(void);
 void close(void);
 
 int main() {
-    if(!init()) return  -1; //Não foi possível Iniciar
+    if(!init()) return  -1; 
     loadAssets();
 
     while (game_running)
