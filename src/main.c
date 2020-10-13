@@ -1,5 +1,7 @@
 #include "raylib.h"
 
+//hell yeah now we have business!
+
 const int screenWidth = 640;
 const int screenHeight = 480;
 
