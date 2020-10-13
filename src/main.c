@@ -1,63 +1,107 @@
-//Moesiof
-#include "raylib.h"
+#include "utils.h"
 
-//hell yeah now we have business!
+//Player
+Player player;
 
+//Common Resources
+Font font;
+Texture2D player_textures[2];
+
+//Game Variables
 const int screenWidth = 640;
 const int screenHeight = 480;
+Level currentLevel;
+bool game_running;
+float last_frame;
+Camera2D camera;
 
-Texture2D player_asset;
-Texture2D tile;
-
-int game_running = 1;
-
-
+//Initialization
 bool init(void);
-bool loadAssets(void);
+bool loadCommonResources(void);
+
+//Update
 void update(void);
+void physicsUpdate(void);
 void inputHandler(void);
+void render(void);
+
+//Cleaning
 void close(void);
 
 int main() {
-    if(!init()) return  -1; 
-    loadAssets();
+    if(!init() || !loadCommonResources()) return  -1;
 
     while (game_running)
     {
+        last_frame = GetFrameTime();
         inputHandler();
         update();
+        physicsUpdate();
+        render();
     }
 
     close();
     return 0;
 }
 
-bool loadAssets() {
-    player_asset = LoadTexture("assets/player/Dude_Monster_Attack1_4.png");
-    player_asset.height = (int)(player_asset.height*1.5);
-    player_asset.width = (int)(player_asset.width*1.5);
-    tile = LoadTexture("assets/maps/level2/phase1/final.png");
-    return  true;
+bool loadCommonResources() {
+    font = LoadFont(FONT_DIR"/Unipix.ttf");
+    player_textures[0] = LoadTexture(PLAYER_DIR"/Dude_Monster_Attack1_4.png");
+    player_textures[1] = LoadTexture(PLAYER_DIR"/Dude_Monster_Idle_4.png");
+
+    if(font.chars == NULL) return  false;
+    if(player_textures[0].width == 0) return  false;
+    if(player_textures[1].width == 0) return  false;
+
+    return true;
+
 }
 
 bool init() {
-    InitWindow(screenWidth, screenHeight, "Teste");
+    InitWindow(screenWidth, screenHeight, "Game Name");
     SetTargetFPS(60);
+    game_running = true;
+    currentLevel = LEVEL2;
     return IsWindowReady();
 }
 
 void update() {
-    BeginDrawing();
-    ClearBackground(RAYWHITE);
-    DrawTexture(tile, 0, 0, WHITE);
-    DrawTexture(player_asset, 10, 145, WHITE);
-    EndDrawing();
+    switch (currentLevel) {
+        case LEVEL1: break;
+        case LEVEL2: updateLevel2(); break;
+        default: break;
+    }
+}
+
+void physicsUpdate() {
+    switch (currentLevel) {
+        case LEVEL1: break;
+        case LEVEL2: physicsUpdateLevel2(); break;
+        default: break;
+    }
 }
 
 void inputHandler() {
-    if(WindowShouldClose()) game_running = 0;
+    game_running = !WindowShouldClose();
+    switch (currentLevel) {
+        case LEVEL1: break;
+        case LEVEL2: inputHandlerLevel2(); break;
+        default: break;
+    }
 }
 
 void close() {
+    game_running = 0;
+    player.position.x = 0;
+    player.position.y = 0;
+    player.health = MAX_HEALTH;
     CloseWindow();
+}
+
+void render() {
+    switch (currentLevel) {
+        case LEVEL1: break;
+        case LEVEL2: renderLevel2(); break;
+        default: break;
+    }
 }
