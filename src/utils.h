@@ -13,6 +13,7 @@
 typedef enum {MENU = 0, LEVEL1, LEVEL2, LEVEL3, ENDING} Level;
 
 typedef struct {
+    bool idle, walking, jumping;
     int health;
     Vector2 position;
     Rectangle collider;

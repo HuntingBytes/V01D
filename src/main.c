@@ -18,6 +18,7 @@ Camera2D camera;
 //Initialization
 bool init(void);
 bool loadCommonResources(void);
+void setPlayer(void);
 
 //Update
 void update(void);
@@ -30,6 +31,8 @@ void close(void);
 
 int main() {
     if(!init() || !loadCommonResources()) return  -1;
+
+    setPlayer();
 
     while (game_running)
     {
@@ -55,6 +58,16 @@ bool loadCommonResources() {
 
     return true;
 
+}
+
+void setPlayer() {
+    player.health = MAX_HEALTH;
+    player.position.x = player.position.y = 80;
+    player.texture = &player_textures[0];
+    player.src_rect.height = player.src_rect.width = (float) player.texture->height;
+    player.src_rect.x = player.src_rect.y = 0;
+    player.idle = true;
+    player.jumping = player.walking = false;
 }
 
 bool init() {
