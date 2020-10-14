@@ -15,35 +15,36 @@ bool game_running;
 Camera2D camera;
 
 //Initialization
-bool init(void);
-bool loadCommonResources(void);
-void startLevel(void);
-void initializePlayer(void);
+bool init(void); //Create Window; Set currentLevel; Game is now running;
+bool loadCommonResources(void); //Resources available at all time
+void startLevel(void); //Start a level once
+void initializePlayer(void); //Initialize Player
 
 //Update
-void update(void);
-void physicsUpdate(void);
 void inputHandler(void);
-void render(void);
+void update(void); //Simulate World
+void physicsUpdate(void); //Collision Detection and Correction
+void render(void); //Show frame on Screen
 
 //Cleaning
-void close(void);
+void close(void); //Finish game
 
 int main() {
-    if(!init() || !loadCommonResources()) return  -1;
+    if(!init() || !loadCommonResources()) return  -1; //If is not possible to create window or load common resources, exit.
 
-    initializePlayer();
+    initializePlayer(); //Set initial player values, not related to any level
 
     while (game_running)
     {
-        startLevel();
-        inputHandler();
-        update();
-        physicsUpdate();
-        render();
+        startLevel(); //Start current level, make sure that it runs only once (due to dynamic allocation)
+        inputHandler(); //Gather input data and change variables (booleans, set speed, etc)
+        update(); //Simulate World, Move Player, Move Camera, Moves Animation forward...
+        physicsUpdate(); //Deal with any collisions between objects, correcting and detecting
+        //postUpdate() or ObjectUpdate(), deal with interactions
+        render(); //Draw the frame
     }
 
-    close();
+    close(); //Finish the game. Unload Textures, set default values
     return 0;
 }
 
@@ -115,6 +116,9 @@ void close() {
     game_running = 0;
     setPlayerHealth(&player, MAX_HEALTH);
     setPlayerPosition(&player, (Vector2){0, 0});
+    UnloadFont(font);
+    UnloadTexture(player_textures[0]);
+    UnloadTexture(player_textures[1]);
     CloseWindow();
 }
 

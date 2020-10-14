@@ -49,6 +49,7 @@ void startLevel2() {
 }
 
 void clearLevel2() {
+    UnloadTexture(*bg);
     free(bg);
     free(colliders);
     free(colliders_length);
