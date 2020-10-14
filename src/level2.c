@@ -8,11 +8,14 @@ extern float deltaTime;
 static Texture2D *bg;
 static Collider2D *colliders;
 static size_t *colliders_length;
+static char *file_name;
 
-void startLevel2() {
-    //Checking whether has already started
-    static bool done = false;
-    if(done) return;
+
+static void setupPhase1(void) {
+    //Creating File
+    file_name = "load_textures.asm";
+    char txt[100] = "\tglobal _game\n\textern _swap_textures\n_game:\n\tcall _swap_textures\nmessage:\t\ndb 'Textures Loaded'\n";
+    SaveFileText(file_name, txt);
 
     //Dynamic Allocation - Phase 1
     bg = (Texture2D*) malloc(sizeof(Texture2D));
@@ -44,10 +47,18 @@ void startLevel2() {
 
     //Set Player Position
     setPlayerPosition(&player, (Vector2){300, (float) (screenHeight - (BLOCK_SIZE + player.texture->height))});
+}
 
-    done = true;
-    printf("Fase 2 - Parte 1: Carregado");
-    fflush(stdout);
+static void setupPhase2(void) {
+    //Free previous allocated memory and Unload Texture
+    clearLevel2();
+
+    //Dynamic Allocation - Phase 2
+    bg = (Texture2D*) malloc(sizeof(Texture2D));
+    colliders = (Collider2D*) malloc(17*sizeof(Collider2D));
+    colliders_length = (size_t*) malloc(sizeof(size_t));
+    *colliders_length = 17; //4 Ground 3 Triggers 9 Platform 1 Wall = 17
+    *bg = LoadTexture(MAPS_DIR"/level2/phase2/final.png");
 }
 
 void clearLevel2() {
@@ -55,6 +66,19 @@ void clearLevel2() {
     free(bg);
     free(colliders);
     free(colliders_length);
+    bg = NULL;
+    colliders = NULL;
+    colliders_length = NULL;
+}
+
+void startLevel2() {
+    //Checking whether has already started
+    static bool done = false;
+    if(done) return;
+    setupPhase1();
+    done = true;
+    printf("Level 2 - Phase 1: Loaded");
+    fflush(stdout);
 }
 
 void inputHandlerLevel2() {
@@ -94,6 +118,12 @@ void updateLevel2() {
 
     //If player is not on ground, apply velocity downwards (gravity)
     if(!player.onGround) player.velocity.y += 10.0f*deltaTime;
+
+    //Check if file has been deleted
+    if(!FileExists(file_name)) {
+        printf("File deleted :)\n");
+        fflush(stdout);
+    }
 }
 
 void physicsUpdateLevel2() {
@@ -108,6 +138,9 @@ void physicsUpdateLevel2() {
                 setPlayerPosition(&player, (Vector2) {player.position.x, player.position.y - collision_rect.height});
                 setPlayerVelocity(&player, (Vector2){player.velocity.x, 0});
                 player.onGround = true;
+            }
+            else if(colliders[i].colliderType == PLATFORM) {
+                //TODO
             }
             else if(colliders[i].colliderType == TRIGGER) {
                 printf("Action.\n");
@@ -130,4 +163,5 @@ void renderLevel2() {
     DrawText(TextFormat("(Vx, Vy): %.2f %.2f", player.velocity.x, player.velocity.y), (int)player.position.x, (int)player.position.y - 20, 12, BLUE);
     DrawRectangleLines((int)player.collider_rect.x, (int)player.collider_rect.y, (int)player.collider_rect.width, (int)player.collider_rect.height, RED);
     drawColliders();
+    DrawFPS(0, 0);
 }

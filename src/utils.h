@@ -6,6 +6,7 @@
 #include "level2.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define BLOCK_SIZE 48
 
