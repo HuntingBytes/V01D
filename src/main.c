@@ -19,6 +19,7 @@ Camera2D camera;
 bool init(void);
 bool loadCommonResources(void);
 void setPlayer(void);
+void startLevel();
 
 //Update
 void update(void);
@@ -36,6 +37,7 @@ int main() {
 
     while (game_running)
     {
+        startLevel();
         last_frame = GetFrameTime();
         inputHandler();
         update();
@@ -76,6 +78,14 @@ bool init() {
     game_running = true;
     currentLevel = LEVEL2;
     return IsWindowReady();
+}
+
+void startLevel() {
+    switch (currentLevel) {
+        case LEVEL1: break;
+        case LEVEL2: startLevel2(); break;
+        default: break;
+    }
 }
 
 void update() {
