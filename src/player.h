@@ -4,7 +4,7 @@
 #define MAX_HEALTH 4
 
 typedef struct {
-    bool idle, walking, jumping;
+    bool idle, walking, jumping, onGround;
     int health;
     Vector2 position, velocity;
     Texture2D *texture;

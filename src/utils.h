@@ -15,7 +15,7 @@
 #define MAPS_DIR "assets/maps"
 
 typedef enum {MENU = 0, LEVEL1, LEVEL2, LEVEL3, ENDING} Level;
-typedef enum {STATIC = 0, TRIGGER, DYNAMIC} ColliderType;
+typedef enum {GROUND = 0, WALL, PLATFORM, TRIGGER} ColliderType;
 
 typedef struct {
     Rectangle collider;

@@ -10,6 +10,7 @@ Texture2D player_textures[2];
 //Game Variables
 const int screenWidth = 640;
 const int screenHeight = 480;
+float deltaTime;
 Level currentLevel;
 bool game_running;
 Camera2D camera;
@@ -36,6 +37,7 @@ int main() {
 
     while (game_running)
     {
+        deltaTime = GetFrameTime();
         startLevel(); //Start current level, make sure that it runs only once (due to dynamic allocation)
         inputHandler(); //Gather input data and change variables (booleans, set speed, etc)
         update(); //Simulate World, Move Player, Move Camera, Moves Animation forward...
@@ -69,6 +71,7 @@ void initializePlayer() {
     player.idle = true;
     player.walking = false;
     player.jumping = false;
+    player.onGround = false;
 }
 
 bool init() {
@@ -123,9 +126,11 @@ void close() {
 }
 
 void render() {
+    BeginDrawing();
     switch (currentLevel) {
         case LEVEL1: break;
         case LEVEL2: renderLevel2(); break;
         default: break;
     }
+    EndDrawing();
 }
