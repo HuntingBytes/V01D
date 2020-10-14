@@ -1,12 +1,12 @@
 #ifndef IP1_2VA_UTILS_H
 #define IP1_2VA_UTILS_H
 
-#include "level2.h"
 #include "raylib.h"
+#include "player.h"
+#include "level2.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX_HEALTH 4
 #define BLOCK_SIZE 48
 
 #define FONT_DIR "assets/fonts"
@@ -21,13 +21,5 @@ typedef struct {
     Rectangle collider;
     ColliderType colliderType;
 }Collider2D;
-
-typedef struct {
-    bool idle, walking, jumping;
-    int health;
-    Vector2 position;
-    Texture2D *texture;
-    Rectangle src_rect;
-}Player;
 
 #endif //IP1_2VA_UTILS_H
