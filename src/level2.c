@@ -26,6 +26,7 @@ static void setupPhase1(void) {
     *colliders_length = 3;
     *bg = LoadTexture(MAPS_DIR"/level2/phase1/final.png");
 
+
     //Ground
     colliders[0].colliderType = GROUND;
     colliders[0].collider.x = 0.0f;
@@ -49,6 +50,7 @@ static void setupPhase1(void) {
 
     //Set Player Position
     setPlayerPosition(&player, (Vector2){300, (float) (screenHeight - (BLOCK_SIZE + player.texture->height))});
+
 }
 
 static void setupPhase2(void) {
@@ -61,6 +63,52 @@ static void setupPhase2(void) {
     colliders_length = (size_t*) malloc(sizeof(size_t));
     *colliders_length = 17; //4 Ground 3 Triggers 9 Platform 1 Wall = 17
     *bg = LoadTexture(MAPS_DIR"/level2/phase2/final.png");
+
+    /*
+    //Ground
+    colliders[0].colliderType = GROUND;
+    colliders[0].collider.x = 0.0f;
+    colliders[0].collider.height = (float) BLOCK_SIZE;
+    colliders[0].collider.y = (float)screenHeight - colliders[0].collider.height;
+    colliders[0].collider.width = (float)BLOCK_SIZE * 10.40f;
+
+    colliders[0].colliderType = GROUND;
+    colliders[0].collider.x = 0.0f;
+    colliders[0].collider.height = (float) BLOCK_SIZE;
+    colliders[0].collider.y = (float)screenHeight - colliders[0].collider.height;
+    colliders[0].collider.width = (float)BLOCK_SIZE * 10.40f;
+
+    colliders[0].colliderType = GROUND;
+    colliders[0].collider.x = 0.0f;
+    colliders[0].collider.height = (float) BLOCK_SIZE;
+    colliders[0].collider.y = (float)screenHeight - colliders[0].collider.height;
+    colliders[0].collider.width = (float)BLOCK_SIZE * 10.40f;
+
+    colliders[0].colliderType = GROUND;
+    colliders[0].collider.x = 0.0f;
+    colliders[0].collider.height = (float) BLOCK_SIZE;
+    colliders[0].collider.y = (float)screenHeight - colliders[0].collider.height;
+    colliders[0].collider.width = (float)BLOCK_SIZE * 10.40f;
+
+    //Wall
+    colliders[1].colliderType = WALL;
+    colliders[1].collider.x = colliders[0].collider.x + colliders[0].collider.width;
+    colliders[1].collider.height = (float)BLOCK_SIZE * 8.0f;
+    colliders[1].collider.y = (float)screenHeight - colliders[1].collider.height;
+    colliders[1].collider.width = (float)BLOCK_SIZE * 4.5f;
+
+    //Sign
+    colliders[2].colliderType = TRIGGER_SIGN;
+    colliders[2].collider.x = (float)BLOCK_SIZE * 5.15f;
+    colliders[2].collider.height = (float)BLOCK_SIZE * 1.15f;
+    colliders[2].collider.y = (float)screenHeight - (colliders[0].collider.height + colliders[2].collider.height);
+    colliders[2].collider.width = (float)BLOCK_SIZE * 0.65f;
+
+    //Set Player Position
+    setPlayerPosition(&player, (Vector2){300, (float) (screenHeight - (BLOCK_SIZE + player.texture->height))});
+     */
+
+
 }
 
 void clearLevel2() {
@@ -162,20 +210,24 @@ void drawColliders() {
     }
 }
 
-void drawSign()
-{
-    Rectangle sign = {0, 30, 100, 40};
-    //DrawRectangleLinesEx(sign, 1, BLACK);
-    DrawRectangleLines((int)sign.x, (int)sign.y, (int)sign.width, (int)sign.height, BLACK);
-    DrawTextRec(font, "Press 'o' to open.,", sign, 10.0f, 1.0f,1, BLACK);
-}
 
 void showMessage()
 {
-    //      stop_player()
-    //      background_shade()
-    //      show_rectangle_with_text()
-    //      press_q_to_exit() ---> remove_blackground_shade
+
+
+        ClearBackground(WHITE);
+        setPlayerVelocity(&player, (Vector2) {0.0f, 0.0f});
+
+        Texture2D bgFaded = LoadTexture(MAPS_DIR"/level2/phase1/final.png");
+
+        DrawTexture(bgFaded, 0, 0, Fade(BLACK, 0.6f));
+
+        Rectangle signMessage = {120, 120, 300, 190};
+        DrawRectangleLines((int) signMessage.x, (int) signMessage.y, (int) signMessage.width, (int) signMessage.height,
+                           BLACK);
+        DrawTextRec(font, "Maybe, just maybe, there is a suspicious file out there...", signMessage, 33.0f, 1.0f, 1,
+                    BLACK);
+
 }
 
 
@@ -189,10 +241,6 @@ void renderLevel2() {
     drawColliders();
     DrawFPS(0, 0);
 
-    if(signColliding)
-    {
-        drawSign();
-        if(IsKeyPressed(KEY_O)) showMessage();
+    if(signColliding) showMessage();
 
-    }
 }
