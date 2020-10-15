@@ -5,8 +5,9 @@ void setPlayerHealth(Player *player, int value) {
 }
 
 void setPlayerPosition(Player *player, Vector2 position) {
-    player->collider_rect.x = player->position.x = position.x;
-    player->collider_rect.y = player->position.y = position.y;
+    player->position = position;
+    player->collider_rect.x = player->position.x;
+    player->collider_rect.y = player->position.y;
 }
 
 void setPlayerTexture(Player *player, Texture2D *texture) {
@@ -16,8 +17,7 @@ void setPlayerTexture(Player *player, Texture2D *texture) {
 }
 
 void setPlayerVelocity(Player *player, Vector2 velocity) {
-    player->velocity.x = velocity.x;
-    player->velocity.y = velocity.y;
+    player->velocity = velocity;
 }
 
 void movePlayer(Player *player) {

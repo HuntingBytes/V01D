@@ -6,6 +6,7 @@ Player player;
 //Common Resources
 Font font;
 Texture2D player_textures[2];
+Texture2D bullet_texture;
 
 //Game Variables
 const int screenWidth = 640;
@@ -54,10 +55,12 @@ bool loadCommonResources() {
     font = LoadFont(FONT_DIR"/Unipix.ttf");
     player_textures[0] = LoadTexture(PLAYER_DIR"/Dude_Monster_Attack1_4.png");
     player_textures[1] = LoadTexture(PLAYER_DIR"/Dude_Monster_Idle_4.png");
+    bullet_texture = LoadTexture(PLAYER_DIR"/bullet.png");
 
     if(font.chars == NULL) return  false;
-    if(player_textures[0].width == 0) return  false;
-    if(player_textures[1].width == 0) return  false;
+    if(player_textures[0].width <= 0) return  false;
+    if(player_textures[1].width <= 0) return  false;
+    if(bullet_texture.width <= 0) return false;
 
     return true;
 
@@ -68,10 +71,17 @@ void initializePlayer() {
     setPlayerPosition(&player, (Vector2){0, 0});
     setPlayerTexture(&player, &player_textures[0]);
     setPlayerVelocity(&player, (Vector2){0, 0});
+
+    setBulletDamage(&player.bullet, 1);
+    setBulletPosition(&player.bullet, (Vector2){0,0});
+    setBulletTexture(&player.bullet, &bullet_texture);
+    setBulletVelocity(&player.bullet, (Vector2){5.0f,0.0f});
+
     player.idle = true;
     player.walking = false;
     player.jumping = false;
     player.onGround = false;
+    player.bullet.active = false;
 }
 
 bool init() {
@@ -116,12 +126,10 @@ void inputHandler() {
 }
 
 void close() {
-    game_running = 0;
-    setPlayerHealth(&player, MAX_HEALTH);
-    setPlayerPosition(&player, (Vector2){0, 0});
     UnloadFont(font);
     UnloadTexture(player_textures[0]);
     UnloadTexture(player_textures[1]);
+    UnloadTexture(bullet_texture);
     CloseWindow();
 }
 

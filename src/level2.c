@@ -39,7 +39,7 @@ static void setupPhase1(void) {
     colliders[1].collider.width = (float)BLOCK_SIZE * 4.5f;
 
     //Sign
-    colliders[2].colliderType = TRIGGER;
+    colliders[2].colliderType = TRIGGER_SIGN;
     colliders[2].collider.x = (float)BLOCK_SIZE * 5.15f;
     colliders[2].collider.height = (float)BLOCK_SIZE * 1.15f;
     colliders[2].collider.y = (float)screenHeight - (colliders[0].collider.height + colliders[2].collider.height);
@@ -104,6 +104,11 @@ void inputHandlerLevel2() {
         vel_y = -5.0f;
     }
 
+    if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !player.bullet.active) {
+        setShoot(&player);
+        player.bullet.active = true;
+    }
+
     //After check input, updates player velocity
     setPlayerVelocity(&player, (Vector2){vel_x, vel_y});
 }
@@ -111,6 +116,11 @@ void inputHandlerLevel2() {
 void updateLevel2() {
     //Move player to next position := (position + velocity)
     movePlayer(&player);
+
+    //If bullet has been shot, update its positions (i. e., shoot)
+    if(player.bullet.active) {
+        shoot(&player.bullet);
+    }
 
     //Clamp map limits
     if(player.position.x < 0) setPlayerPosition(&player, (Vector2){0, player.position.y});
@@ -128,6 +138,7 @@ void updateLevel2() {
 
 void physicsUpdateLevel2() {
     for(int i = 0; i < *colliders_length; i++) {
+        //Player Collisions
         if(CheckCollisionRecs(player.collider_rect, colliders[i].collider)) {
             Rectangle collision_rect = GetCollisionRec(player.collider_rect, colliders[i].collider);
             if(colliders[i].colliderType == WALL) {
@@ -142,9 +153,19 @@ void physicsUpdateLevel2() {
             else if(colliders[i].colliderType == PLATFORM) {
                 //TODO
             }
-            else if(colliders[i].colliderType == TRIGGER) {
+            else if(colliders[i].colliderType == TRIGGER_SIGN) {
                 printf("Action.\n");
                 fflush(stdout);
+            }
+            else if(colliders[i].colliderType == TRIGGER_LADDER) {
+                //TODO
+            }
+        }
+
+        //Bullet Collisions
+        if(colliders[i].colliderType != TRIGGER_SIGN && colliders[i].colliderType != TRIGGER_LADDER) {
+            if (CheckCollisionRecs(player.bullet.collider.collider, colliders[i].collider)) {
+                player.bullet.active = false;
             }
         }
     }
@@ -152,16 +173,27 @@ void physicsUpdateLevel2() {
 
 void drawColliders() {
     for(int i = 0; i < *colliders_length; i++) {
-        DrawRectangleLines((int)colliders[i].collider.x, (int)colliders[i].collider.y, (int)colliders[i].collider.width, (int)colliders[i].collider.height, RED);
+        DrawRectangleLinesEx(colliders[i].collider, 2, RED);
     }
 }
 
 void renderLevel2() {
     ClearBackground(WHITE);
+
+    //Draw background
     DrawTexture(*bg, 0, 0, WHITE);
+
+    //Draw player
     DrawTextureRec(*player.texture, player.src_rect, player.position, WHITE);
-    DrawText(TextFormat("(Vx, Vy): %.2f %.2f", player.velocity.x, player.velocity.y), (int)player.position.x, (int)player.position.y - 20, 12, BLUE);
-    DrawRectangleLines((int)player.collider_rect.x, (int)player.collider_rect.y, (int)player.collider_rect.width, (int)player.collider_rect.height, RED);
-    drawColliders();
-    DrawFPS(0, 0);
+
+    //If bullet has been shot, draw
+    if(player.bullet.active) {
+        DrawTexture(*player.bullet.texture, (int)player.bullet.collider.collider.x, (int)player.bullet.collider.collider.y, WHITE);
+    }
+
+    //DrawText(TextFormat("(Vx, Vy): %.2f %.2f", player.velocity.x, player.velocity.y), (int)player.position.x, (int)player.position.y - 20, 12, BLUE);
+    //DrawRectangleLinesEx(player.collider_rect, 2, RED);
+    //drawColliders();
+    //DrawRectangleLinesEx(player.bullet.collider.collider, 2, GREEN);
+    //DrawFPS(0, 0);
 }
