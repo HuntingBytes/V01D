@@ -2,6 +2,7 @@
 
 extern const int screenWidth;
 extern const int screenHeight;
+extern Font font;
 extern Player player;
 extern float deltaTime;
 
@@ -10,6 +11,7 @@ static Collider2D *colliders;
 static size_t *colliders_length;
 static char *file_name;
 
+bool signColliding = 0;
 
 static void setupPhase1(void) {
     //Creating File
@@ -39,7 +41,7 @@ static void setupPhase1(void) {
     colliders[1].collider.width = (float)BLOCK_SIZE * 4.5f;
 
     //Sign
-    colliders[2].colliderType = TRIGGER;
+    colliders[2].colliderType = TRIGGER_SIGN;
     colliders[2].collider.x = (float)BLOCK_SIZE * 5.15f;
     colliders[2].collider.height = (float)BLOCK_SIZE * 1.15f;
     colliders[2].collider.y = (float)screenHeight - (colliders[0].collider.height + colliders[2].collider.height);
@@ -140,13 +142,17 @@ void physicsUpdateLevel2() {
                 player.onGround = true;
             }
             else if(colliders[i].colliderType == PLATFORM) {
-                //TODO
+                //TO_DO
             }
-            else if(colliders[i].colliderType == TRIGGER) {
+            else if(colliders[i].colliderType == TRIGGER_SIGN) {
+                signColliding = 1;
+
                 printf("Action.\n");
                 fflush(stdout);
             }
+
         }
+        else signColliding = 0;
     }
 }
 
@@ -156,6 +162,24 @@ void drawColliders() {
     }
 }
 
+void drawSign()
+{
+    Rectangle sign = {0, 30, 100, 40};
+    //DrawRectangleLinesEx(sign, 1, BLACK);
+    DrawRectangleLines((int)sign.x, (int)sign.y, (int)sign.width, (int)sign.height, BLACK);
+    DrawTextRec(font, "Press 'o' to open.,", sign, 10.0f, 1.0f,1, BLACK);
+}
+
+void showMessage()
+{
+    //      stop_player()
+    //      background_shade()
+    //      show_rectangle_with_text()
+    //      press_q_to_exit() ---> remove_blackground_shade
+}
+
+
+// ALL DRAWING MUST BE HERE
 void renderLevel2() {
     ClearBackground(WHITE);
     DrawTexture(*bg, 0, 0, WHITE);
@@ -164,4 +188,11 @@ void renderLevel2() {
     DrawRectangleLines((int)player.collider_rect.x, (int)player.collider_rect.y, (int)player.collider_rect.width, (int)player.collider_rect.height, RED);
     drawColliders();
     DrawFPS(0, 0);
+
+    if(signColliding)
+    {
+        drawSign();
+        if(IsKeyPressed(KEY_O)) showMessage();
+
+    }
 }
