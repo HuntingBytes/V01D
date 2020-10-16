@@ -243,6 +243,7 @@ void updateLevel2() {
 void physicsUpdateLevel2() {
     for(int i = 0; i < *colliders_length; i++) {
         if(CheckCollisionRecs(player.collider_rect, colliders[i].collider)) {
+
             Rectangle collision_rect = GetCollisionRec(player.collider_rect, colliders[i].collider);
             if(colliders[i].colliderType == WALL) {
                 if(lastPositionPlayer(&player).x < colliders[i].collider.x) setPlayerPosition(&player, (Vector2) {player.position.x - collision_rect.width, player.position.y});
@@ -254,8 +255,10 @@ void physicsUpdateLevel2() {
                 player.onGround = true;
             }
             else if(colliders[i].colliderType == PLATFORM) {
-                setPlayerPosition(&player, (Vector2) {player.position.x - collision_rect.width, player.position.y - collision_rect.height});
-                setPlayerVelocity(&player, (Vector2){player.velocity.x, 0});
+                if(lastPositionPlayer(&player).x < colliders[i].collider.x) setPlayerPosition(&player, (Vector2) {player.position.x - collision_rect.width, player.position.y});
+                else setPlayerPosition(&player, (Vector2) {player.position.x + collision_rect.width, player.position.y});
+                //setPlayerPosition(&player, (Vector2) {player.position.x - collision_rect.width, player.position.y - collision_rect.height});
+                //setPlayerVelocity(&player, (Vector2){player.velocity.x, 0});
                 player.onGround = true;
             }
             else if(colliders[i].colliderType == TRIGGER_SIGN) {
