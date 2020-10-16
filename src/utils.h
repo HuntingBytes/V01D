@@ -30,7 +30,7 @@ typedef struct {
     float distance, current_distance;
     Texture2D *texture;
     Collider2D collider;
-    Vector2 velocity;
+    Vector2 velocity, buffer_velocity;
 }Bullet;
 
 typedef struct {
@@ -48,11 +48,17 @@ void setPlayerTexture(Player *player, Texture2D *texture);
 void setPlayerVelocity(Player *player, Vector2 velocity);
 void movePlayer(Player *player);
 Vector2 lastPositionPlayer(Player *player);
+void playerOnCollisionGround(Player *player, Rectangle collider, Rectangle collision_rect);
+void playerOnCollisionWall(Player *player, Rectangle collider, Rectangle collision_rect);
+void playerOnCollisionPlatform(Player *player, Rectangle collider, Rectangle collision_rect);
+void playerOnCollisionLadder(Player *player, Rectangle collider); //TODO
+void playerOnCollisionSign(); //TODO
 
 void setBulletDamage(Bullet *bullet, int damage);
 void setBulletDistance(Bullet *bullet, float distance);
 void setBulletTexture(Bullet *bullet, Texture2D *texture);
 void setBulletVelocity(Bullet *bullet, Vector2 velocity);
+void updateBulletVelocityFromBuffer(Bullet *bullet);
 void setBulletPosition(Bullet *bullet, Vector2 position);
 void setShoot(Player *player);
 void shoot(Bullet *bullet);

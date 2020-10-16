@@ -45,8 +45,10 @@ static void setupPhase1(void) {
     colliders[2].collider.y = (float)screenHeight - (colliders[0].collider.height + colliders[2].collider.height);
     colliders[2].collider.width = (float)BLOCK_SIZE * 0.65f;
 
-    //Set Player Position
+    //Set Player Position and Shoot
     setPlayerPosition(&player, (Vector2){300, (float) (screenHeight - (BLOCK_SIZE + player.texture->height))});
+    setShoot(&player);
+    player.bullet.buffer_velocity = player.bullet.velocity;
 }
 
 static void setupPhase2(void) {
@@ -77,8 +79,6 @@ void startLevel2() {
     if(done) return;
     setupPhase1();
     done = true;
-    printf("Level 2 - Phase 1: Loaded");
-    fflush(stdout);
 }
 
 void inputHandlerLevel2() {
@@ -90,40 +90,43 @@ void inputHandlerLevel2() {
     float bullet_vel_x = player.bullet.velocity.x;
     float bullet_vel_y = player.bullet.velocity.y;
 
-    if(IsKeyDown(KEY_D)) {
-        vel_x = 100.0f*deltaTime;
-    }
+    //Store current key states (Array?)
+    bool left_down = IsKeyDown(KEY_A);
+    bool left_pressed = IsKeyPressed(KEY_A);
+    bool right_down = IsKeyDown(KEY_D);
+    bool right_pressed = IsKeyPressed(KEY_D);
+    bool jump_pressed = IsKeyPressed(KEY_SPACE);
+    bool shoot_pressed = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 
-    if(IsKeyDown(KEY_A)) {
-        vel_x = -100.0f*deltaTime;
-    }
+    //Set velocity of player
+    if(right_down) { vel_x = 100.0f*deltaTime; }
+    if(left_down) { vel_x = -100.0f*deltaTime; }
+    if((!left_down && !right_down) ||(left_down && right_down)) { vel_x = 0; }
 
-    if((IsKeyUp(KEY_D) && IsKeyUp(KEY_A)) ||(IsKeyDown(KEY_D) && IsKeyDown(KEY_A))) {
-        vel_x = 0;
-    }
-
-    if(IsKeyPressed(KEY_SPACE) && player.onGround) {
+    //Player has jumped
+    if(jump_pressed && player.onGround) {
         player.onGround = false;
         player.jumping = true;
         vel_y = -250.0f*deltaTime;
     }
 
-    if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !player.bullet.active) {
-        player.bullet.active = true;
+    //Set bullet velocity
+    if(left_down || left_pressed) {
+        if(!player.bullet.active) { bullet_vel_x = -fabsf(bullet_vel_x); }
+        player.bullet.buffer_velocity = (Vector2){-fabsf(bullet_vel_x), bullet_vel_y};
+    }
+    if(right_down || right_pressed) {
+        if(!player.bullet.active) { bullet_vel_x = fabsf(bullet_vel_x); }
+        player.bullet.buffer_velocity = (Vector2){fabsf(bullet_vel_x), bullet_vel_y};
     }
 
-    if((IsKeyDown(KEY_A) || IsKeyPressed(KEY_A)) && !player.bullet.active) {
-        bullet_vel_x = -fabsf(bullet_vel_x);
-    }
-
-    if((IsKeyDown(KEY_D) || IsKeyPressed(KEY_D)) && !player.bullet.active) {
-        bullet_vel_x = fabsf(bullet_vel_x);
-    }
+    //Bullet has been shot
+    if(shoot_pressed && !player.bullet.active) { player.bullet.active = true; }
 
     //After check input, updates player velocity
     setPlayerVelocity(&player, (Vector2){vel_x, vel_y});
 
-    //After check input, updates bullet velocity
+    //After check input, updates bullet velocity (Create buffer?)
     setBulletVelocity(&player.bullet, (Vector2){bullet_vel_x, bullet_vel_y});
 }
 
@@ -138,14 +141,6 @@ void updateLevel2() {
         setShoot(&player);
     }
 
-    //Clamp map limits - Player
-    if(player.position.x < 0) setPlayerPosition(&player, (Vector2){0, player.position.y});
-    if(player.position.x + player.collider_rect.width > (float)screenWidth) setPlayerPosition(&player, (Vector2){(float)screenWidth - player.collider_rect.width, player.position.y});
-
-    //Clamp map limits - Bullet
-    if(player.bullet.collider.collider.x < 0) setShoot(&player);
-    if(player.bullet.collider.collider.x + player.bullet.collider.collider.width > (float) screenWidth) setShoot(&player);
-
     //If player is not on ground, apply velocity downwards (gravity)
     if(!player.onGround) player.velocity.y += 10.0f*deltaTime;
 
@@ -157,28 +152,38 @@ void updateLevel2() {
 }
 
 void physicsUpdateLevel2() {
+    //Clamp map limits - Player
+    if(player.position.x < 0) setPlayerPosition(&player, (Vector2){0, player.position.y});
+    if(player.position.x + player.collider_rect.width > (float)screenWidth) setPlayerPosition(&player, (Vector2){(float)screenWidth - player.collider_rect.width, player.position.y});
+
+    //Clamp map limits - Bullet
+    if(player.bullet.collider.collider.x < 0) {
+        setShoot(&player);
+        updateBulletVelocityFromBuffer(&player.bullet);
+    }
+    if(player.bullet.collider.collider.x + player.bullet.collider.collider.width > (float) screenWidth){
+        setShoot(&player);
+        updateBulletVelocityFromBuffer(&player.bullet);
+    }
+
     for(int i = 0; i < *colliders_length; i++) {
         //Player Collisions
         if(CheckCollisionRecs(player.collider_rect, colliders[i].collider)) {
             Rectangle collision_rect = GetCollisionRec(player.collider_rect, colliders[i].collider);
-            if(colliders[i].colliderType == WALL) {
-                if(lastPositionPlayer(&player).x < colliders[i].collider.x) setPlayerPosition(&player, (Vector2) {player.position.x - collision_rect.width, player.position.y});
-                else setPlayerPosition(&player, (Vector2) {player.position.x + collision_rect.width, player.position.y});
+            if(colliders[i].colliderType == GROUND) {
+                playerOnCollisionGround(&player, colliders[i].collider, collision_rect);
             }
-            else if(colliders[i].colliderType == GROUND) {
-                setPlayerPosition(&player, (Vector2) {player.position.x, player.position.y - collision_rect.height});
-                setPlayerVelocity(&player, (Vector2){player.velocity.x, 0});
-                player.onGround = true;
+            else if(colliders[i].colliderType == WALL) {
+                playerOnCollisionWall(&player, colliders[i].collider,collision_rect);
             }
             else if(colliders[i].colliderType == PLATFORM) {
-                //TODO
+                playerOnCollisionPlatform(&player, colliders[i].collider, collision_rect);
             }
             else if(colliders[i].colliderType == TRIGGER_SIGN) {
-                printf("Action.\n");
-                fflush(stdout);
+                playerOnCollisionSign();
             }
             else if(colliders[i].colliderType == TRIGGER_LADDER) {
-                //TODO
+                playerOnCollisionLadder(&player, colliders[i].collider);
             }
         }
 
@@ -186,6 +191,7 @@ void physicsUpdateLevel2() {
         if(colliders[i].colliderType != TRIGGER_SIGN && colliders[i].colliderType != TRIGGER_LADDER) {
             if (CheckCollisionRecs(player.bullet.collider.collider, colliders[i].collider)) {
                 player.bullet.active = false;
+                updateBulletVelocityFromBuffer(&player.bullet);
             }
         }
     }

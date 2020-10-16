@@ -27,6 +27,7 @@ void inputHandler(void);
 void update(void); //Simulate World
 void physicsUpdate(void); //Collision Detection and Correction
 void render(void); //Show frame on Screen
+void clearLevel(void); //Clear level
 
 //Cleaning
 void close(void); //Finish game
@@ -45,10 +46,19 @@ int main() {
         physicsUpdate(); //Deal with any collisions between objects, correcting and detecting
         //postUpdate() or ObjectUpdate(), deal with interactions
         render(); //Draw the frame
+        clearLevel();
     }
 
     close(); //Finish the game. Unload Textures, set default values
     return 0;
+}
+
+bool init() {
+    InitWindow(screenWidth, screenHeight, "Game Name");
+    SetTargetFPS(60);
+    game_running = true;
+    currentLevel = LEVEL2;
+    return IsWindowReady();
 }
 
 bool loadCommonResources() {
@@ -85,18 +95,19 @@ void initializePlayer() {
     player.bullet.active = false;
 }
 
-bool init() {
-    InitWindow(screenWidth, screenHeight, "Game Name");
-    SetTargetFPS(60);
-    game_running = true;
-    currentLevel = LEVEL2;
-    return IsWindowReady();
-}
-
 void startLevel() {
     switch (currentLevel) {
         case LEVEL1: break;
         case LEVEL2: startLevel2(); break;
+        default: break;
+    }
+}
+
+void inputHandler() {
+    game_running = !WindowShouldClose();
+    switch (currentLevel) {
+        case LEVEL1: break;
+        case LEVEL2: inputHandlerLevel2(); break;
         default: break;
     }
 }
@@ -117,12 +128,23 @@ void physicsUpdate() {
     }
 }
 
-void inputHandler() {
-    game_running = !WindowShouldClose();
+void render() {
+    BeginDrawing();
     switch (currentLevel) {
         case LEVEL1: break;
-        case LEVEL2: inputHandlerLevel2(); break;
+        case LEVEL2: renderLevel2(); break;
         default: break;
+    }
+    EndDrawing();
+}
+
+void clearLevel() {
+    if(!game_running) {
+        switch (currentLevel) {
+            case LEVEL1: break;
+            case LEVEL2:clearLevel2();break;
+            default: break;
+        }
     }
 }
 
@@ -132,14 +154,4 @@ void close() {
     UnloadTexture(player_textures[1]);
     UnloadTexture(bullet_texture);
     CloseWindow();
-}
-
-void render() {
-    BeginDrawing();
-    switch (currentLevel) {
-        case LEVEL1: break;
-        case LEVEL2: renderLevel2(); break;
-        default: break;
-    }
-    EndDrawing();
 }

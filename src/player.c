@@ -27,6 +27,23 @@ void movePlayer(Player *player) {
     player->collider_rect.y = player->position.y;
 }
 
+void playerOnCollisionGround(Player *player, Rectangle collider, Rectangle collision_rect) {
+    setPlayerPosition(player, (Vector2) {player->position.x, player->position.y - collision_rect.height});
+    setPlayerVelocity(player, (Vector2){player->velocity.x, 0});
+    player->onGround = true;
+}
+
+void playerOnCollisionWall(Player *player, Rectangle collider, Rectangle collision_rect) {
+    if(lastPositionPlayer(player).x < collider.x) setPlayerPosition(player, (Vector2) {player->position.x - collision_rect.width, player->position.y});
+    else setPlayerPosition(player, (Vector2) {player->position.x + collision_rect.width, player->position.y});
+}
+
+void playerOnCollisionPlatform(Player *player, Rectangle collider, Rectangle collision_rect) {}
+
+void playerOnCollisionLadder(Player *player, Rectangle collider) {} //TODO
+
+void playerOnCollisionSign() {} //TODO
+
 Vector2 lastPositionPlayer(Player *player) {
     return (Vector2) {player->position.x - player->velocity.x, player->position.y - player->velocity.y};
 }

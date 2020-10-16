@@ -20,6 +20,10 @@ void setBulletVelocity(Bullet *bullet, Vector2 velocity) {
     bullet->velocity = velocity;
 }
 
+void updateBulletVelocityFromBuffer(Bullet *bullet) {
+    bullet->velocity = bullet->buffer_velocity;
+}
+
 void setBulletPosition(Bullet *bullet, Vector2 position) {
     bullet->collider.collider.x = position.x;
     bullet->collider.collider.y = position.y;
