@@ -62,4 +62,7 @@ void updateBulletVelocityFromBuffer(Bullet *bullet);
 void setBulletPosition(Bullet *bullet, Vector2 position);
 void setShoot(Player *player);
 void shoot(Bullet *bullet);
+
+void UpdatePlayerCamera(Camera2D *camera, Player *player, float screen_edge);
+void clampCameraToLimits(Camera2D *camera, float screen_edge);
 #endif //IP1_2VA_UTILS_H

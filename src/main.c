@@ -58,6 +58,10 @@ bool init() {
     SetTargetFPS(60);
     game_running = true;
     currentLevel = LEVEL2;
+    camera.target = (Vector2) {0,0};
+    camera.offset = (Vector2) {0,0};
+    camera.zoom = 1.0f;
+    camera.rotation = 0.0f;
     return IsWindowReady();
 }
 
@@ -130,11 +134,13 @@ void physicsUpdate() {
 
 void render() {
     BeginDrawing();
+    BeginMode2D(camera);
     switch (currentLevel) {
         case LEVEL1: break;
         case LEVEL2: renderLevel2(); break;
         default: break;
     }
+    EndMode2D();
     EndDrawing();
 }
 

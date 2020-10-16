@@ -3,6 +3,7 @@
 extern const int screenWidth;
 extern const int screenHeight;
 extern Player player;
+extern Camera2D camera;
 extern float deltaTime;
 
 static Texture2D *bg;
@@ -63,6 +64,11 @@ static void setupPhase2(void) {
     colliders_length = (size_t*) malloc(sizeof(size_t));
     *colliders_length = 17; //4 Ground 3 Triggers 9 Platform 1 Wall = 17
     *bg = LoadTexture(MAPS_DIR"/level2/phase2/final.png");
+
+    //Set Player Position and Shoot
+    setPlayerPosition(&player, (Vector2){0, (float) (screenHeight - (BLOCK_SIZE + player.texture->height))});
+    setShoot(&player);
+    player.bullet.buffer_velocity = player.bullet.velocity;
 }
 
 void clearLevel2() {
@@ -160,6 +166,8 @@ void updateLevel2() {
         transition = true;
         setupPhase2();
     }
+
+    UpdatePlayerCamera(&camera, &player, (float)bg->width);
 }
 
 void physicsUpdateLevel2() {
@@ -168,7 +176,7 @@ void physicsUpdateLevel2() {
 
     //Clamp map limits - Player
     if(player.position.x < 0) setPlayerPosition(&player, (Vector2){0, player.position.y});
-    if(player.position.x + player.collider_rect.width > (float)screenWidth) setPlayerPosition(&player, (Vector2){(float)screenWidth - player.collider_rect.width, player.position.y});
+    if(player.position.x + player.collider_rect.width > (float)bg->width) setPlayerPosition(&player, (Vector2){(float)screenWidth - player.collider_rect.width, player.position.y});
 
     //Clamp map limits - Bullet
     if(player.bullet.collider.collider.x < 0) {

@@ -1,5 +1,6 @@
 #include "utils.h"
 
+//Attributes Related
 void setPlayerHealth(Player *player, int value) {
     player->health = value;
 }
@@ -20,11 +21,16 @@ void setPlayerVelocity(Player *player, Vector2 velocity) {
     player->velocity = velocity;
 }
 
+//Collision Related
 void movePlayer(Player *player) {
     player->position.x += player->velocity.x;
     player->position.y += player->velocity.y;
     player->collider_rect.x = player->position.x;
     player->collider_rect.y = player->position.y;
+}
+
+Vector2 lastPositionPlayer(Player *player) {
+    return (Vector2) {player->position.x - player->velocity.x, player->position.y - player->velocity.y};
 }
 
 void playerOnCollisionGround(Player *player, Rectangle collider, Rectangle collision_rect) {
@@ -44,6 +50,4 @@ void playerOnCollisionLadder(Player *player, Rectangle collider) {} //TODO
 
 void playerOnCollisionSign() {} //TODO
 
-Vector2 lastPositionPlayer(Player *player) {
-    return (Vector2) {player->position.x - player->velocity.x, player->position.y - player->velocity.y};
-}
+//Animation Related
