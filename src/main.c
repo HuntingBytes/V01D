@@ -1,5 +1,5 @@
 #include "raylib.h"
-
+#include <stdio.h>
 const int screenWidth = 640;
 const int screenHeight = 480;
 
@@ -7,7 +7,6 @@ Texture2D player_asset;
 Texture2D tile;
 Texture2D mascara;
 Texture2D virado;
-Rectangle teste = {200, 100, 60, 60};
 Rectangle grid = {70, 35, 260, 390};
 Rectangle box = {450, 35, 150, 390};
 Texture2D pieces[6];
@@ -19,6 +18,7 @@ int game_running = 1;
 
 bool init(void);
 bool loadAssets(void);
+void piecesColl(int i);
 void update(void);
 void inputHandler(void);
 void close(void);
@@ -72,20 +72,31 @@ void update() {
     mousePos = GetMousePosition();
 
     BeginDrawing();
+
     ClearBackground(WHITE);
     DrawTexture(tile, 0, 0, WHITE);
     DrawTexture(player_asset, 10, 145, WHITE);
     DrawTexture(virado, 200, 200, WHITE);
-    /*if(CheckCollisionPointRec(mousePos, teste)){
-        DrawRectangleRec(teste, MAGENTA);
-    }else{
-        DrawRectangleRec(teste, YELLOW);
-    }*/
     puzzle();
 
     EndDrawing();
+}
 
+void initPieces (){
+    int i, j = 45;
 
+    for(i = 0; i < 6; i++){
+        coords[i].height = coords[i].width = 130;
+
+        if(i % 2 == 0){
+            coords[i].x = 460 - 5;
+        }else{
+            coords[i].x = 460 + 5;
+        }
+
+        coords[i].y = j;
+        j = j + 45;
+    }
 }
 
 void puzzle (){
@@ -98,6 +109,7 @@ void puzzle (){
     checkMouse();
 
 }
+
 void checkPieces(){
     int i;
     //passa por cada um dos elementos do vetor de peças e imprime na tela usando as coordenadas no vetor coords
@@ -109,50 +121,41 @@ void checkPieces(){
 
 void checkMouse(){
     int i;
-    //este for serve para mover as peças, atualizando a posição dos retângulos que as representam
+    //este "for" serve para mover as peças, atualizando a posição dos retângulos que as representam
     //com estas coordenadas, ele desenha as peças na tela
-    //PROBLEMA: a função está detectando o mouse passando por cima de outros quadrados e agrupando na mesma coordenada
     for(i = 0; i < 6; i++){
-        //testa se o botão esquerda está emitindo sinal. caso sim, atualiza posição do retangulo
+        //testa se o botão esquerdo está pressionado. caso sim, atualiza posição do retangulo
         if(IsMouseButtonDown(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(mousePos, coords[i])) {
             coords[i].x = GetMouseX() - coords[i].width / 2;
             coords[i].y = GetMouseY() - coords[i].height / 2;
+            piecesColl(i);
         }
-            //if(CheckCollisionPointRec(mousePos, coords[i])){
-                //DrawRectangleRec(piecesCoords, MAGENTA);
-                //DrawTexture(pieces[i], coords[i].x, coords[i].y, WHITE);
-            //}else{
-                //DrawRectangleRec(piecesCoords, YELLOW);
-                //DrawTexture(pieces[i], coords[i].x, coords[i].y, WHITE);
-            //}
-    }
-
-    //testa para que o quadrado/retângulo não saia dos limites da janela
-    if(teste.x + teste.width >= GetScreenWidth()){
-        teste.x = GetScreenWidth() - teste.width;
-    }else if(teste.x < 0){
-        teste.x = 0;
-    }
-    if(teste.y + teste.height >= GetScreenHeight()){
-        teste.y = GetScreenHeight() - teste.height;
-    }else if(teste.y < 0){
-        teste.y = 0;
+        //testa a posição das peças para não sairem das bordas da tela
+        if(coords[i].x + coords[i].width >= GetScreenWidth()){
+            coords[i].x = GetScreenWidth() - coords[i].width;
+        }else if(coords[i].x < 0){
+            coords[i].x = 0;
+        }
+        if(coords[i].y + coords[i].height >= GetScreenHeight()){
+            coords[i].y = GetScreenHeight() - coords[i].height;
+        }else if(coords[i].y < 0){
+            coords[i].y = 0;
+        }
     }
 }
 
-void initPieces (){
-    int i, j = 45;
-
-    for(i = 0; i < 6; i++){
-        coords[i].height = coords[i].width = 130;
-        if(i % 2 == 0){
-            coords[i].x = 460 - 5;
-        }else{
-            coords[i].x = 460 + 5;
+void piecesColl(int i){
+    //função para impedir peças de empilhar
+    for(int j = 0; j < 6; j++){
+        if(j != i){
+            //move as peças caso estejam perto umas das outras "como um glitch"
+            if(coords[i].x == coords[j].x && coords[i].y != coords[j].y){
+                coords[i].x = GetMouseX() - coords[i].width/2;
+            }
+            if(coords[i].y == coords[j].y&& coords[i].x != coords[j].x){
+                coords[i].y = coords[i].height/2;
+            }
         }
-
-        coords[i].y = j;
-        j = j + 45;
     }
 }
 
