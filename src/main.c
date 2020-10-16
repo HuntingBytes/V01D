@@ -73,6 +73,7 @@ void initializePlayer() {
     setPlayerVelocity(&player, (Vector2){0, 0});
 
     setBulletDamage(&player.bullet, 1);
+    setBulletDistance(&player.bullet, 400.0f);
     setBulletPosition(&player.bullet, (Vector2){0,0});
     setBulletTexture(&player.bullet, &bullet_texture);
     setBulletVelocity(&player.bullet, (Vector2){5.0f,0.0f});

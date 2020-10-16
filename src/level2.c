@@ -86,6 +86,10 @@ void inputHandlerLevel2() {
     float vel_x = player.velocity.x;
     float vel_y = player.velocity.y;
 
+    //Store current bullet velocity
+    float bullet_vel_x = player.bullet.velocity.x;
+    float bullet_vel_y = player.bullet.velocity.y;
+
     if(IsKeyDown(KEY_D)) {
         vel_x = 100.0f*deltaTime;
     }
@@ -101,16 +105,26 @@ void inputHandlerLevel2() {
     if(IsKeyPressed(KEY_SPACE) && player.onGround) {
         player.onGround = false;
         player.jumping = true;
-        vel_y = -5.0f;
+        vel_y = -250.0f*deltaTime;
     }
 
     if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !player.bullet.active) {
-        setShoot(&player);
         player.bullet.active = true;
+    }
+
+    if((IsKeyDown(KEY_A) || IsKeyPressed(KEY_A)) && !player.bullet.active) {
+        bullet_vel_x = -fabsf(bullet_vel_x);
+    }
+
+    if((IsKeyDown(KEY_D) || IsKeyPressed(KEY_D)) && !player.bullet.active) {
+        bullet_vel_x = fabsf(bullet_vel_x);
     }
 
     //After check input, updates player velocity
     setPlayerVelocity(&player, (Vector2){vel_x, vel_y});
+
+    //After check input, updates bullet velocity
+    setBulletVelocity(&player.bullet, (Vector2){bullet_vel_x, bullet_vel_y});
 }
 
 void updateLevel2() {
@@ -120,11 +134,17 @@ void updateLevel2() {
     //If bullet has been shot, update its positions (i. e., shoot)
     if(player.bullet.active) {
         shoot(&player.bullet);
+    } else {
+        setShoot(&player);
     }
 
-    //Clamp map limits
+    //Clamp map limits - Player
     if(player.position.x < 0) setPlayerPosition(&player, (Vector2){0, player.position.y});
     if(player.position.x + player.collider_rect.width > (float)screenWidth) setPlayerPosition(&player, (Vector2){(float)screenWidth - player.collider_rect.width, player.position.y});
+
+    //Clamp map limits - Bullet
+    if(player.bullet.collider.collider.x < 0) setShoot(&player);
+    if(player.bullet.collider.collider.x + player.bullet.collider.collider.width > (float) screenWidth) setShoot(&player);
 
     //If player is not on ground, apply velocity downwards (gravity)
     if(!player.onGround) player.velocity.y += 10.0f*deltaTime;
@@ -195,5 +215,5 @@ void renderLevel2() {
     //DrawRectangleLinesEx(player.collider_rect, 2, RED);
     //drawColliders();
     //DrawRectangleLinesEx(player.bullet.collider.collider, 2, GREEN);
-    //DrawFPS(0, 0);
+    DrawFPS(0, 0);
 }

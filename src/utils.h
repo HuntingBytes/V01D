@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #define BLOCK_SIZE 48
 #define MAX_HEALTH 4
@@ -26,6 +27,7 @@ typedef struct {
 typedef struct {
     bool active;
     int damage;
+    float distance, current_distance;
     Texture2D *texture;
     Collider2D collider;
     Vector2 velocity;
@@ -48,6 +50,7 @@ void movePlayer(Player *player);
 Vector2 lastPositionPlayer(Player *player);
 
 void setBulletDamage(Bullet *bullet, int damage);
+void setBulletDistance(Bullet *bullet, float distance);
 void setBulletTexture(Bullet *bullet, Texture2D *texture);
 void setBulletVelocity(Bullet *bullet, Vector2 velocity);
 void setBulletPosition(Bullet *bullet, Vector2 position);
