@@ -8,7 +8,7 @@ Font font;
 Texture2D player_textures[2];
 
 //Game Variables
-const int screenWidth = 640;
+const int screenWidth = 1920;            ///aaaaaaaa 640
 const int screenHeight = 480;
 float deltaTime;
 Level currentLevel;
@@ -39,9 +39,9 @@ int main() {
     {
         deltaTime = GetFrameTime();
         startLevel(); //Start current level, make sure that it runs only once (due to dynamic allocation)
-        inputHandler(); //Gather input data and change variables (booleans, set speed, etc)
-        update(); //Simulate World, Move Player, Move Camera, Moves Animation forward...
-        physicsUpdate(); //Deal with any collisions between objects, correcting and detecting
+        //inputHandler(); //Gather input data and change variables (booleans, set speed, etc)
+        //update(); //Simulate World, Move Player, Move Camera, Moves Animation forward...
+        //physicsUpdate(); //Deal with any collisions between objects, correcting and detecting
         //postUpdate() or ObjectUpdate(), deal with interactions
         render(); //Draw the frame
     }

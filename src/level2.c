@@ -55,7 +55,7 @@ static void setupPhase1(void) {
 
 static void setupPhase2(void) {
     //Free previous allocated memory and Unload Texture
-    clearLevel2();
+    //clearLevel2();                                            //AAAAAAAAAAAAAAAAA
 
     //Dynamic Allocation - Phase 2
     bg = (Texture2D*) malloc(sizeof(Texture2D));
@@ -64,49 +64,112 @@ static void setupPhase2(void) {
     *colliders_length = 17; //4 Ground 3 Triggers 9 Platform 1 Wall = 17
     *bg = LoadTexture(MAPS_DIR"/level2/phase2/final.png");
 
-    /*
-    //Ground
+
+    //Ground Left
     colliders[0].colliderType = GROUND;
     colliders[0].collider.x = 0.0f;
     colliders[0].collider.height = (float) BLOCK_SIZE;
     colliders[0].collider.y = (float)screenHeight - colliders[0].collider.height;
-    colliders[0].collider.width = (float)BLOCK_SIZE * 10.40f;
+    colliders[0].collider.width = (float)BLOCK_SIZE * 18.35f;
 
-    colliders[0].colliderType = GROUND;
-    colliders[0].collider.x = 0.0f;
-    colliders[0].collider.height = (float) BLOCK_SIZE;
-    colliders[0].collider.y = (float)screenHeight - colliders[0].collider.height;
-    colliders[0].collider.width = (float)BLOCK_SIZE * 10.40f;
-
-    colliders[0].colliderType = GROUND;
-    colliders[0].collider.x = 0.0f;
-    colliders[0].collider.height = (float) BLOCK_SIZE;
-    colliders[0].collider.y = (float)screenHeight - colliders[0].collider.height;
-    colliders[0].collider.width = (float)BLOCK_SIZE * 10.40f;
-
-    colliders[0].colliderType = GROUND;
-    colliders[0].collider.x = 0.0f;
-    colliders[0].collider.height = (float) BLOCK_SIZE;
-    colliders[0].collider.y = (float)screenHeight - colliders[0].collider.height;
-    colliders[0].collider.width = (float)BLOCK_SIZE * 10.40f;
-
-    //Wall
-    colliders[1].colliderType = WALL;
-    colliders[1].collider.x = colliders[0].collider.x + colliders[0].collider.width;
-    colliders[1].collider.height = (float)BLOCK_SIZE * 8.0f;
+    //Ground Right 1
+    colliders[1].colliderType = GROUND;
+    colliders[1].collider.x = (float)BLOCK_SIZE * 23.67f;
+    colliders[1].collider.height = (float) BLOCK_SIZE;
     colliders[1].collider.y = (float)screenHeight - colliders[1].collider.height;
-    colliders[1].collider.width = (float)BLOCK_SIZE * 4.5f;
+    colliders[1].collider.width = (float)BLOCK_SIZE * 8.00f;
 
-    //Sign
+    //Ground Right 2
+    colliders[2].colliderType = GROUND;
+    colliders[2].collider.x = (float)BLOCK_SIZE * 32.38f;
+    colliders[2].collider.height = (float) BLOCK_SIZE;
+    colliders[2].collider.y = (float)screenHeight - colliders[0].collider.height;
+    colliders[2].collider.width = (float)BLOCK_SIZE * 1.90f;
+
+    //Ground Right 3
+    colliders[3].colliderType = GROUND;
+    colliders[3].collider.x = (float)BLOCK_SIZE * 35.00f;
+    colliders[3].collider.height = (float) BLOCK_SIZE;
+    colliders[3].collider.y = (float)screenHeight - colliders[3].collider.height;
+    colliders[3].collider.width = (float)BLOCK_SIZE * 5.00f;
+
+
+/*
+    //Plataform
+    colliders[4].colliderType = WALL;
+    colliders[4].collider.x = colliders[0].collider.x + colliders[0].collider.width;
+    colliders[4].collider.height = (float)BLOCK_SIZE * 8.0f;
+    colliders[4].collider.y = (float)screenHeight - colliders[1].collider.height;
+    colliders[4].collider.width = (float)BLOCK_SIZE * 4.5f;
+
+    //Plataform
+    colliders[5].colliderType = WALL;
+    colliders[5].collider.x = colliders[0].collider.x + colliders[0].collider.width;
+    colliders[5].collider.height = (float)BLOCK_SIZE * 8.0f;
+    colliders[5].collider.y = (float)screenHeight - colliders[1].collider.height;
+    colliders[5].collider.width = (float)BLOCK_SIZE * 4.5f;
+
+    //Plataform
+    colliders[6].colliderType = WALL;
+    colliders[6].collider.x = colliders[0].collider.x + colliders[0].collider.width;
+    colliders[6].collider.height = (float)BLOCK_SIZE * 8.0f;
+    colliders[6].collider.y = (float)screenHeight - colliders[1].collider.height;
+    colliders[6].collider.width = (float)BLOCK_SIZE * 4.5f;
+
+    //Plataform
+    colliders[7].colliderType = WALL;
+    colliders[7].collider.x = colliders[0].collider.x + colliders[0].collider.width;
+    colliders[7].collider.height = (float)BLOCK_SIZE * 8.0f;
+    colliders[7].collider.y = (float)screenHeight - colliders[1].collider.height;
+    colliders[7].collider.width = (float)BLOCK_SIZE * 4.5f;
+
+    //Plataform
+    colliders[8].colliderType = WALL;
+    colliders[8].collider.x = colliders[0].collider.x + colliders[0].collider.width;
+    colliders[8].collider.height = (float)BLOCK_SIZE * 8.0f;
+    colliders[8].collider.y = (float)screenHeight - colliders[1].collider.height;
+    colliders[8].collider.width = (float)BLOCK_SIZE * 4.5f;
+
+    //Plataform
+    colliders[9].colliderType = WALL;
+    colliders[9].collider.x = colliders[0].collider.x + colliders[0].collider.width;
+    colliders[9].collider.height = (float)BLOCK_SIZE * 8.0f;
+    colliders[9].collider.y = (float)screenHeight - colliders[1].collider.height;
+    colliders[9].collider.width = (float)BLOCK_SIZE * 4.5f;
+
+     //Plataform
+    colliders[10].colliderType = WALL;
+    colliders[3].collider.x = colliders[0].collider.x + colliders[0].collider.width;
+    colliders[3].collider.height = (float)BLOCK_SIZE * 8.0f;
+    colliders[3].collider.y = (float)screenHeight - colliders[1].collider.height;
+    colliders[3].collider.width = (float)BLOCK_SIZE * 4.5f;
+
+     //Plataform
+    colliders[3].colliderType = WALL;
+    colliders[3].collider.x = colliders[0].collider.x + colliders[0].collider.width;
+    colliders[3].collider.height = (float)BLOCK_SIZE * 8.0f;
+    colliders[3].collider.y = (float)screenHeight - colliders[1].collider.height;
+    colliders[3].collider.width = (float)BLOCK_SIZE * 4.5f;
+
+
+     //Plataform
+    colliders[3].colliderType = WALL;
+    colliders[3].collider.x = colliders[0].collider.x + colliders[0].collider.width;
+    colliders[3].collider.height = (float)BLOCK_SIZE * 8.0f;
+    colliders[3].collider.y = (float)screenHeight - colliders[1].collider.height;
+    colliders[3].collider.width = (float)BLOCK_SIZE * 4.5f;
+
+
+    //Stair
     colliders[2].colliderType = TRIGGER_SIGN;
     colliders[2].collider.x = (float)BLOCK_SIZE * 5.15f;
     colliders[2].collider.height = (float)BLOCK_SIZE * 1.15f;
     colliders[2].collider.y = (float)screenHeight - (colliders[0].collider.height + colliders[2].collider.height);
     colliders[2].collider.width = (float)BLOCK_SIZE * 0.65f;
-
+*/
     //Set Player Position
     setPlayerPosition(&player, (Vector2){300, (float) (screenHeight - (BLOCK_SIZE + player.texture->height))});
-     */
+
 
 
 }
@@ -125,7 +188,7 @@ void startLevel2() {
     //Checking whether has already started
     static bool done = false;
     if(done) return;
-    setupPhase1();
+    setupPhase2();                                   //AAAAAAAAAAAAAAAAAAAAAA
     done = true;
     printf("Level 2 - Phase 1: Loaded");
     fflush(stdout);
@@ -171,6 +234,7 @@ void updateLevel2() {
 
     //Check if file has been deleted
     if(!FileExists(file_name)) {
+
         printf("File deleted :)\n");
         fflush(stdout);
     }
