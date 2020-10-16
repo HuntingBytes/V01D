@@ -142,7 +142,7 @@ void clearLevel() {
     if(!game_running) {
         switch (currentLevel) {
             case LEVEL1: break;
-            case LEVEL2:clearLevel2();break;
+            case LEVEL2:clearLevel2(); break;
             default: break;
         }
     }

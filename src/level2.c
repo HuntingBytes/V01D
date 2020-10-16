@@ -9,7 +9,9 @@ static Texture2D *bg;
 static Collider2D *colliders;
 static size_t *colliders_length;
 static char *file_name;
-
+static bool transition;
+static float duration = 3.0f;
+static float alpha = 1.0f;
 
 static void setupPhase1(void) {
     //Creating File
@@ -46,7 +48,7 @@ static void setupPhase1(void) {
     colliders[2].collider.width = (float)BLOCK_SIZE * 0.65f;
 
     //Set Player Position and Shoot
-    setPlayerPosition(&player, (Vector2){300, (float) (screenHeight - (BLOCK_SIZE + player.texture->height))});
+    setPlayerPosition(&player, (Vector2){0, (float) (screenHeight - (BLOCK_SIZE + player.texture->height))});
     setShoot(&player);
     player.bullet.buffer_velocity = player.bullet.velocity;
 }
@@ -82,6 +84,9 @@ void startLevel2() {
 }
 
 void inputHandlerLevel2() {
+    //If it is transitioning, return
+    if(transition) return;
+
     //Store current player velocity
     float vel_x = player.velocity.x;
     float vel_y = player.velocity.y;
@@ -131,6 +136,11 @@ void inputHandlerLevel2() {
 }
 
 void updateLevel2() {
+    //If it is transitioning, return
+    if(transition) return;
+
+    static bool phase_done = false;
+
     //Move player to next position := (position + velocity)
     movePlayer(&player);
 
@@ -144,14 +154,18 @@ void updateLevel2() {
     //If player is not on ground, apply velocity downwards (gravity)
     if(!player.onGround) player.velocity.y += 10.0f*deltaTime;
 
-    //Check if file has been deleted
-    if(!FileExists(file_name)) {
-        printf("File deleted :)\n");
-        fflush(stdout);
+    //Check if file has been deleted and change phase
+    if(!phase_done && !FileExists(file_name)) {
+        phase_done = true;
+        transition = true;
+        setupPhase2();
     }
 }
 
 void physicsUpdateLevel2() {
+    //If it is transitioning, return
+    if(transition) return;
+
     //Clamp map limits - Player
     if(player.position.x < 0) setPlayerPosition(&player, (Vector2){0, player.position.y});
     if(player.position.x + player.collider_rect.width > (float)screenWidth) setPlayerPosition(&player, (Vector2){(float)screenWidth - player.collider_rect.width, player.position.y});
@@ -222,4 +236,16 @@ void renderLevel2() {
     //drawColliders();
     //DrawRectangleLinesEx(player.bullet.collider.collider, 2, GREEN);
     DrawFPS(0, 0);
+
+    //Transition (Maybe global variables instead?)
+    if(transition) {
+        DrawRectangle(0,0, screenWidth, screenHeight, Fade(WHITE, alpha));
+        duration -= 0.1f;
+        if(duration < 0.01f) {
+            alpha -= 0.01f;
+            if(alpha < 0.01f) {
+                transition = false;
+            }
+        }
+    }
 }
