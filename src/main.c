@@ -39,9 +39,9 @@ int main() {
     {
         deltaTime = GetFrameTime();
         startLevel(); //Start current level, make sure that it runs only once (due to dynamic allocation)
-        //inputHandler(); //Gather input data and change variables (booleans, set speed, etc)
-        //update(); //Simulate World, Move Player, Move Camera, Moves Animation forward...
-        //physicsUpdate(); //Deal with any collisions between objects, correcting and detecting
+        inputHandler(); //Gather input data and change variables (booleans, set speed, etc)
+        update(); //Simulate World, Move Player, Move Camera, Moves Animation forward...
+        physicsUpdate(); //Deal with any collisions between objects, correcting and detecting
         //postUpdate() or ObjectUpdate(), deal with interactions
         render(); //Draw the frame
     }
