@@ -36,6 +36,7 @@ typedef struct {
 typedef struct {
     bool idle, walking, jumping, onGround;
     int health;
+    float dir; //-1 or 1 : Direction (1: Right, -1: Left)
     Vector2 position, velocity;
     Texture2D *texture;
     Rectangle src_rect, collider_rect;

@@ -32,13 +32,16 @@ void setBulletPosition(Bullet *bullet, Vector2 position) {
 void setShoot(Player *player) {
     player->bullet.current_distance = 0.0f;
     player->bullet.active = false;
-    if(player->bullet.velocity.x < 0) {
+
+    if(player->dir < 0) {
         player->bullet.collider.collider.x = player->position.x - player->bullet.collider.collider.width;
     }
-    else if(player->bullet.velocity.x > 0) {
+    else if(player->dir > 0) {
         player->bullet.collider.collider.x = player->position.x + player->collider_rect.width;
     }
+
     player->bullet.collider.collider.y = player->position.y + (player->collider_rect.height - player->bullet.collider.collider.height)/2.0f;
+    setBulletVelocity(&player->bullet, (Vector2) {(player->dir)*fabsf(player->bullet.velocity.x), player->bullet.velocity.y});
 }
 
 void shoot(Bullet *bullet) {

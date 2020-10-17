@@ -199,10 +199,6 @@ void inputHandlerLevel2() {
     float vel_x = player.velocity.x;
     float vel_y = player.velocity.y;
 
-    //Store current bullet velocity
-    float bullet_vel_x = player.bullet.velocity.x;
-    float bullet_vel_y = player.bullet.velocity.y;
-
     //Store current key states (Array?)
     bool left_down = IsKeyDown(KEY_A);
     bool left_pressed = IsKeyPressed(KEY_A);
@@ -212,8 +208,14 @@ void inputHandlerLevel2() {
     bool shoot_pressed = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 
     //Set velocity of player
-    if(right_down) { vel_x = 100.0f*deltaTime; }
-    if(left_down) { vel_x = -100.0f*deltaTime; }
+    if(right_down) {
+        vel_x = 100.0f*deltaTime;
+        player.dir = 1.0f;
+    }
+    if(left_down) {
+        vel_x = -100.0f*deltaTime;
+        player.dir = -1.0f;
+    }
     if((!left_down && !right_down) ||(left_down && right_down)) { vel_x = 0; }
 
     //Player has jumped
@@ -223,24 +225,14 @@ void inputHandlerLevel2() {
         vel_y = -300.0f*deltaTime;
     }
 
-    //Set bullet velocity
-    if(left_down || left_pressed) {
-        if(!player.bullet.active) { bullet_vel_x = -fabsf(bullet_vel_x); }
-        player.bullet.buffer_velocity = (Vector2){-fabsf(bullet_vel_x), bullet_vel_y};
-    }
-    if(right_down || right_pressed) {
-        if(!player.bullet.active) { bullet_vel_x = fabsf(bullet_vel_x); }
-        player.bullet.buffer_velocity = (Vector2){fabsf(bullet_vel_x), bullet_vel_y};
-    }
-
     //Bullet has been shot
-    if(shoot_pressed && !player.bullet.active) { player.bullet.active = true; }
+    if(shoot_pressed && !player.bullet.active) {
+        setShoot(&player);
+        player.bullet.active = true;
+    }
 
     //After check input, updates player velocity
     setPlayerVelocity(&player, (Vector2){vel_x, vel_y});
-
-    //After check input, updates bullet velocity (Create buffer?)
-    setBulletVelocity(&player.bullet, (Vector2){bullet_vel_x, bullet_vel_y});
 }
 
 void updateLevel2() {
@@ -255,8 +247,6 @@ void updateLevel2() {
     //If bullet has been shot, update its positions (i. e., shoot)
     if(player.bullet.active) {
         shoot(&player.bullet);
-    } else {
-        setShoot(&player);
     }
 
     //If player is not on ground, apply velocity downwards (gravity)
@@ -282,12 +272,10 @@ void physicsUpdateLevel2() {
 
     //Clamp map limits - Bullet
     if(player.bullet.collider.collider.x < 0) {
-        setShoot(&player);
-        updateBulletVelocityFromBuffer(&player.bullet);
+        player.bullet.active = false;
     }
     if(player.bullet.collider.collider.x + player.bullet.collider.collider.width > (float)bg->width){
-        setShoot(&player);
-        updateBulletVelocityFromBuffer(&player.bullet);
+        player.bullet.active = false;
     }
 
     for(int i = 0; i < *colliders_length; i++) {
@@ -316,7 +304,6 @@ void physicsUpdateLevel2() {
         if(colliders[i].colliderType != TRIGGER_SIGN && colliders[i].colliderType != TRIGGER_LADDER) {
             if (CheckCollisionRecs(player.bullet.collider.collider, colliders[i].collider)) {
                 player.bullet.active = false;
-                updateBulletVelocityFromBuffer(&player.bullet);
             }
         }
     }

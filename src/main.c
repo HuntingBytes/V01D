@@ -97,6 +97,7 @@ void initializePlayer() {
     player.jumping = false;
     player.onGround = false;
     player.bullet.active = false;
+    player.dir = 1;
 }
 
 void startLevel() {
