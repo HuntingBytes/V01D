@@ -152,29 +152,13 @@ static void setupPhase2(void) {
     colliders[10].collider.height = (float)BLOCK_SIZE;
     colliders[10].collider.y = (float)(screenHeight - (4.32 * colliders[10].collider.height));
     colliders[10].collider.width = (float)BLOCK_SIZE * 3.00f;
-/*
-     //Plataform 8
-    colliders[11].colliderType = PLATFORM;
-    colliders[11].collider.x = (float)BLOCK_SIZE * 18.90f;
-    colliders[11].collider.height = (float)BLOCK_SIZE;
-    colliders[11].collider.y = (float)(screenHeight - (2.32 * colliders[4].collider.height));
-    colliders[11].collider.width = (float)BLOCK_SIZE * 2.00f;
 
-
-     //Plataform 9
-    colliders[11].colliderType = PLATFORM;
-    colliders[11].collider.x = (float)BLOCK_SIZE * 18.90f;
-    colliders[11].collider.height = (float)BLOCK_SIZE;
-    colliders[11].collider.y = (float)(screenHeight - (2.32 * colliders[4].collider.height));
-    colliders[11].collider.width = (float)BLOCK_SIZE * 2.00f;
-
-*/
     //Stairs
-    colliders[12].colliderType = TRIGGER_LADDER;
-    colliders[12].collider.x = (float)BLOCK_SIZE * 26.84f;
-    colliders[12].collider.height = (float)BLOCK_SIZE * 3.25f;
-    colliders[12].collider.y = (float)screenHeight - (colliders[12].collider.height + colliders[2].collider.height);
-    colliders[12].collider.width = (float)BLOCK_SIZE * 0.45f;
+    colliders[11].colliderType = TRIGGER_LADDER;
+    colliders[11].collider.x = (float)BLOCK_SIZE * 26.84f;
+    colliders[11].collider.height = (float)BLOCK_SIZE * 3.25f;
+    colliders[11].collider.y = (float)screenHeight - (colliders[12].collider.height + colliders[2].collider.height);
+    colliders[11].collider.width = (float)BLOCK_SIZE * 0.45f;
 
     //Set Player Position and Shoot
     setPlayerPosition(&player, (Vector2){0, (float) (screenHeight - (BLOCK_SIZE + player.texture->height))});
