@@ -6,9 +6,10 @@ Player player;
 //Common Resources
 Font font;
 Texture2D player_textures[2];
+Texture2D bullet_texture;
 
 //Game Variables
-const int screenWidth = 1920;            ///aaaaaaaa 640
+const int screenWidth = 640;
 const int screenHeight = 480;
 float deltaTime;
 Level currentLevel;
@@ -26,6 +27,7 @@ void inputHandler(void);
 void update(void); //Simulate World
 void physicsUpdate(void); //Collision Detection and Correction
 void render(void); //Show frame on Screen
+void clearLevel(void); //Clear level
 
 //Cleaning
 void close(void); //Finish game
@@ -44,20 +46,35 @@ int main() {
         physicsUpdate(); //Deal with any collisions between objects, correcting and detecting
         //postUpdate() or ObjectUpdate(), deal with interactions
         render(); //Draw the frame
+        clearLevel();
     }
 
     close(); //Finish the game. Unload Textures, set default values
     return 0;
 }
 
+bool init() {
+    InitWindow(screenWidth, screenHeight, "Game Name");
+    SetTargetFPS(60);
+    game_running = true;
+    currentLevel = LEVEL2;
+    camera.target = (Vector2) {0,0};
+    camera.offset = (Vector2) {0,0};
+    camera.zoom = 1.0f;
+    camera.rotation = 0.0f;
+    return IsWindowReady();
+}
+
 bool loadCommonResources() {
     font = LoadFont(FONT_DIR"/Unipix.ttf");
     player_textures[0] = LoadTexture(PLAYER_DIR"/Dude_Monster_Attack1_4.png");
     player_textures[1] = LoadTexture(PLAYER_DIR"/Dude_Monster_Idle_4.png");
+    bullet_texture = LoadTexture(PLAYER_DIR"/bullet.png");
 
     if(font.chars == NULL) return  false;
-    if(player_textures[0].width == 0) return  false;
-    if(player_textures[1].width == 0) return  false;
+    if(player_textures[0].width <= 0) return  false;
+    if(player_textures[1].width <= 0) return  false;
+    if(bullet_texture.width <= 0) return false;
 
     return true;
 
@@ -68,24 +85,33 @@ void initializePlayer() {
     setPlayerPosition(&player, (Vector2){0, 0});
     setPlayerTexture(&player, &player_textures[0]);
     setPlayerVelocity(&player, (Vector2){0, 0});
+
+    setBulletDamage(&player.bullet, 1);
+    setBulletDistance(&player.bullet, 400.0f);
+    setBulletPosition(&player.bullet, (Vector2){0,0});
+    setBulletTexture(&player.bullet, &bullet_texture);
+    setBulletVelocity(&player.bullet, (Vector2){5.0f,0.0f});
+
     player.idle = true;
     player.walking = false;
     player.jumping = false;
     player.onGround = false;
-}
-
-bool init() {
-    InitWindow(screenWidth, screenHeight, "Game Name");
-    SetTargetFPS(60);
-    game_running = true;
-    currentLevel = LEVEL2;
-    return IsWindowReady();
+    player.bullet.active = false;
 }
 
 void startLevel() {
     switch (currentLevel) {
         case LEVEL1: break;
         case LEVEL2: startLevel2(); break;
+        default: break;
+    }
+}
+
+void inputHandler() {
+    game_running = !WindowShouldClose();
+    switch (currentLevel) {
+        case LEVEL1: break;
+        case LEVEL2: inputHandlerLevel2(); break;
         default: break;
     }
 }
@@ -106,31 +132,32 @@ void physicsUpdate() {
     }
 }
 
-void inputHandler() {
-    game_running = !WindowShouldClose();
-    switch (currentLevel) {
-        case LEVEL1: break;
-        case LEVEL2: inputHandlerLevel2(); break;
-        default: break;
-    }
-}
-
-void close() {
-    game_running = 0;
-    setPlayerHealth(&player, MAX_HEALTH);
-    setPlayerPosition(&player, (Vector2){0, 0});
-    UnloadFont(font);
-    UnloadTexture(player_textures[0]);
-    UnloadTexture(player_textures[1]);
-    CloseWindow();
-}
-
 void render() {
     BeginDrawing();
+    BeginMode2D(camera);
     switch (currentLevel) {
         case LEVEL1: break;
         case LEVEL2: renderLevel2(); break;
         default: break;
     }
+    EndMode2D();
     EndDrawing();
+}
+
+void clearLevel() {
+    if(!game_running) {
+        switch (currentLevel) {
+            case LEVEL1: break;
+            case LEVEL2: clearLevel2(); break;
+            default: break;
+        }
+    }
+}
+
+void close() {
+    UnloadFont(font);
+    UnloadTexture(player_textures[0]);
+    UnloadTexture(player_textures[1]);
+    UnloadTexture(bullet_texture);
+    CloseWindow();
 }
