@@ -16,6 +16,15 @@ static bool sign_colliding = false;
 static float duration = 3.0f;
 static float alpha = 1.0f;
 
+static Rectangle flippedRectangle(Rectangle rect) {
+    Rectangle result;
+    result.x = rect.x;
+    result.y = rect.y;
+    result.width = -rect.width;
+    result.height = rect.height;
+    return  result;
+}
+
 static void setupPhase1(void) {
     //Creating File
     file_name = "load_textures.asm";
@@ -330,17 +339,18 @@ void renderLevel2() {
     DrawTexture(*bg, 0, 0, WHITE);
 
     //Draw player
-    DrawTextureRec(*player.texture, player.src_rect, player.position, WHITE);
+    if(player.dir < 0) { DrawTextureRec(*player.texture, flippedRectangle(player.src_rect), player.position, WHITE); }
+    else { DrawTextureRec(*player.texture, player.src_rect, player.position, WHITE); }
 
     //If bullet has been shot, draw
     if(player.bullet.active) {
         DrawTexture(*player.bullet.texture, (int)player.bullet.collider.collider.x, (int)player.bullet.collider.collider.y, WHITE);
     }
 
-    DrawText(TextFormat("(Vx, Vy): %.2f %.2f", player.velocity.x, player.velocity.y), (int)player.position.x, (int)player.position.y - 20, 12, BLUE);
-    DrawRectangleLinesEx(player.collider_rect, 2, RED);
-    drawColliders();
-    DrawRectangleLinesEx(player.bullet.collider.collider, 2, GREEN);
+    //DrawText(TextFormat("(Vx, Vy): %.2f %.2f", player.velocity.x, player.velocity.y), (int)player.position.x, (int)player.position.y - 20, 12, BLUE);
+    //DrawRectangleLinesEx(player.collider_rect, 2, RED);
+    //drawColliders();
+    //DrawRectangleLinesEx(player.bullet.collider.collider, 2, GREEN);
     DrawFPS(0, 0);
 
     //Sign
