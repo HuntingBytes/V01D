@@ -52,7 +52,6 @@ void playerOnCollisionGround(Player *player, Rectangle collider, Rectangle colli
 void playerOnCollisionWall(Player *player, Rectangle collider, Rectangle collision_rect);
 void playerOnCollisionPlatform(Player *player, Rectangle collider, Rectangle collision_rect);
 void playerOnCollisionLadder(Player *player, Rectangle collider); //TODO
-void playerOnCollisionSign(); //TODO
 
 void setBulletDamage(Bullet *bullet, int damage);
 void setBulletDistance(Bullet *bullet, float distance);

@@ -4,13 +4,15 @@ extern const int screenWidth;
 extern const int screenHeight;
 extern Player player;
 extern Camera2D camera;
+extern Font font;
 extern float deltaTime;
 
 static Texture2D *bg;
 static Collider2D *colliders;
 static size_t *colliders_length;
 static char *file_name;
-static bool transition;
+static bool transition = false;
+static bool sign_colliding = false;
 static float duration = 3.0f;
 static float alpha = 1.0f;
 
@@ -60,10 +62,110 @@ static void setupPhase2(void) {
 
     //Dynamic Allocation - Phase 2
     bg = (Texture2D*) malloc(sizeof(Texture2D));
-    colliders = (Collider2D*) malloc(17*sizeof(Collider2D));
+    colliders = (Collider2D*) malloc(12 * sizeof(Collider2D));
     colliders_length = (size_t*) malloc(sizeof(size_t));
-    *colliders_length = 17; //4 Ground 3 Triggers 9 Platform 1 Wall = 17
+    *colliders_length = 12; //4 Ground 3 Triggers 9 Platform 1 Wall = 17
     *bg = LoadTexture(MAPS_DIR"/level2/phase2/final.png");
+
+    //Ground Left
+    colliders[0].colliderType = GROUND;
+    colliders[0].collider.x = 0.0f;
+    colliders[0].collider.height = (float) BLOCK_SIZE;
+    colliders[0].collider.y = (float)screenHeight - colliders[0].collider.height;
+    colliders[0].collider.width = (float)BLOCK_SIZE * 18.35f;
+
+    //Ground Right 1
+    colliders[1].colliderType = GROUND;
+    colliders[1].collider.x = (float)BLOCK_SIZE * 23.67f;
+    colliders[1].collider.height = (float) BLOCK_SIZE;
+    colliders[1].collider.y = (float)screenHeight - colliders[1].collider.height;
+    colliders[1].collider.width = (float)BLOCK_SIZE * 8.00f;
+
+    //Ground Right 2
+    colliders[2].colliderType = GROUND;
+    colliders[2].collider.x = (float)BLOCK_SIZE * 32.38f;
+    colliders[2].collider.height = (float) BLOCK_SIZE;
+    colliders[2].collider.y = (float)screenHeight - colliders[0].collider.height;
+    colliders[2].collider.width = (float)BLOCK_SIZE * 1.90f;
+
+    //Ground Right 3
+    colliders[3].colliderType = GROUND;
+    colliders[3].collider.x = (float)BLOCK_SIZE * 35.00f;
+    colliders[3].collider.height = (float) BLOCK_SIZE;
+    colliders[3].collider.y = (float)screenHeight - colliders[3].collider.height;
+    colliders[3].collider.width = (float)BLOCK_SIZE * 5.00f;
+
+    //Plataform 1 (Small Rect)
+    colliders[4].colliderType = PLATFORM;
+    colliders[4].collider.x = (float)BLOCK_SIZE * 18.90f;
+    colliders[4].collider.height = (float)BLOCK_SIZE;
+    colliders[4].collider.y = (float)(screenHeight - (2.32 * colliders[4].collider.height));
+    colliders[4].collider.width = (float)BLOCK_SIZE * 2.00f;
+
+    //Plataform 2 (Square)
+    colliders[5].colliderType = PLATFORM;
+    colliders[5].collider.x = (float)BLOCK_SIZE * 21.90f;
+    colliders[5].collider.height = (float)BLOCK_SIZE;
+    colliders[5].collider.y = (float)(screenHeight - (3.23 * colliders[5].collider.height));
+    colliders[5].collider.width = (float)BLOCK_SIZE;
+
+    //Plataform 3 (Mid Rect)
+    colliders[6].colliderType = PLATFORM;
+    colliders[6].collider.x = (float)BLOCK_SIZE * 27.60f;
+    colliders[6].collider.height = (float)BLOCK_SIZE;
+    colliders[6].collider.y = (float)(screenHeight - (4.32 * colliders[6].collider.height));
+    colliders[6].collider.width = (float)BLOCK_SIZE * 3.00f;
+
+    //Plataform 4 (Square)
+    colliders[7].colliderType = PLATFORM;
+    colliders[7].collider.x = (float)BLOCK_SIZE * 30.65f;
+    colliders[7].collider.height = (float)BLOCK_SIZE;
+    colliders[7].collider.y = (float)(screenHeight - (5.28 * colliders[7].collider.height));
+    colliders[7].collider.width = (float)BLOCK_SIZE;
+
+    //Plataform 5 (Large Rect)
+    colliders[8].colliderType = PLATFORM;
+    colliders[8].collider.x = (float)BLOCK_SIZE * 31.73f;
+    colliders[8].collider.height = (float)BLOCK_SIZE;
+    colliders[8].collider.y = (float)(screenHeight - (6.25 * colliders[8].collider.height));
+    colliders[8].collider.width = (float)BLOCK_SIZE * 4.00f;
+
+    //Plataform 6 (Square)
+    colliders[9].colliderType = PLATFORM;
+    colliders[9].collider.x = (float)BLOCK_SIZE * 35.83f;
+    colliders[9].collider.height = (float)BLOCK_SIZE;
+    colliders[9].collider.y = (float)(screenHeight - (5.28 * colliders[9].collider.height));
+    colliders[9].collider.width = (float)BLOCK_SIZE;
+
+    //Plataform 7
+    colliders[10].colliderType = PLATFORM;
+    colliders[10].collider.x = (float)BLOCK_SIZE * 36.85f;
+    colliders[10].collider.height = (float)BLOCK_SIZE;
+    colliders[10].collider.y = (float)(screenHeight - (4.32 * colliders[10].collider.height));
+    colliders[10].collider.width = (float)BLOCK_SIZE * 3.00f;
+/*
+     //Plataform 8
+    colliders[11].colliderType = PLATFORM;
+    colliders[11].collider.x = (float)BLOCK_SIZE * 18.90f;
+    colliders[11].collider.height = (float)BLOCK_SIZE;
+    colliders[11].collider.y = (float)(screenHeight - (2.32 * colliders[4].collider.height));
+    colliders[11].collider.width = (float)BLOCK_SIZE * 2.00f;
+
+
+     //Plataform 9
+    colliders[11].colliderType = PLATFORM;
+    colliders[11].collider.x = (float)BLOCK_SIZE * 18.90f;
+    colliders[11].collider.height = (float)BLOCK_SIZE;
+    colliders[11].collider.y = (float)(screenHeight - (2.32 * colliders[4].collider.height));
+    colliders[11].collider.width = (float)BLOCK_SIZE * 2.00f;
+
+*/
+    //Stairs
+    colliders[12].colliderType = TRIGGER_LADDER;
+    colliders[12].collider.x = (float)BLOCK_SIZE * 26.84f;
+    colliders[12].collider.height = (float)BLOCK_SIZE * 3.25f;
+    colliders[12].collider.y = (float)screenHeight - (colliders[12].collider.height + colliders[2].collider.height);
+    colliders[12].collider.width = (float)BLOCK_SIZE * 0.45f;
 
     //Set Player Position and Shoot
     setPlayerPosition(&player, (Vector2){0, (float) (screenHeight - (BLOCK_SIZE + player.texture->height))});
@@ -118,7 +220,7 @@ void inputHandlerLevel2() {
     if(jump_pressed && player.onGround) {
         player.onGround = false;
         player.jumping = true;
-        vel_y = -250.0f*deltaTime;
+        vel_y = -300.0f*deltaTime;
     }
 
     //Set bullet velocity
@@ -183,7 +285,7 @@ void physicsUpdateLevel2() {
         setShoot(&player);
         updateBulletVelocityFromBuffer(&player.bullet);
     }
-    if(player.bullet.collider.collider.x + player.bullet.collider.collider.width > (float) screenWidth){
+    if(player.bullet.collider.collider.x + player.bullet.collider.collider.width > (float)bg->width){
         setShoot(&player);
         updateBulletVelocityFromBuffer(&player.bullet);
     }
@@ -202,13 +304,14 @@ void physicsUpdateLevel2() {
                 playerOnCollisionPlatform(&player, colliders[i].collider, collision_rect);
             }
             else if(colliders[i].colliderType == TRIGGER_SIGN) {
-                playerOnCollisionSign();
+                sign_colliding = true;
             }
             else if(colliders[i].colliderType == TRIGGER_LADDER) {
                 playerOnCollisionLadder(&player, colliders[i].collider);
             }
+        } else {
+            sign_colliding = false;
         }
-
         //Bullet Collisions
         if(colliders[i].colliderType != TRIGGER_SIGN && colliders[i].colliderType != TRIGGER_LADDER) {
             if (CheckCollisionRecs(player.bullet.collider.collider, colliders[i].collider)) {
@@ -225,6 +328,14 @@ void drawColliders() {
     }
 }
 
+static void showMessage() {
+    ClearBackground(WHITE);
+    DrawTexture(*bg, 0, 0, Fade(BLACK, 0.6f));
+    Rectangle signMessage = {120, 120, 300, 190};
+    DrawRectangleLines((int) signMessage.x, (int) signMessage.y, (int) signMessage.width, (int) signMessage.height,BLACK);
+    DrawTextRec(font, "Maybe, just maybe, there is a suspicious file out there...", signMessage, 33.0f, 1.0f, 1, BLACK);
+}
+
 void renderLevel2() {
     ClearBackground(WHITE);
 
@@ -239,11 +350,14 @@ void renderLevel2() {
         DrawTexture(*player.bullet.texture, (int)player.bullet.collider.collider.x, (int)player.bullet.collider.collider.y, WHITE);
     }
 
-    //DrawText(TextFormat("(Vx, Vy): %.2f %.2f", player.velocity.x, player.velocity.y), (int)player.position.x, (int)player.position.y - 20, 12, BLUE);
-    //DrawRectangleLinesEx(player.collider_rect, 2, RED);
-    //drawColliders();
-    //DrawRectangleLinesEx(player.bullet.collider.collider, 2, GREEN);
+    DrawText(TextFormat("(Vx, Vy): %.2f %.2f", player.velocity.x, player.velocity.y), (int)player.position.x, (int)player.position.y - 20, 12, BLUE);
+    DrawRectangleLinesEx(player.collider_rect, 2, RED);
+    drawColliders();
+    DrawRectangleLinesEx(player.bullet.collider.collider, 2, GREEN);
     DrawFPS(0, 0);
+
+    //Sign
+    if(sign_colliding) { showMessage(); }
 
     //Transition (Maybe global variables instead?)
     if(transition) {

@@ -44,10 +44,12 @@ void playerOnCollisionWall(Player *player, Rectangle collider, Rectangle collisi
     else setPlayerPosition(player, (Vector2) {player->position.x + collision_rect.width, player->position.y});
 }
 
-void playerOnCollisionPlatform(Player *player, Rectangle collider, Rectangle collision_rect) {}
+void playerOnCollisionPlatform(Player *player, Rectangle collider, Rectangle collision_rect) {
+    if(lastPositionPlayer(player).x < collider.x) setPlayerPosition(player, (Vector2) {player->position.x - collision_rect.width, player->position.y});
+    else setPlayerPosition(player, (Vector2) {player->position.x + collision_rect.width, player->position.y});
+    player->onGround = true;
+}
 
 void playerOnCollisionLadder(Player *player, Rectangle collider) {} //TODO
-
-void playerOnCollisionSign() {} //TODO
 
 //Animation Related
