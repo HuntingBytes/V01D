@@ -1,11 +1,14 @@
 #include "utils.h"
 
+#define NUMBER_PLAYER_TEXTURES 6
+
 //Player
 Player player;
 
 //Common Resources
 Font font;
-Texture2D player_textures[2];
+Texture2D player_textures[NUMBER_PLAYER_TEXTURES];
+Animation player_animations[NUMBER_PLAYER_TEXTURES];
 Texture2D bullet_texture;
 
 //Game Variables
@@ -55,7 +58,7 @@ int main() {
 
 bool init() {
     InitWindow(screenWidth, screenHeight, "Game Name");
-    SetTargetFPS(60);
+    SetTargetFPS(FPS);
     game_running = true;
     currentLevel = LEVEL2;
     camera.target = (Vector2) {0,0};
@@ -67,23 +70,29 @@ bool init() {
 
 bool loadCommonResources() {
     font = LoadFont(FONT_DIR"/Unipix.ttf");
-    player_textures[0] = LoadTexture(PLAYER_DIR"/Dude_Monster_Attack1_4.png");
-    player_textures[1] = LoadTexture(PLAYER_DIR"/Dude_Monster_Idle_4.png");
+
+    player_textures[IDLE] = LoadTexture(PLAYER_DIR"/idle.png");
+    player_textures[WALK] = LoadTexture(PLAYER_DIR"/walk.png");
+    player_textures[JUMP] = LoadTexture(PLAYER_DIR"/jump.png");
+    player_textures[CLIMB] = LoadTexture(PLAYER_DIR"/climb.png");
+    player_textures[THROW] = LoadTexture(PLAYER_DIR"/throw.png");
+    player_textures[DIE] = LoadTexture(PLAYER_DIR"/death.png");
     bullet_texture = LoadTexture(PLAYER_DIR"/bullet.png");
 
-    if(font.chars == NULL) return  false;
-    if(player_textures[0].width <= 0) return  false;
-    if(player_textures[1].width <= 0) return  false;
-    if(bullet_texture.width <= 0) return false;
+    if(font.texture.id <= 0) return  false;
+    if(bullet_texture.id <= 0) return false;
+    for(int i = IDLE; i < NUMBER_PLAYER_TEXTURES; i++) {
+        if(player_textures[i].id <= 0) {return false;}
+        loadAnimation(&player_textures[i], &player_animations[i], i);
+    }
 
     return true;
-
 }
 
 void initializePlayer() {
     setPlayerHealth(&player, MAX_HEALTH);
     setPlayerPosition(&player, (Vector2){0, 0});
-    setPlayerTexture(&player, &player_textures[0]);
+    setPlayerTexture(&player, &player_textures[IDLE], &player_animations[IDLE]);
     setPlayerVelocity(&player, (Vector2){0, 0});
 
     setBulletDamage(&player.bullet, 1);
@@ -92,8 +101,6 @@ void initializePlayer() {
     setBulletTexture(&player.bullet, &bullet_texture);
     setBulletVelocity(&player.bullet, (Vector2){5.0f,0.0f});
 
-    player.idle = true;
-    player.walking = false;
     player.jumping = false;
     player.onGround = false;
     player.bullet.active = false;
@@ -157,8 +164,7 @@ void clearLevel() {
 
 void close() {
     UnloadFont(font);
-    UnloadTexture(player_textures[0]);
-    UnloadTexture(player_textures[1]);
     UnloadTexture(bullet_texture);
+    for(int i = 0; i < NUMBER_PLAYER_TEXTURES; i++) { UnloadTexture(player_textures[i]); }
     CloseWindow();
 }

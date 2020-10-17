@@ -6,6 +6,8 @@ extern Player player;
 extern Camera2D camera;
 extern Font font;
 extern float deltaTime;
+extern Texture2D player_textures[];
+extern Animation player_animations[];
 
 static Texture2D *bg;
 static Collider2D *colliders;
@@ -15,6 +17,7 @@ static bool transition = false;
 static bool sign_colliding = false;
 static float duration = 3.0f;
 static float alpha = 1.0f;
+static int frame_counter = 0;
 
 static Rectangle flippedRectangle(Rectangle rect) {
     Rectangle result;
@@ -194,9 +197,7 @@ void inputHandlerLevel2() {
 
     //Store current key states (Array?)
     bool left_down = IsKeyDown(KEY_A);
-    bool left_pressed = IsKeyPressed(KEY_A);
     bool right_down = IsKeyDown(KEY_D);
-    bool right_pressed = IsKeyPressed(KEY_D);
     bool jump_pressed = IsKeyPressed(KEY_SPACE);
     bool shoot_pressed = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 
@@ -209,12 +210,30 @@ void inputHandlerLevel2() {
         vel_x = -100.0f*deltaTime;
         player.dir = -1.0f;
     }
-    if((!left_down && !right_down) ||(left_down && right_down)) { vel_x = 0; }
+    if((!left_down && !right_down) ||(left_down && right_down)) {
+        vel_x = 0;
+        player.walking = false;
+        if(!player.idle && !player.jumping) {
+            changeAnimationTo(&player, &player_animations[IDLE]);
+            player.idle = true;
+        }
+    } else {
+        player.idle = false;
+        if(!player.walking && !player.jumping) {
+            changeAnimationTo(&player, &player_animations[WALK]);
+            player.walking = true;
+        }
+    }
 
     //Player has jumped
     if(jump_pressed && player.onGround) {
+        if(!player.jumping) {
+            changeAnimationTo(&player, &player_animations[JUMP]);
+            player.jumping = true;
+            player.walking = false;
+            player.idle = false;
+        }
         player.onGround = false;
-        player.jumping = true;
         vel_y = -300.0f*deltaTime;
     }
 
@@ -236,6 +255,10 @@ void updateLevel2() {
 
     //Move player to next position := (position + velocity)
     movePlayer(&player);
+
+    //Move Animation to next step
+    frame_counter++;
+    moveAnimation(&player, &frame_counter);
 
     //If bullet has been shot, update its positions (i. e., shoot)
     if(player.bullet.active) {
