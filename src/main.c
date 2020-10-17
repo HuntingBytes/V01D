@@ -1,6 +1,6 @@
 #include "utils.h"
 
-#define NUMBER_PLAYER_TEXTURES 6
+#define NUMBER_PLAYER_TEXTURES 5
 
 //Player
 Player player;
@@ -75,7 +75,6 @@ bool loadCommonResources() {
     player_textures[WALK] = LoadTexture(PLAYER_DIR"/walk.png");
     player_textures[JUMP] = LoadTexture(PLAYER_DIR"/jump.png");
     player_textures[CLIMB] = LoadTexture(PLAYER_DIR"/climb.png");
-    player_textures[THROW] = LoadTexture(PLAYER_DIR"/throw.png");
     player_textures[DIE] = LoadTexture(PLAYER_DIR"/death.png");
     bullet_texture = LoadTexture(PLAYER_DIR"/bullet.png");
 

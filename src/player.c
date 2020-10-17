@@ -62,18 +62,18 @@ void moveAnimation(Player *player, int *frame_counter) {
         *frame_counter = 0;
         player->current_animation->current_frame++;
 
-        if(player->current_animation->type != JUMP) {
-            if (player->current_animation->current_frame > player->current_animation->n_sprites) {
-                player->current_animation->current_frame = 0;
-            }
-        } else {
-
+        if(player->current_animation->type == JUMP) {
             if (player->current_animation->current_frame > player->current_animation->n_sprites) {
                 player->current_animation->current_frame = player->current_animation->n_sprites - 1;
             }
 
             if(player->current_animation->current_frame >= player->current_animation->n_sprites/2 && player->velocity.y < 0.01f) {
                 player->current_animation->current_frame = player->current_animation->n_sprites/2 - 1;
+            }
+        }
+        else {
+            if (player->current_animation->current_frame > player->current_animation->n_sprites) {
+                player->current_animation->current_frame = 0;
             }
         }
 
@@ -88,7 +88,6 @@ void changeAnimationTo(Player *player, Animation *target) {
         case WALK: texture = &player_textures[WALK]; break;
         case JUMP: texture = &player_textures[JUMP]; break;
         case CLIMB: texture = &player_textures[CLIMB]; break;
-        case THROW: texture = &player_textures[THROW]; break;
         case DIE: texture = &player_textures[DIE]; break;
         default: texture = player->texture;
     }

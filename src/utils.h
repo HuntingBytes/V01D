@@ -20,7 +20,7 @@
 
 typedef enum {MENU = 0, LEVEL1, LEVEL2, LEVEL3, ENDING} Level;
 typedef enum {GROUND = 0, WALL, PLATFORM, TRIGGER_SIGN, TRIGGER_LADDER, TRIGGER_BULLET} ColliderType;
-typedef enum {IDLE = 0, WALK, JUMP, CLIMB, THROW, DIE} AnimationType;
+typedef enum {IDLE = 0, WALK, JUMP, CLIMB, DIE} AnimationType;
 
 typedef struct {
     AnimationType type;
