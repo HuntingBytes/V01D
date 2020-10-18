@@ -15,6 +15,7 @@ static size_t *colliders_length;
 static char *file_name;
 static bool transition = false;
 static bool sign_colliding = false;
+static bool ladder_colliding = false;
 static float duration = 3.0f;
 static float alpha = 1.0f;
 static int frame_counter = 0;
@@ -65,7 +66,6 @@ static void setupPhase1(void) {
     //Set Player Position and Shoot
     setPlayerPosition(&player, (Vector2){0, (float) (screenHeight - (BLOCK_SIZE + player.texture->height))});
     setShoot(&player);
-    player.bullet.buffer_velocity = player.bullet.velocity;
 }
 
 static void setupPhase2(void) {
@@ -107,49 +107,49 @@ static void setupPhase2(void) {
     colliders[3].collider.y = (float)screenHeight - colliders[3].collider.height;
     colliders[3].collider.width = (float)BLOCK_SIZE * 5.00f;
 
-    //Plataform 1 (Small Rect)
+    //Platform 1 (Small Rect)
     colliders[4].colliderType = PLATFORM;
     colliders[4].collider.x = (float)BLOCK_SIZE * 18.90f;
     colliders[4].collider.height = (float)BLOCK_SIZE;
     colliders[4].collider.y = (float)(screenHeight - (2.32 * colliders[4].collider.height));
     colliders[4].collider.width = (float)BLOCK_SIZE * 2.00f;
 
-    //Plataform 2 (Square)
+    //Platform 2 (Square)
     colliders[5].colliderType = PLATFORM;
     colliders[5].collider.x = (float)BLOCK_SIZE * 21.90f;
     colliders[5].collider.height = (float)BLOCK_SIZE;
     colliders[5].collider.y = (float)(screenHeight - (3.23 * colliders[5].collider.height));
     colliders[5].collider.width = (float)BLOCK_SIZE;
 
-    //Plataform 3 (Mid Rect)
+    //Platform 3 (Mid Rect)
     colliders[6].colliderType = PLATFORM;
     colliders[6].collider.x = (float)BLOCK_SIZE * 27.60f;
     colliders[6].collider.height = (float)BLOCK_SIZE;
     colliders[6].collider.y = (float)(screenHeight - (4.32 * colliders[6].collider.height));
     colliders[6].collider.width = (float)BLOCK_SIZE * 3.00f;
 
-    //Plataform 4 (Square)
+    //Platform 4 (Square)
     colliders[7].colliderType = PLATFORM;
     colliders[7].collider.x = (float)BLOCK_SIZE * 30.65f;
     colliders[7].collider.height = (float)BLOCK_SIZE;
     colliders[7].collider.y = (float)(screenHeight - (5.28 * colliders[7].collider.height));
     colliders[7].collider.width = (float)BLOCK_SIZE;
 
-    //Plataform 5 (Large Rect)
+    //Platform 5 (Large Rect)
     colliders[8].colliderType = PLATFORM;
     colliders[8].collider.x = (float)BLOCK_SIZE * 31.73f;
     colliders[8].collider.height = (float)BLOCK_SIZE;
     colliders[8].collider.y = (float)(screenHeight - (6.25 * colliders[8].collider.height));
     colliders[8].collider.width = (float)BLOCK_SIZE * 4.00f;
 
-    //Plataform 6 (Square)
+    //Platform 6 (Square)
     colliders[9].colliderType = PLATFORM;
     colliders[9].collider.x = (float)BLOCK_SIZE * 35.83f;
     colliders[9].collider.height = (float)BLOCK_SIZE;
     colliders[9].collider.y = (float)(screenHeight - (5.28 * colliders[9].collider.height));
     colliders[9].collider.width = (float)BLOCK_SIZE;
 
-    //Plataform 7
+    //Platform 7
     colliders[10].colliderType = PLATFORM;
     colliders[10].collider.x = (float)BLOCK_SIZE * 36.85f;
     colliders[10].collider.height = (float)BLOCK_SIZE;
@@ -159,14 +159,12 @@ static void setupPhase2(void) {
     //Stairs
     colliders[11].colliderType = TRIGGER_LADDER;
     colliders[11].collider.x = (float)BLOCK_SIZE * 26.84f;
-    colliders[11].collider.height = (float)BLOCK_SIZE * 3.25f;
-    colliders[11].collider.y = (float)screenHeight - (colliders[12].collider.height + colliders[2].collider.height);
-    colliders[11].collider.width = (float)BLOCK_SIZE * 0.45f;
-
+    colliders[11].collider.height = (float)BLOCK_SIZE * 2.85f;
+    colliders[11].collider.y = (float)(screenHeight - (1.55 * colliders[11].collider.height));
+    colliders[11].collider.width = (float)BLOCK_SIZE * 0.6f;
     //Set Player Position and Shoot
     setPlayerPosition(&player, (Vector2){0, (float) (screenHeight - (BLOCK_SIZE + player.texture->height))});
     setShoot(&player);
-    player.bullet.buffer_velocity = player.bullet.velocity;
 }
 
 void clearLevel2() {
@@ -200,6 +198,10 @@ void inputHandlerLevel2() {
     bool right_down = IsKeyDown(KEY_D);
     bool jump_pressed = IsKeyPressed(KEY_SPACE);
     bool shoot_pressed = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+    bool upper_down = IsKeyDown(KEY_W);
+    bool upper_pressed = IsKeyPressed(KEY_W);
+    bool lower_down = IsKeyDown(KEY_S);
+    bool lower_pressed = IsKeyPressed(KEY_S);
 
     //Set velocity of player
     if(right_down) {
@@ -223,6 +225,22 @@ void inputHandlerLevel2() {
             changeAnimationTo(&player, &player_animations[WALK]);
             player.walking = true;
         }
+    }
+
+    //Player is climbing the ladder
+    if(ladder_colliding)
+    {
+        if(upper_pressed && player.onGround) //on the floor, beginning to climb
+        {
+            player.onGround = false;
+            if(upper_down) vel_y = -100*deltaTime;
+        }
+        if(!player.onGround) //on the ladder
+        {
+            if (upper_down) vel_y = -100*deltaTime;
+            if (lower_down) vel_y = 100*deltaTime;
+        }
+
     }
 
     //Player has jumped
@@ -266,7 +284,7 @@ void updateLevel2() {
     }
 
     //If player is not on ground, apply velocity downwards (gravity)
-    if(!player.onGround) player.velocity.y += 10.0f*deltaTime;
+    if(!player.onGround && !ladder_colliding) player.velocity.y += 10.0f*deltaTime;
 
     //Check if file has been deleted and change phase
     if(!phase_done && !FileExists(file_name)) {
@@ -284,7 +302,7 @@ void physicsUpdateLevel2() {
 
     //Clamp map limits - Player
     if(player.position.x < 0) setPlayerPosition(&player, (Vector2){0, player.position.y});
-    if(player.position.x + player.collider_rect.width > (float)bg->width) setPlayerPosition(&player, (Vector2){(float)screenWidth - player.collider_rect.width, player.position.y});
+    if(player.position.x + player.collider_rect.width > (float)bg->width) setPlayerPosition(&player, (Vector2){(float)bg->width - player.collider_rect.width, player.position.y});
 
     //Clamp map limits - Bullet
     if(player.bullet.collider.collider.x < 0) {
@@ -311,10 +329,11 @@ void physicsUpdateLevel2() {
                 sign_colliding = true;
             }
             else if(colliders[i].colliderType == TRIGGER_LADDER) {
-                playerOnCollisionLadder(&player, colliders[i].collider);
+                ladder_colliding = true;
             }
         } else {
-            sign_colliding = false;
+            if(colliders[i].colliderType == TRIGGER_LADDER) { ladder_colliding = false; }
+            if(colliders[i].colliderType == TRIGGER_SIGN) { sign_colliding = false; }
         }
         //Bullet Collisions
         if(colliders[i].colliderType != TRIGGER_SIGN && colliders[i].colliderType != TRIGGER_LADDER) {
@@ -325,7 +344,7 @@ void physicsUpdateLevel2() {
     }
 }
 
-void drawColliders() {
+static void drawColliders() {
     for(int i = 0; i < *colliders_length; i++) {
         DrawRectangleLinesEx(colliders[i].collider, 2, RED);
     }
@@ -355,9 +374,9 @@ void renderLevel2() {
     }
 
     //DrawText(TextFormat("(Vx, Vy): %.2f %.2f", player.velocity.x, player.velocity.y), (int)player.position.x, (int)player.position.y - 20, 12, BLUE);
-    //DrawRectangleLinesEx(player.collider_rect, 2, RED);
-    //drawColliders();
-    //DrawRectangleLinesEx(player.bullet.collider.collider, 2, GREEN);
+    DrawRectangleLinesEx(player.collider_rect, 2, RED);
+    drawColliders();
+    DrawRectangleLinesEx(player.bullet.collider.collider, 2, GREEN);
     DrawFPS(0, 0);
 
     //Sign

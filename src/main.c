@@ -4,12 +4,14 @@
 
 //Player
 Player player;
+//-------------
 
 //Common Resources
 Font font;
 Texture2D player_textures[NUMBER_PLAYER_TEXTURES];
 Animation player_animations[NUMBER_PLAYER_TEXTURES];
 Texture2D bullet_texture;
+//---------------------------
 
 //Game Variables
 const int screenWidth = 640;
@@ -18,12 +20,14 @@ float deltaTime;
 Level currentLevel;
 bool game_running;
 Camera2D camera;
+//---------------------------
 
 //Initialization
 bool init(void); //Create Window; Set currentLevel; Game is now running;
 bool loadCommonResources(void); //Resources available at all time
 void startLevel(void); //Start a level once
 void initializePlayer(void); //Initialize Player
+//------------------------------------------------------------------------
 
 //Update
 void inputHandler(void);
@@ -31,9 +35,11 @@ void update(void); //Simulate World
 void physicsUpdate(void); //Collision Detection and Correction
 void render(void); //Show frame on Screen
 void clearLevel(void); //Clear level
+//---------------------------------------------------------------
 
 //Cleaning
 void close(void); //Finish game
+//-------------------------------
 
 int main() {
     if(!init() || !loadCommonResources()) return  -1; //If is not possible to create window or load common resources, exit.
@@ -100,6 +106,8 @@ void initializePlayer() {
     setBulletTexture(&player.bullet, &bullet_texture);
     setBulletVelocity(&player.bullet, (Vector2){5.0f,0.0f});
 
+    player.idle = true;
+    player.walking = false;
     player.jumping = false;
     player.onGround = false;
     player.bullet.active = false;

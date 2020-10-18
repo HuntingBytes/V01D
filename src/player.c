@@ -49,12 +49,28 @@ void playerOnCollisionWall(Player *player, Rectangle collider, Rectangle collisi
 }
 
 void playerOnCollisionPlatform(Player *player, Rectangle collider, Rectangle collision_rect) {
-    if(lastPositionPlayer(player).x < collider.x) setPlayerPosition(player, (Vector2) {player->position.x - collision_rect.width, player->position.y});
-    else setPlayerPosition(player, (Vector2) {player->position.x + collision_rect.width, player->position.y});
-    player->onGround = true;
+    if(collision_rect.width  > (0.6 * player->collider_rect.width ))
+    {
+        setPlayerPosition(player, (Vector2) {player->position.x, player->position.y - collision_rect.height + 0.1f});
+        setPlayerVelocity(player, (Vector2){player->velocity.x, 0});
+        player->onGround = true;
+        player->jumping = false;
+    }
+    else
+    {
+        player->onGround = false;
+        if (lastPositionPlayer(player).x < collider.x)
+        {
+            if(lastPositionPlayer(player).y > (collider.y + BLOCK_SIZE))  setPlayerPosition(player, (Vector2) {player->position.x - collision_rect.width, player->position.y});
+            else setPlayerPosition(player, (Vector2){player->position.x - collision_rect.width, player->position.y});
+        }
+        else if((lastPositionPlayer(player).x + BLOCK_SIZE) > collider.x)
+        {
+            if(lastPositionPlayer(player).y > (collider.y + BLOCK_SIZE))  setPlayerPosition(player, (Vector2) {player->position.x + collision_rect.width, player->position.y});
+            else setPlayerPosition(player, (Vector2) {player->position.x + collision_rect.width, player->position.y});
+        }
+    }
 }
-
-void playerOnCollisionLadder(Player *player, Rectangle collider) {} //TODO
 
 //Animation Related
 void moveAnimation(Player *player, int *frame_counter) {

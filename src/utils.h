@@ -41,7 +41,7 @@ typedef struct {
     float distance, current_distance;
     Texture2D *texture;
     Collider2D collider;
-    Vector2 velocity, buffer_velocity;
+    Vector2 velocity;
 }Bullet;
 
 typedef struct {
@@ -64,7 +64,6 @@ Vector2 lastPositionPlayer(Player *player);
 void playerOnCollisionGround(Player *player, Rectangle collider, Rectangle collision_rect);
 void playerOnCollisionWall(Player *player, Rectangle collider, Rectangle collision_rect);
 void playerOnCollisionPlatform(Player *player, Rectangle collider, Rectangle collision_rect);
-void playerOnCollisionLadder(Player *player, Rectangle collider); //TODO
 void loadAnimation(Texture2D *texture, Animation *animation, AnimationType type);
 void moveAnimation(Player *player, int *frame_counter);
 void changeAnimationTo(Player *player, Animation *target);
