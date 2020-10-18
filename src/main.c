@@ -1,5 +1,8 @@
 #include "raylib.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
 const int screenWidth = 640;
 const int screenHeight = 480;
 
@@ -15,6 +18,7 @@ Rectangle coords[6];
 struct Vector2 mousePos = {0};
 
 int game_running = 1;
+int v[] = {0, 1, 2, 3, 4, 5};
 
 bool init(void);
 bool loadAssets(void);
@@ -26,9 +30,11 @@ void puzzle(void);
 void checkPieces();
 void checkMouse(void);
 void initPieces(void);
+void random(void);
 
 int main() {
-    if(!init()) return  -1; 
+    if(!init()) return  -1;
+    random();
     loadAssets();
     initPieces();
     while (game_running)
@@ -52,12 +58,12 @@ bool loadAssets() {
     virado.width = (int)(virado.width*1.5);
 
     mascara = LoadTexture("assets/maps/level2/phase1/final.png");
-    pieces[0] = LoadTexture("assets/puzzle/01.jpg");
-    pieces[1] = LoadTexture("assets/puzzle/02.jpg");
-    pieces[2] = LoadTexture("assets/puzzle/03.jpg");
-    pieces[3] = LoadTexture("assets/puzzle/04.jpg");
-    pieces[4] = LoadTexture("assets/puzzle/05.jpg");
-    pieces[5] = LoadTexture("assets/puzzle/06.jpg");
+    pieces[v[0]] = LoadTexture("assets/puzzle/01.jpg");
+    pieces[v[1]] = LoadTexture("assets/puzzle/02.jpg");
+    pieces[v[2]] = LoadTexture("assets/puzzle/03.jpg");
+    pieces[v[3]] = LoadTexture("assets/puzzle/04.jpg");
+    pieces[v[4]] = LoadTexture("assets/puzzle/05.jpg");
+    pieces[v[5]] = LoadTexture("assets/puzzle/06.jpg");
 
     return  true;
 }
@@ -99,6 +105,20 @@ void initPieces (){
     }
 }
 
+void random (){
+    int j, aux;
+    //gera semente aleatória
+    srand(time(NULL)*time(NULL));
+
+    //embaralha os números no vetor
+    for(int i = 5; i > 0; i--){
+        j = rand() % 6;
+        aux = v[j];
+        v[j] = v[i];
+        v[i] = aux;
+    }
+}
+
 void puzzle (){
     DrawTexture(mascara, 0, 0, Fade(BLACK, 0.6f));
     DrawRectangleRec(grid, Fade(WHITE, 0.5f));
@@ -128,6 +148,7 @@ void checkMouse(){
         if(IsMouseButtonDown(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(mousePos, coords[i])) {
             coords[i].x = GetMouseX() - coords[i].width / 2;
             coords[i].y = GetMouseY() - coords[i].height / 2;
+            printf("SEGURANDO A PECA %i", i);
             piecesColl(i);
         }
         //testa a posição das peças para não sairem das bordas da tela
