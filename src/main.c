@@ -15,6 +15,8 @@ float deltaTime;
 Level currentLevel;
 bool game_running;
 Camera2D camera;
+//---------------------------
+
 
 //Initialization
 bool init(void); //Create Window; Set currentLevel; Game is now running;

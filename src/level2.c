@@ -57,6 +57,7 @@ static void setupPhase1(void) {
     player.bullet.buffer_velocity = player.bullet.velocity;
 }
 
+
 static void setupPhase2(void) {
     //Free previous allocated memory and Unload Texture
     //clearLevel2(); AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -148,8 +149,8 @@ static void setupPhase2(void) {
     //Stairs
     colliders[11].colliderType = TRIGGER_LADDER;
     colliders[11].collider.x = (float)BLOCK_SIZE * 26.84f;
-    colliders[11].collider.height = (float)BLOCK_SIZE * 2.45f;
-    colliders[11].collider.y = (float)(screenHeight - (1.70 * colliders[11].collider.height));
+    colliders[11].collider.height = (float)BLOCK_SIZE * 2.85f;
+    colliders[11].collider.y = (float)(screenHeight - (1.55 * colliders[11].collider.height));
     colliders[11].collider.width = (float)BLOCK_SIZE * 0.45f;
 
     //Set Player Position and Shoot
@@ -178,6 +179,7 @@ void startLevel2() {
     done = true;
 }
 
+
 void inputHandlerLevel2() {
     //If it is transitioning, return
     if(transition) return;
@@ -196,7 +198,9 @@ void inputHandlerLevel2() {
     bool right_down = IsKeyDown(KEY_D);
     bool right_pressed = IsKeyPressed(KEY_D);
     bool upper_down = IsKeyDown(KEY_W);
+    bool upper_pressed = IsKeyPressed(KEY_W);
     bool lower_down = IsKeyDown(KEY_S);
+    bool lower_pressed = IsKeyPressed(KEY_S);
     bool jump_pressed = IsKeyPressed(KEY_SPACE);
     bool shoot_pressed = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 
@@ -208,18 +212,18 @@ void inputHandlerLevel2() {
     //Player is climbing  the ladder
     if(ladder_colliding)
     {
-        if(upper_down && player.onGround == true)
+        if(upper_pressed && player.onGround)            //on the floor, beginning to climb
         {
             player.onGround = false;
-
+            if(upper_down) vel_y = -100*deltaTime;
         }
-        if(lower_down && player.onGround == false)
+        if(!player.onGround)                           //on the ladder
         {
-
+            if (upper_down) vel_y = -100*deltaTime;
+            if (lower_down) vel_y = 100*deltaTime;
         }
 
     }
-
 
 
     //Player has jumped
@@ -266,7 +270,7 @@ void updateLevel2() {
     }
 
     //If player is not on ground, apply velocity downwards (gravity)
-    if(!player.onGround) player.velocity.y += 10.0f*deltaTime;
+    if(!player.onGround && !ladder_colliding) player.velocity.y += 10.0f*deltaTime;
 
     //Check if file has been deleted and change phase
     if(!phase_done && !FileExists(file_name)) {
@@ -309,15 +313,19 @@ void physicsUpdateLevel2() {
             }
             else if(colliders[i].colliderType == PLATFORM) {
                 playerOnCollisionPlatform(&player, colliders[i].collider, collision_rect);
+
             }
             else if(colliders[i].colliderType == TRIGGER_SIGN) {
                 sign_colliding = true;
             }
             else if(colliders[i].colliderType == TRIGGER_LADDER) {
                 ladder_colliding = true;
-                playerOnCollisionLadder(&player, colliders[i].collider);
+                //playerOnCollisionLadder(&player, colliders[i].collider);
             }
-        } else {
+        }
+        else
+        {
+
             sign_colliding = false;
             ladder_colliding = false;
         }

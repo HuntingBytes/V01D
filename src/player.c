@@ -34,6 +34,7 @@ Vector2 lastPositionPlayer(Player *player) {
 }
 
 void playerOnCollisionGround(Player *player, Rectangle collider, Rectangle collision_rect) {
+    printf("Jogador entrou em contato com o chao\n");
     setPlayerPosition(player, (Vector2) {player->position.x, player->position.y - collision_rect.height});
     setPlayerVelocity(player, (Vector2){player->velocity.x, 0});
     player->onGround = true;
@@ -46,25 +47,34 @@ void playerOnCollisionWall(Player *player, Rectangle collider, Rectangle collisi
 
 void playerOnCollisionPlatform(Player *player, Rectangle collider, Rectangle collision_rect)
 {
-    if(collision_rect.width  > (0.5 * player->collider_rect.width))
+    if(collision_rect.width  > (0.6 * player->collider_rect.width ))
     {
-        setPlayerPosition(player, (Vector2) {player->position.x, player->position.y - collision_rect.height});
+        printf("Player on platform\n");
+        fflush(stdout);
+        setPlayerPosition(player, (Vector2) {player->position.x, player->position.y - collision_rect.height + 0.1});
         setPlayerVelocity(player, (Vector2){player->velocity.x, 0});
         player->onGround = true;
     }
     else
     {
-        if (lastPositionPlayer(player).x < (collider.x + collider.width)) setPlayerPosition(player, (Vector2) {player->position.x - collision_rect.width, player->position.y});
-        else setPlayerPosition(player, (Vector2) {player->position.x + collision_rect.width, player->position.y});
+        player->onGround = false;
+        if (lastPositionPlayer(player).x < collider.x)
+        {
+            if(lastPositionPlayer(player).y > (collider.y + BLOCK_SIZE))  setPlayerPosition(player, (Vector2) {player->position.x - collision_rect.width, player->position.y});
+            else setPlayerPosition(player, (Vector2){player->position.x - collision_rect.width, player->position.y});
+        }
+        else if((lastPositionPlayer(player).x + BLOCK_SIZE) > collider.x)
+        {
+            if(lastPositionPlayer(player).y > (collider.y + BLOCK_SIZE))  setPlayerPosition(player, (Vector2) {player->position.x + collision_rect.width, player->position.y});
+            else setPlayerPosition(player, (Vector2) {player->position.x + collision_rect.width, player->position.y});
+        }
     }
 }
 
+/*
 void playerOnCollisionLadder(Player *player, Rectangle collider)
 {
-    if(player->onGround == true)
-    {
 
-    }
+
 }
-
-//Animation Related
+*/
