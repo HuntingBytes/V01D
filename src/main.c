@@ -20,6 +20,7 @@ struct Vector2 mousePos = {0};
 int game_running = 1;
 int v[] = {0, 1, 2, 3, 4, 5};
 
+bool complete(void);
 bool init(void);
 bool loadAssets(void);
 void piecesColl(int i);
@@ -31,6 +32,7 @@ void checkPieces();
 void checkMouse(void);
 void initPieces(void);
 void random(void);
+void fim();
 
 int main() {
     if(!init()) return  -1;
@@ -75,19 +77,32 @@ bool init() {
 }
 
 void update() {
-    mousePos = GetMousePosition();
+    if(!complete()){
+        mousePos = GetMousePosition();
 
-    BeginDrawing();
+        BeginDrawing();
 
-    ClearBackground(WHITE);
-    DrawTexture(tile, 0, 0, WHITE);
-    DrawTexture(player_asset, 10, 145, WHITE);
-    DrawTexture(virado, 200, 200, WHITE);
-    puzzle();
+        ClearBackground(WHITE);
+        DrawTexture(tile, 0, 0, WHITE);
+        DrawTexture(player_asset, 10, 145, WHITE);
+        DrawTexture(virado, 200, 200, WHITE);
+        puzzle();
+        complete();
 
-    EndDrawing();
+        EndDrawing();
+    }else{
+        fim();
+    }
+
 }
 
+void inputHandler() {
+    if(WindowShouldClose()) game_running = 0;
+}
+
+void close() {
+    CloseWindow();
+}
 void initPieces (){
     int i, j = 45;
 
@@ -100,7 +115,7 @@ void initPieces (){
             coords[i].x = 460 + 5;
         }
 
-        coords[i].y = j;
+        coords[i].y = (float) j;
         j = j + 45;
     }
 }
@@ -127,14 +142,13 @@ void puzzle (){
     DrawRectangleLinesEx(box, 2, BLACK);
     checkPieces();
     checkMouse();
-
 }
 
 void checkPieces(){
     int i;
     //passa por cada um dos elementos do vetor de peças e imprime na tela usando as coordenadas no vetor coords
     for(i = 0; i < 6; i++){
-        DrawTexture(pieces[i], coords[i].x, coords[i].y, WHITE);
+        DrawTexture(pieces[i], (int) coords[i].x, (int) coords[i].y, WHITE);
         DrawRectangleLinesEx(coords[i], 2, BLACK);
     }
 }
@@ -146,19 +160,19 @@ void checkMouse(){
     for(i = 0; i < 6; i++){
         //testa se o botão esquerdo está pressionado. caso sim, atualiza posição do retangulo
         if(IsMouseButtonDown(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(mousePos, coords[i])) {
-            coords[i].x = GetMouseX() - coords[i].width / 2;
-            coords[i].y = GetMouseY() - coords[i].height / 2;
-            printf("SEGURANDO A PECA %i", i);
+            coords[i].x = (float) GetMouseX() - coords[i].width / 2;
+            coords[i].y = (float) GetMouseY() - coords[i].height / 2;
+            //printf("SEGURANDO A PECA %i -- v = %i", i, v[i]);
             piecesColl(i);
         }
         //testa a posição das peças para não sairem das bordas da tela
-        if(coords[i].x + coords[i].width >= GetScreenWidth()){
-            coords[i].x = GetScreenWidth() - coords[i].width;
+        if(coords[i].x + coords[i].width >= (float) GetScreenWidth()){
+            coords[i].x = (float) GetScreenWidth() - coords[i].width;
         }else if(coords[i].x < 0){
             coords[i].x = 0;
         }
-        if(coords[i].y + coords[i].height >= GetScreenHeight()){
-            coords[i].y = GetScreenHeight() - coords[i].height;
+        if(coords[i].y + coords[i].height >= (float) GetScreenHeight()){
+            coords[i].y = (float) GetScreenHeight() - coords[i].height;
         }else if(coords[i].y < 0){
             coords[i].y = 0;
         }
@@ -171,19 +185,56 @@ void piecesColl(int i){
         if(j != i){
             //move as peças caso estejam perto umas das outras "como um glitch"
             if(coords[i].x == coords[j].x && coords[i].y != coords[j].y){
-                coords[i].x = GetMouseX() - coords[i].width/2;
+                coords[i].x = (float) GetMouseX() - coords[i].width/2;
             }
-            if(coords[i].y == coords[j].y&& coords[i].x != coords[j].x){
+            if(coords[i].y == coords[j].y && coords[i].x != coords[j].x){
                 coords[i].y = coords[i].height/2;
             }
         }
     }
 }
 
-void inputHandler() {
-    if(WindowShouldClose()) game_running = 0;
+bool complete (){
+    int i;
+    float area = 0, limX, limY, areaMax;
+    Vector2 p; //struct para armazenar ponto central da peça
+
+    areaMax = grid.height * grid.width; //area maxima possivel, ou seja, area do grid total
+    limX = grid.x + 130; //marca o ponto central do grid
+    limY = grid.y + 130; //marca 1/3 do comprimento do grid
+
+    for(i = 0; i < 6; i++){
+        p.x = coords[v[i]].x + coords[v[i]].width/2;//armazena coordenada x da metade da peça
+        p.y = coords[v[i]].y + coords[v[i]].height/2;//armazena coordenada x da metade da peça
+        if(i % 2 == 0){//peças do lado direito
+            if(p.x > grid.x && p.x <= limX){
+                if(p.y > grid.y && p.y < limY){
+                    //soma area das peças do lado direito
+                    area += GetCollisionRec(grid, coords[i]).height * GetCollisionRec(grid, coords[i]).width;
+                }
+            }
+        }else{//peças do lado esquerdo
+            if(p.x > limX && p.x <= limX + 130){
+                if(p.y > grid.y && p.y < limY){
+                    //soma area das peças do lado esquerdo
+                    area += GetCollisionRec(grid, coords[i]).height * GetCollisionRec(grid, coords[i]).width;
+                    //aumenta o limite vertical do grid a ser avaliado
+                    limY += 130;
+                }
+            }
+        }
+    }
+
+    if(area >= areaMax*0.7){
+        //printf("AREA IGUAL A %f ", area/areaMax);
+        return true;
+    }
+    return false;
 }
 
-void close() {
-    CloseWindow();
+void fim (){
+    BeginDrawing();
+    DrawRectangle(0, 0, 640, 480, RAYWHITE);
+    DrawText("DALE DALE DALE", 160, 220, 30, BLACK);
+    EndDrawing();
 }
