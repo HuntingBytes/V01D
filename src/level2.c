@@ -199,6 +199,8 @@ static void setupPhase2(void) {
     setPlayerPosition(&player, (Vector2){0, (float) (screenHeight - (BLOCK_SIZE + player.texture->height))});
     changeAnimationTo(&player, &player_animations[IDLE]);
     setShoot(&player);
+
+    //Set Enemy Position and Animation
 }
 
 
@@ -390,6 +392,7 @@ void physicsUpdateLevel2() {
             if (CheckCollisionRecs(player.bullet.collider.collider, colliders[i].collider)) {
                 player.bullet.active = false;
             }
+            //Check Collision with Enemy
         }
     }
 }

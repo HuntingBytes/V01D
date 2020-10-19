@@ -61,6 +61,12 @@ typedef struct {
 
 }Player;
 
+/*
+typedef struct {
+    bool isAttacking, onGround;
+
+}Enemy;
+*/
 void setPlayerHealth(Player *player, int value);
 void setPlayerPosition(Player *player, Vector2 position);
 void setPlayerTexture(Player *player, Texture2D *texture, Animation *animation);
