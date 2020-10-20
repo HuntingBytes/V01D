@@ -2,17 +2,15 @@
 
 extern const int screenWidth;
 extern const int screenHeight;
+extern Level currentLevel; 
 
 typedef struct {
     Vector2 vetor;
     Rectangle retang;
 }NovoRec;
 
-int main(void)
-{
-    
-    InitWindow(screenWidth, screenHeight, "Menu");
-    
+int mainMenu(void)
+{    
     //Declaração de variáveis
     Vector2 mousePosition = { -100.0f, -100.0f };
     Vector2 diskPosition = {175, 360};
@@ -22,16 +20,17 @@ int main(void)
     NovoRec rec_disk;
     Color colorEntrada = RED;
     Color colorButton = RED;
+    bool fimMenu = false;
 
     //Inicialização das texturas
-    Texture2D background = LoadTexture("C:/Users/joaop/Desktop/IP1-2VA/assets/maps/menu/menu_background.png");
-    Texture2D cursor = LoadTexture("C:/Users/joaop/Desktop/IP1-2VA/assets/maps/menu/hand.png");
-    Texture2D disk = LoadTexture("C:/Users/joaop/Desktop/IP1-2VA/assets/maps/menu/disk.png");
-    Texture2D pointerHand = LoadTexture("C:/Users/joaop/Desktop/IP1-2VA/assets/maps/menu/pointer-hand-def.png");
+    Texture2D background = LoadTexture(MAPS_DIR"/menu/menu_background.png");
+    Texture2D cursor = LoadTexture(MAPS_DIR"/menu/hand.png");
+    Texture2D disk = LoadTexture(MAPS_DIR"/menu/disk.png");
+    Texture2D pointerHand = LoadTexture(MAPS_DIR"/menu/pointer-hand-def.png");
     Texture2D hand = cursor;
     
     //Loop principal do jogo
-    while(!WindowShouldClose())
+    while(!fimMenu)
     {
         //atualizando os valores das variáveis de posição da mão e do retânuglo
         mousePosition = GetMousePosition();
@@ -66,6 +65,8 @@ int main(void)
         {
             colorButton = GREEN;
             colorEntrada = BLANK;
+            currentLevel++;
+            fimMenu = true;
         }
      
         //AQUI É OS DESENHO
@@ -84,5 +85,11 @@ int main(void)
         EndDrawing();
     }
     
+    UnloadTexture(background);
+    UnloadTexture(disk);
+    UnloadTexture(hand);
+    UnloadTexture(pointerHand);
+    UnloadTexture(cursor);
+
     return 0;
 }
