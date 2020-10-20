@@ -9,6 +9,7 @@
 
 #define FPS 60
 
+#define FONT_DIR "assets/fonts"
 #define PLAYER_DIR "assets/player"
 #define MAPS_DIR "assets/maps"
 
@@ -38,7 +39,7 @@ typedef struct {
 }Bullet;
 
 typedef struct {
-    bool idle, walking, jumping, onGround;
+    bool idle, walking, jumping, climbing, onGround;
     int health;
     float dir; //-1 or 1 : Direction (1: Right, -1: Left)
     Vector2 position, velocity;
@@ -52,15 +53,15 @@ void initLevel(void); //Start level2. Set initial position, load textures, etc
 void inputHandler(void); //Handle the input data according to the phase
 void update(void); //Move player and check limits of the world**(To do)
 void physicsUpdate(void); //Detect and correct collisions according to its type
-void render(void); //Draw frame
+void draw(void); //Draw frame
+void rendere(void);
 void clearLevel(void); //Clear level
 
-void initPlayer(void);
 void setPlayerHealth(Player *player, int value);
 void setPlayerPosition(Player *player, Vector2 position);
 void setPlayerTexture(Player *player, Texture2D *texture, Animation *animation);
 void setPlayerVelocity(Player *player, Vector2 velocity);
-void playerPos(Player *player);
+void movePlayer(Player *player);
 Vector2 lastPositionPlayer(Player *player);
 void playerOnCollisionGround(Player *player, Rectangle collider, Rectangle collision_rect);
 void playerOnCollisionWall(Player *player, Rectangle collider, Rectangle collision_rect);
@@ -69,6 +70,7 @@ void loadAnimation(Texture2D *texture, Animation *animation, AnimationType type)
 void moveAnimation(Player *player, int *frame_counter);
 void changeAnimationTo(Player *player, Animation *target);
 
+void setBulletDamage(Bullet *bullet, int damage);
 void setBulletDistance(Bullet *bullet, float distance);
 void setBulletTexture(Bullet *bullet, Texture2D *texture);
 void setBulletVelocity(Bullet *bullet, Vector2 velocity);

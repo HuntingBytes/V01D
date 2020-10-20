@@ -2,16 +2,31 @@
 
 extern const int screenWidth;
 extern const int screenHeight;
-extern Player player;
 extern int game_running;
+extern float deltaTime;
+extern Font font;
+extern Player player;
 extern Texture2D tile;
-extern Texture2D playerTextures[];
+extern Texture2D player_textures[];
 extern Camera2D camera;
-static Collider2D *colliders;
+extern Animation player_animations[];
 
-void level3 (){
-    initPlayer();
-
+static Collider2D colliders[15];
+static int frame_counter = 0;
+static bool transition = false;
+static float invert_factor = -1.0f;
+static bool ladder_colliding = false;
+static int current_ground = 0;
+static int colliders_length = 15;
+static float duration = 3.0f;
+static float alpha = 1.0f;
+static Rectangle flippedRectangle(Rectangle rect) {
+    Rectangle result;
+    result.x = rect.x;
+    result.y = rect.y;
+    result.width = -rect.width;
+    result.height = rect.height;
+    return  result;
 }
 
 void initLevel(){
@@ -19,8 +34,6 @@ void initLevel(){
     camera.offset = (Vector2) {0,0};
     camera.zoom = 1.5f;
     camera.rotation = 0.0f;
-
-    colliders = (Collider2D*) malloc(15 * sizeof(Collider2D));
 
     //Starting ground
     colliders[0].colliderType = GROUND;
@@ -112,73 +125,210 @@ void initLevel(){
     colliders[14].collider.height = (float)BLOCK_SIZE * 2.0f;
     colliders[14].collider.y = 336;
     colliders[14].collider.width = (float)BLOCK_SIZE * 2.0f;
-}
 
-void initPlayer(){
-    player.idle = true;
+    setPlayerPosition(&player, (Vector2){0, (float) (screenHeight - (BLOCK_SIZE + player.texture->height))});
+    setShoot(&player);
+
     player.onGround = false;
-    player.walking = false;
     player.jumping = false;
-    player.health = MAX_HEALTH;
-    player.dir = 1;
-    player.position = (Vector2) {0,0};
-    player.velocity = (Vector2) {0, 0};
-
+    player.climbing = false;
+    player.walking = false;
+    player.idle = true;
+    player.dir = 1.0f;
 }
 
 void inputHandler(){
-    if(WindowShouldClose()){
-        game_running = 0;
-        return;
-    }
+    //If it is transitioning, return
+    if(transition) return;
 
-    if(IsKeyDown(KEY_A)){
-        player.velocity.x = -3.0f;
+    //Store current player velocity
+    float vel_x = player.velocity.x;
+    float vel_y = player.velocity.y;
+
+    //Store current key states (Array?)
+    bool left_down = IsKeyDown(KEY_A);
+    bool right_down = IsKeyDown(KEY_D);
+    bool jump_pressed = IsKeyPressed(KEY_SPACE);
+    bool shoot_pressed = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+    bool upper_down = IsKeyDown(KEY_W);
+    bool upper_pressed = IsKeyPressed(KEY_W);
+    bool lower_down = IsKeyDown(KEY_S);
+
+    //Set velocity of player
+    if(right_down) {
+        vel_x = 100.0f*deltaTime*invert_factor;
+        player.dir = 1.0f*invert_factor;
     }
-    if(IsKeyDown(KEY_D)){
-        player.velocity.x = 3.0f;
+    if(left_down) {
+        vel_x = -100.0f*deltaTime*invert_factor;
+        player.dir = -1.0f*invert_factor;
     }
-    if((IsKeyDown(KEY_A) && IsKeyDown(KEY_D)) || (!IsKeyDown(KEY_A) && !IsKeyDown(KEY_D))){
-        player.velocity.x = 0;
+    if((!left_down && !right_down) ||(left_down && right_down)) {
+        vel_x = 0;
         player.walking = false;
-    }else{
+        if(!player.idle && !player.jumping && !player.climbing) {
+            changeAnimationTo(&player, &player_animations[IDLE]);
+            player.idle = true;
+        }
+    } else {
         player.idle = false;
-        if(!player.walking && !player.jumping){
+        if(!player.walking && !player.jumping && !player.climbing) {
+            changeAnimationTo(&player, &player_animations[WALK]);
             player.walking = true;
         }
-
     }
 
-    if(IsKeyDown(KEY_SPACE)){
-        player.velocity.y = -3.0f;
-    }
-    if(IsKeyDown(KEY_S)){
-        player.velocity.y = 3.0f;
-    }
-    if((IsKeyDown(KEY_S) && IsKeyDown(KEY_SPACE)) || (!IsKeyDown(KEY_S) && !IsKeyDown(KEY_SPACE))){
-        player.velocity.y = 0;
-        player.jumping = false;
-        if(!player.walking && !player.idle){
-            player.jumping = true;
+    //Player is climbing the ladder
+    if(ladder_colliding)
+    {
+        if(upper_pressed && player.onGround) //on the floor, beginning to climb
+        {
             player.onGround = false;
+            if(upper_down) vel_y = -100*deltaTime;
         }
+        if(!player.onGround) //on the ladder
+        {
+            if (upper_down) vel_y = -100*deltaTime;
+            if (lower_down) vel_y = 100*deltaTime;
+        }
+
+        if((upper_down || lower_down) && !player.climbing) {
+            changeAnimationTo(&player, &player_animations[CLIMB]);
+            player.climbing = true;
+            player.idle = false;
+            player.walking = false;
+        }
+
+        if(!upper_down && !lower_down) {
+            player.climbing = false;
+        }
+
+    } else {
+        player.climbing = false;
     }
-    playerPos(&player);
+
+    //Player has jumped
+    if(jump_pressed && player.onGround) {
+        if(!player.jumping) {
+            changeAnimationTo(&player, &player_animations[JUMP]);
+            player.jumping = true;
+            player.walking = false;
+            player.idle = false;
+        }
+        player.onGround = false;
+        vel_y = -300.0f*deltaTime;
+    }
+
+    //Bullet has been shot
+    if(shoot_pressed && !player.bullet.active) {
+        setShoot(&player);
+        player.bullet.active = true;
+    }
+
+    //After check input, updates player velocity
+    setPlayerVelocity(&player, (Vector2){vel_x, vel_y});
 }
 
 void playerPos(Player *player){
     player -> position.x += player -> velocity.x;
     player -> position.y += player -> velocity.y;
+    player -> collider_rect.x += player -> velocity.x;
+    player -> collider_rect.y += player -> velocity.y;
 }
 
 void update() {
-    //UpdatePlayerCamera(&camera, &player, (float) tile.width);
+    //If it is transitioning, return
+    if(transition) return;
 
+    static bool phase_done = false;
+
+    //Move player to next position := (position + velocity)
+    movePlayer(&player);
+
+    //Move Animation to next step
+    frame_counter++;
+    moveAnimation(&player, &frame_counter);
+
+    //If bullet has been shot, update its positions (i. e., shoot)
+    if(player.bullet.active) {
+        shoot(&player.bullet);
+    }
+
+    //If player is not on ground, apply velocity downwards (gravity)
+    if(!player.onGround && !ladder_colliding) player.velocity.y += 10.0f*deltaTime;
+
+    UpdatePlayerCamera(&camera, &player, (float)tile.width);
+}
+
+void physicsUpdate() {
+    //If it is transitioning, return
+    if(transition) return;
+
+    //Clamp map limits - Player
+    if(player.position.x < 0) setPlayerPosition(&player, (Vector2){0, player.position.y});
+    if(player.position.x + player.collider_rect.width > (float)tile.width) setPlayerPosition(&player, (Vector2){(float)tile.width - player.collider_rect.width, player.position.y});
+
+    //Clamp map limits - Bullet
+    if(player.bullet.collider.collider.x < 0) {
+        player.bullet.active = false;
+    }
+    if(player.bullet.collider.collider.x + player.bullet.collider.collider.width > (float)tile.width){
+        player.bullet.active = false;
+    }
+
+    for(int i = 0; i < colliders_length; i++) {
+        //Player Collisions
+        if(CheckCollisionRecs(player.collider_rect, colliders[i].collider)) {
+            Rectangle collision_rect = GetCollisionRec(player.collider_rect, colliders[i].collider);
+            if(colliders[i].colliderType == GROUND) {
+                playerOnCollisionGround(&player, colliders[i].collider, collision_rect);
+                current_ground = i;
+            }
+            else if(colliders[i].colliderType == WALL) {
+                playerOnCollisionWall(&player, colliders[i].collider,collision_rect);
+            }
+            else if(colliders[i].colliderType == PLATFORM) {
+                playerOnCollisionPlatform(&player, colliders[i].collider, collision_rect);
+                current_ground = i;
+            }
+            //else if(colliders[i].colliderType == TRIGGER_SIGN) {
+            //    sign_colliding = true;
+           //}
+            else if(colliders[i].colliderType == TRIGGER_LADDER) {
+                ladder_colliding = true;
+            }
+        } else {
+            if(colliders[i].colliderType == TRIGGER_LADDER) { ladder_colliding = false; }
+            //if(colliders[i].colliderType == TRIGGER_SIGN) { sign_colliding = false; }
+        }
+        //Bullet Collisions
+        if(colliders[i].colliderType != TRIGGER_LADDER) {
+            if (CheckCollisionRecs(player.bullet.collider.collider, colliders[i].collider)) {
+                player.bullet.active = false;
+            }
+        }
+    }
+
+    if(colliders[current_ground].colliderType == GROUND) {
+        if(player.position.x + player.collider_rect.width < colliders[current_ground].collider.x) {
+            player.onGround = false;
+        }
+        if(player.position.x > colliders[current_ground].collider.x + colliders[current_ground].collider.width) {
+            player.onGround = false;
+        }
+    }
+}
+
+void draw(){
     BeginDrawing();
     //BeginMode2D(camera);
 
     ClearBackground(WHITE);
     DrawTexture(tile, 0, 0, WHITE);
+    //DrawTextureRec(*player.texture, player.src_rect, player.position, WHITE);
+    //DrawRectangleLinesEx(player.texture, 2, GOLD);
+    DrawRectangleLinesEx(colliders[1].collider, 2, MAGENTA);
+    /*
     DrawTexture(playerTextures[IDLE], player.position.x, player.position.y, WHITE);
     DrawRectangleLinesEx(colliders[0].collider, 2, LIME);
     DrawRectangleLinesEx(colliders[1].collider, 2, MAGENTA);
@@ -195,6 +345,7 @@ void update() {
     DrawRectangleLinesEx(colliders[12].collider, 2, RED);
     DrawRectangleLinesEx(colliders[13].collider, 2, RED);
     DrawRectangleLinesEx(colliders[14].collider, 2, GOLD);
+     */
     //callPuzzle();
     //complete();
 
@@ -202,36 +353,39 @@ void update() {
     EndDrawing();
 }
 
+void rendere (){
+    ClearBackground(WHITE);
 
+    //Draw background
+    DrawTexture(tile, 0, 0, WHITE);
 
-bool loadAssets() {
+    //Draw player
+    if(player.dir < 0) { DrawTextureRec(*player.texture, flippedRectangle(player.src_rect), player.position, WHITE); }
+    else { DrawTextureRec(*player.texture, player.src_rect, player.position, WHITE); }
 
-    playerTextures[IDLE] = LoadTexture(PLAYER_DIR"/idle.png");
-    playerTextures[WALK] = LoadTexture(PLAYER_DIR"/walk.png");
-    playerTextures[JUMP] = LoadTexture(PLAYER_DIR"/jump.png");
-    playerTextures[CLIMB] = LoadTexture(PLAYER_DIR"/climb.png");
-    playerTextures[DIE] = LoadTexture(PLAYER_DIR"/death.png");
-
-    tile = LoadTexture(MAPS_DIR"/level3/phase1/final.png");
-
-    //virado.height = (int)(virado.height*1.5);
-    //virado.width = (int)(virado.width*1.5);
-
-    return  true;
-}
-
-void UpdatePlayerCamera(Camera2D *camera, Player *player, float screen_edge) {
-    camera->target.x = player->position.x;
-    camera->offset = (Vector2) {0.5f*(float)screenWidth, 0};
-    clampCameraToLimits(camera, screen_edge);
-}
-
-void clampCameraToLimits(Camera2D *camera, float screen_edge) {
-    if (camera->target.x - camera->offset.x < 0) {
-        camera->target.x = camera->offset.x;
+    //If bullet has been shot, draw
+    if(player.bullet.active) {
+        DrawTexture(*player.bullet.texture, (int)player.bullet.collider.collider.x, (int)player.bullet.collider.collider.y, WHITE);
     }
 
-    if ((camera->target.x - camera->offset.x) + (float) screenWidth > screen_edge) {
-        camera->target.x = screen_edge - (float) screenWidth + camera->offset.x;
+    //DrawText(TextFormat("(Vx, Vy): %.2f %.2f", player.velocity.x, player.velocity.y), (int)player.position.x, (int)player.position.y - 20, 12, BLUE);
+    //DrawRectangleLinesEx(player.collider_rect, 2, RED);
+    //drawColliders();
+    //DrawRectangleLinesEx(player.bullet.collider.collider, 2, GREEN);
+    //DrawFPS((int)(camera.target.x-camera.offset.x), (int)(camera.target.y-camera.offset.y));
+
+    //Sign
+    //if(sign_colliding) { showMessage(sign_text, 12.0f); }
+
+    //Transition (Maybe global variables instead?)
+    if(transition) {
+        DrawRectangle(0,0, screenWidth, screenHeight, Fade(WHITE, alpha));
+        duration -= 0.1f;
+        if(duration < 0.01f) {
+            alpha -= 0.01f;
+            if(alpha < 0.01f) {
+                transition = false;
+            }
+        }
     }
 }
