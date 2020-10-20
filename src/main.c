@@ -143,6 +143,10 @@ void showLevelName() {
             frame_counter = 0;
             finished = true;
         }
+        if(WindowShouldClose()) {
+            game_running = false;
+            return;
+        }
         EndDrawing();
     }
 }
