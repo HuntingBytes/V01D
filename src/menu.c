@@ -16,7 +16,6 @@ int main(void)
     //Declaração de variáveis
     Vector2 mousePosition = { -100.0f, -100.0f };
     Vector2 diskPosition = {175, 360};
-    Vector2 textPosition = {220, 180};
     Rectangle entrada = {330, 353, 60, 7};
     Rectangle button = {400, 348, 16, 16};
     NovoRec rec_hand;
@@ -24,11 +23,8 @@ int main(void)
     Color colorEntrada = RED;
     Color colorButton = RED;
     static int contador = 0; 
-    //bool boolText = false; 
-    //char message[100] = {"Mano, cê tá fodido demais, pai"};
 
     //Inicialização das texturas
-    Font fonte = LoadFont("C:/Users/joaop/Desktop/IP1-2VA/assets/fonts/Unipix.fnt");
     Texture2D background = LoadTexture("C:/Users/joaop/Desktop/IP1-2VA/assets/maps/menu/menu_background.png");
     Texture2D cursor = LoadTexture("C:/Users/joaop/Desktop/IP1-2VA/assets/player/hand.png");
     Texture2D disk = LoadTexture("C:/Users/joaop/Desktop/IP1-2VA/assets/maps/menu/disk.png");
@@ -80,16 +76,8 @@ int main(void)
         {
             colorButton = GREEN;
             colorEntrada = BLANK;
-            contador++;
         }
-        
-        if (contador == 2)
-        {
-            //aqui ele deve mostrar a mensagem na tela e depois apagar o verde do botão
-            colorButton = BLANK;
-        }
-        
-           
+     
         //AQUI É OS DESENHO
 
         BeginDrawing();       
@@ -102,7 +90,7 @@ int main(void)
         DrawRectangleRec(button, colorButton); 
         DrawTexture(disk, diskPosition.x, diskPosition.y, WHITE);
         DrawTexture(hand, mousePosition.x, mousePosition.y, WHITE); 
-        //DrawTextEx(fonte, "\t\t\t \t\t Mano, \n cê tá muito fodido!", textPosition, 14, 5, RED);
+      
         EndDrawing();
     }
     
