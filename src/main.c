@@ -40,7 +40,7 @@ int main() {
     while (game_running) {
             switch (currentLevel) {
                 case MENU:
-                    //mainMenu();
+                    mainMenu();
                     break;
                 case LEVEL1:
                     //mainLevel1();
@@ -69,7 +69,7 @@ bool init() {
     InitWindow(screenWidth, screenHeight, "Teste");
     SetTargetFPS(FPS);
     game_running = true;
-    currentLevel = LEVEL2;
+    currentLevel = MENU;
     camera.target = (Vector2) {0,0};
     camera.offset = (Vector2) {0,0};
     camera.zoom = 1.0f;

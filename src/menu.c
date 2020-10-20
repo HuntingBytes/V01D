@@ -1,16 +1,16 @@
-#include "raylib.h"
+#include "includes/utils.h"
 
 extern const int screenWidth;
 extern const int screenHeight;
-extern Level currentLevel; 
+extern Level currentLevel;
+extern bool game_running;
 
 typedef struct {
     Vector2 vetor;
     Rectangle retang;
 }NovoRec;
 
-int mainMenu(void)
-{    
+void mainMenu() {
     //Declaração de variáveis
     Vector2 mousePosition = { -100.0f, -100.0f };
     Vector2 diskPosition = {175, 360};
@@ -32,13 +32,19 @@ int mainMenu(void)
     //Loop principal do jogo
     while(!fimMenu)
     {
+        if(WindowShouldClose()) {
+            game_running = false;
+            fimMenu = true;
+            break;
+        }
+
         //atualizando os valores das variáveis de posição da mão e do retânuglo
         mousePosition = GetMousePosition();
         rec_hand.vetor = GetMousePosition();
-        rec_hand.retang = (struct Rectangle){rec_hand.vetor.x, rec_hand.vetor.y, cursor.width, cursor.height};
+        rec_hand.retang = (struct Rectangle){rec_hand.vetor.x, rec_hand.vetor.y, (float)cursor.width, (float)cursor.height};
         
         //setando a posição do retânuglo do disquete
-        rec_disk.retang = (struct Rectangle) {diskPosition.x, diskPosition.y, disk.width, disk.height};
+        rec_disk.retang = (struct Rectangle) {diskPosition.x, diskPosition.y, (float)disk.width, (float)disk.height};
         
         //checagem de colsião só na maciota entre mão e disco
         if (CheckCollisionRecs(rec_hand.retang, rec_disk.retang) && IsMouseButtonDown(MOUSE_LEFT_BUTTON)) 
@@ -65,11 +71,9 @@ int mainMenu(void)
         {
             colorButton = GREEN;
             colorEntrada = BLANK;
-            currentLevel++;
+            currentLevel = LEVEL2;
             fimMenu = true;
         }
-     
-        //AQUI É OS DESENHO
 
         BeginDrawing();       
 
@@ -79,8 +83,8 @@ int mainMenu(void)
         DrawTexture(background, 0, 0, WHITE);
         DrawRectangleRec(entrada, colorEntrada);
         DrawRectangleRec(button, colorButton); 
-        DrawTexture(disk, diskPosition.x, diskPosition.y, WHITE);
-        DrawTexture(hand, mousePosition.x, mousePosition.y, WHITE); 
+        DrawTexture(disk, (int)diskPosition.x, (int)diskPosition.y, WHITE);
+        DrawTexture(hand, (int)mousePosition.x, (int)mousePosition.y, WHITE);
       
         EndDrawing();
     }
@@ -90,6 +94,4 @@ int mainMenu(void)
     UnloadTexture(hand);
     UnloadTexture(pointerHand);
     UnloadTexture(cursor);
-
-    return 0;
 }
