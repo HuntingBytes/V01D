@@ -28,16 +28,10 @@ Camera2D camera;
 //Initialization
 bool init(void); //Create Window; Set currentLevel; Game is now running;
 bool loadCommonResources(void); //Resources available at all time
-void startLevel(void); //Start a level once
 void initializePlayer(void); //Initialize Player
 //------------------------------------------------------------------------
 
 //Update
-void inputHandler(void);
-void update(void); //Simulate World
-void physicsUpdate(void); //Collision Detection and Correction
-void render(void); //Show frame on Screen
-void clearLevel(void); //Clear level
 void close(void);
 //---------------------------------------------------------------
 
