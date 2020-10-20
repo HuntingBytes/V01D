@@ -1,4 +1,5 @@
 #include "level3_phase1.h"
+#include "raylib.h"
 
 extern const int screenWidth;
 extern const int screenHeight;

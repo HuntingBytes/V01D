@@ -229,13 +229,6 @@ void inputHandler(){
     setPlayerVelocity(&player, (Vector2){vel_x, vel_y});
 }
 
-void playerPos(Player *player){
-    player -> position.x += player -> velocity.x;
-    player -> position.y += player -> velocity.y;
-    player -> collider_rect.x += player -> velocity.x;
-    player -> collider_rect.y += player -> velocity.y;
-}
-
 void update() {
     //If it is transitioning, return
     if(transition) return;

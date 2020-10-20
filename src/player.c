@@ -1,4 +1,5 @@
 #include "level3_phase1.h"
+#include "raylib.h"
 
 extern Texture2D player_textures[];
 extern Animation player_animations[];

@@ -1,5 +1,6 @@
 #include "level3_phase1.h"
 #include <math.h>
+#include "raylib.h"
 
 void setBulletDamage(Bullet *bullet, int damage) {
     bullet->damage = damage;
