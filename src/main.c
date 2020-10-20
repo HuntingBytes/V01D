@@ -24,12 +24,12 @@ Animation player_animations[NUMBER_PLAYER_TEXTURES]; //Armazena todas as animaco
 Texture2D bullet_texture; //Armazena a textura da bala
 //------------------------------------------------
 
-//Funcoes Gerais
+//Funcoes Gerais -------
 bool init(void); //Funcao que inicializa a janela e algumas variaveis
 bool loadCommonResources(void); //Funcao que carrega as texturas do jogador, da bala, fonte e animacao
 void initializePlayer(void); //Funcao que inicializa a struct jogador
 void close(void); //Funcao que fecha a janela e descarrega as texturas usadas
-//---------------
+//-------------------
 
 int main() {
     if(!init() || !loadCommonResources()) return -1; //Se nao foi possivel carregar as texturas/janelas, o jogo nem inicia
@@ -38,7 +38,7 @@ int main() {
 
     //Se o jogo estiver rodando, roca a main() equivalente ao nivel atual
     while (game_running) {
-            switch (currentLevel) {
+        switch (currentLevel) {
                 case MENU:
                     mainMenu();
                     break;

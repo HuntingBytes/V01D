@@ -463,7 +463,7 @@ static void renderLevel2() {
 
     //DrawText(TextFormat("(Vx, Vy): %.2f %.2f", player.velocity.x, player.velocity.y), (int)player.position.x, (int)player.position.y - 20, 12, BLUE);
     //DrawRectangleLinesEx(player.collider_rect, 2, RED);
-    drawColliders();
+    //drawColliders();
     //DrawRectangleLinesEx(player.bullet.collider.collider, 2, GREEN);
     //DrawFPS((int)(camera.target.x-camera.offset.x), (int)(camera.target.y-camera.offset.y));
 
