@@ -55,7 +55,6 @@ bool init() {
     InitWindow(screenWidth, screenHeight, "Teste");
     SetTargetFPS(FPS);
     game_running = true;
-    transition = true;
     currentLevel = MENU;
     return IsWindowReady();
 }
