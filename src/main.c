@@ -81,6 +81,8 @@ bool loadCommonResources() {
     player_textures[DIE] = LoadTexture(PLAYER_DIR"/death.png");
     bullet_texture = LoadTexture(PLAYER_DIR"/bullet.png");
 
+    tile = LoadTexture(MAPS_DIR"/level3/phase1/final.png");
+
     if(font.texture.id <= 0) return  false;
     if(bullet_texture.id <= 0) return false;
     for(int i = IDLE; i < NUMBER_PLAYER_TEXTURES; i++) {
