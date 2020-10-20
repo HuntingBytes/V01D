@@ -1,5 +1,8 @@
 #include "raylib.h"
 
+extern const int screenWidth;
+extern const int screenHeight;
+
 typedef struct {
     Vector2 vetor;
     Rectangle retang;
@@ -7,10 +10,7 @@ typedef struct {
 
 int main(void)
 {
-    //Inicialização da tela
-    const int screenWidth = 640;
-    const int screenHeight = 480;
-
+    
     InitWindow(screenWidth, screenHeight, "Menu");
     
     //Declaração de variáveis
