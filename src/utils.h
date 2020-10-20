@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 #define FPS 60
 
@@ -18,10 +19,13 @@
 #define PLAYER_DIR "assets/player"
 #define AUDIO_DIR "assets/audio"
 #define MAPS_DIR "assets/maps"
+#define ENEMY_DIR "assets/enemies"
+#define NPC_DIR "assets/npc"
 
 typedef enum {MENU = 0, LEVEL1, LEVEL2, LEVEL3, ENDING} Level;
 typedef enum {GROUND = 0, WALL, PLATFORM, TRIGGER_SIGN, TRIGGER_LADDER, TRIGGER_BULLET} ColliderType;
 typedef enum {IDLE = 0, WALK, JUMP, CLIMB, DIE} AnimationType;
+
 
 typedef struct {
     AnimationType type;
@@ -61,12 +65,27 @@ typedef struct {
 
 }Player;
 
-/*
+
 typedef struct {
-    bool isAttacking, onGround;
+
+    Vector2 health_position;
+    int current_health;
+    Vector2 position;
+    Rectangle src_rect, collider_rect;
+    Texture2D *texture;
+    bool is_dead;
 
 }Enemy;
-*/
+
+typedef struct
+{
+    Texture2D* texture;
+    Vector2 position;
+    Rectangle collider_rect;
+
+}NPC;
+
+//-----------------Player related functions----------------
 void setPlayerHealth(Player *player, int value);
 void setPlayerPosition(Player *player, Vector2 position);
 void setPlayerTexture(Player *player, Texture2D *texture, Animation *animation);
@@ -79,6 +98,21 @@ void playerOnCollisionPlatform(Player *player, Rectangle collider, Rectangle col
 void loadAnimation(Texture2D *texture, Animation *animation, AnimationType type);
 void moveAnimation(Player *player, int *frame_counter);
 void changeAnimationTo(Player *player, Animation *target);
+//----------------
+
+//----------------Enemy related functions
+void setEnemyHealth(Enemy *enemy, Vector2 health_position);
+void setEnemyPosition(Enemy *enemy, Vector2 position);
+void setEnemyTexture(Enemy *enemy, Texture2D *texture);
+void enemyAttack(Enemy *enemy, Player *player);
+
+//NPC related functions
+void setNPCPosition(NPC *npc, Vector2 position);
+void setNPCTexture(NPC *npc, Texture2D *texture);
+
+
+
+//-----------------Bullet related functions
 void setBulletDamage(Bullet *bullet, int damage);
 void setBulletDistance(Bullet *bullet, float distance);
 void setBulletTexture(Bullet *bullet, Texture2D *texture);
@@ -86,7 +120,9 @@ void setBulletVelocity(Bullet *bullet, Vector2 velocity);
 void setBulletPosition(Bullet *bullet, Vector2 position);
 void setShoot(Player *player);
 void shoot(Bullet *bullet);
+//--------------------
 
+//-----------------Camera related functions
 void UpdatePlayerCamera(Camera2D *camera, Player *player, float screen_edge);
 void clampCameraToLimits(Camera2D *camera, float screen_edge);
 #endif //IP1_2VA_UTILS_H

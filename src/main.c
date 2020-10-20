@@ -2,9 +2,12 @@
 
 #define NUMBER_PLAYER_TEXTURES 5
 
+
+
 //Player
 Player player;
 //-------------
+
 
 //Common Resources
 Font font;

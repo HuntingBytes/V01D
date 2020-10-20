@@ -52,7 +52,7 @@ void playerOnCollisionWall(Player *player, Rectangle collider, Rectangle collisi
 
 
 void playerOnCollisionPlatform(Player *player, Rectangle collider, Rectangle collision_rect) {
-    if(collision_rect.width  > (0.6 * player->collider_rect.width ))
+    if(collision_rect.width  > (0.1 * player->collider_rect.width ))
     {
         setPlayerPosition(player, (Vector2) {player->position.x, player->position.y - collision_rect.height + 0.1f});
         setPlayerVelocity(player, (Vector2){player->velocity.x, 0});
@@ -125,3 +125,16 @@ void loadAnimation(Texture2D *texture, Animation *animation, AnimationType type)
     animation->frame_speed =  (int) ((float)animation->n_sprites*(1.5f));
 }
 
+void setNPCPosition(NPC *npc,Vector2 position)
+{
+    npc->position = position;
+    npc->collider_rect.x = position.x;
+    npc->collider_rect.y = position.y;
+}
+
+void setNPCTexture(NPC *npc, Texture2D *texture)
+{
+    npc->texture = texture;
+    npc->collider_rect.width = (float)texture->height;
+    npc->collider_rect.height = (float)texture->height;
+}
