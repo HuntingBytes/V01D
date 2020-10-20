@@ -1,20 +1,17 @@
 #include "includes/level2.h"
 
-//Game Variables
+//Variáveis Externas
 extern const int screenWidth;
 extern const int screenHeight;
 extern Level currentLevel;
 extern bool game_running;
-
-//Global Variables
 extern Player player;
 extern Camera2D camera;
 extern Font font;
-
-//Common Resources
 extern Texture2D player_textures[];
 extern Animation player_animations[];
 extern Texture2D bullet_texture;
+//-------------------------------
 
 static Level2 *level;
 
@@ -211,24 +208,29 @@ static void setupPhase2(void) {
                 "Eu preciso sair daqui...";
 }
 
-void clearLevel2() {
-    if(level->levelFinished) {
-        UnloadTexture(*level->bg);
-        free(level);
+static void drawColliders(void) {
+    for(int i = 0; i < *level->colliders_length; i++) {
+        DrawRectangleLinesEx(level->colliders[i].collider, 2, RED);
     }
 }
 
-void clearPhase1() {
-    UnloadTexture(*level->bg);
-    free(level->bg);
-    free(level->colliders);
-    free(level->colliders_length);
-    level->bg = NULL;
-    level->colliders = NULL;
-    level->colliders_length = NULL;
+static void showMessage(char *txt, float offset) {
+    DrawTexture(*level->bg, 0, 0, Fade(BLACK, 0.6f));
+    Rectangle signMessage = {0};
+    signMessage.width = (float)(screenWidth)*0.75f;
+    signMessage.height = (float)(screenHeight)*0.5f;
+    signMessage.x = (camera.target.x - camera.offset.x) + ((float)screenWidth - signMessage.width)/2.0f;
+    signMessage.y = ((float)screenHeight - signMessage.height)/2.0f;
+    DrawRectangle((int) signMessage.x, (int) signMessage.y, (int) signMessage.width, (int) signMessage.height, Fade(GRAY, 0.8f));
+    Rectangle txtRect = {0};
+    txtRect.width = signMessage.width - 2.0f*offset;
+    txtRect.height = signMessage.height - 2.0f*offset;
+    txtRect.x = signMessage.x + offset;
+    txtRect.y = signMessage.y + offset;
+    DrawTextRec(font, txt, txtRect, 20.0f, 1.0f, true, WHITE);
 }
 
-void startLevel2() {
+static void startLevel2() {
     level = malloc(sizeof(Level2));
     level->levelFinished = false;
     level->transition = false;
@@ -242,7 +244,7 @@ void startLevel2() {
     setupPhase1();
 }
 
-void inputHandlerLevel2() {
+static void inputHandlerLevel2() {
     if(WindowShouldClose()) {
         level->levelFinished = true;
         game_running = false;
@@ -340,7 +342,7 @@ void inputHandlerLevel2() {
     setPlayerVelocity(&player, (Vector2){vel_x, vel_y});
 }
 
-void updateLevel2() {
+static void updateLevel2() {
     //If it is transitioning, return
     if(level->transition) return;
 
@@ -371,7 +373,7 @@ void updateLevel2() {
     UpdatePlayerCamera(&camera, &player, (float)level->bg->width);
 }
 
-void physicsUpdateLevel2() {
+static void physicsUpdateLevel2() {
     //If it is transitioning, return
     if(level->transition) return;
 
@@ -430,29 +432,7 @@ void physicsUpdateLevel2() {
     }
 }
 
-static void drawColliders() {
-    for(int i = 0; i < *level->colliders_length; i++) {
-        DrawRectangleLinesEx(level->colliders[i].collider, 2, RED);
-    }
-}
-
-static void showMessage(char *txt, float offset) {
-    DrawTexture(*level->bg, 0, 0, Fade(BLACK, 0.6f));
-    Rectangle signMessage = {0};
-    signMessage.width = (float)(screenWidth)*0.75f;
-    signMessage.height = (float)(screenHeight)*0.5f;
-    signMessage.x = (camera.target.x - camera.offset.x) + ((float)screenWidth - signMessage.width)/2.0f;
-    signMessage.y = ((float)screenHeight - signMessage.height)/2.0f;
-    DrawRectangle((int) signMessage.x, (int) signMessage.y, (int) signMessage.width, (int) signMessage.height, Fade(GRAY, 0.8f));
-    Rectangle txtRect = {0};
-    txtRect.width = signMessage.width - 2.0f*offset;
-    txtRect.height = signMessage.height - 2.0f*offset;
-    txtRect.x = signMessage.x + offset;
-    txtRect.y = signMessage.y + offset;
-    DrawTextRec(font, txt, txtRect, 20.0f, 1.0f, true, WHITE);
-}
-
-void renderLevel2() {
+static void renderLevel2() {
     BeginDrawing();
     BeginMode2D(camera);
 
@@ -493,4 +473,21 @@ void renderLevel2() {
 
     EndMode2D();
     EndDrawing();
+}
+
+static void clearLevel2() {
+    if(level->levelFinished) {
+        UnloadTexture(*level->bg);
+        free(level);
+    }
+}
+
+static void clearPhase1() {
+    UnloadTexture(*level->bg);
+    free(level->bg);
+    free(level->colliders);
+    free(level->colliders_length);
+    level->bg = NULL;
+    level->colliders = NULL;
+    level->colliders_length = NULL;
 }

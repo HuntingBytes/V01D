@@ -26,13 +26,15 @@ typedef struct {
 }Level2;
 
 //Funções Nível --------------------------------
-void startLevel2(void); //Start level2. Set initial position, load textures, etc
-void inputHandlerLevel2(void); //Handle the input data according to the phase
-void updateLevel2(void); //Move player and check limits of the world**(To do)
-void physicsUpdateLevel2(void); //Detect and correct collisions according to its type
-void renderLevel2(void); //Draw frame
-void clearPhase1(void); //Clear Phase1
-void clearLevel2(void); //Clear level
+static void startLevel2(void); //Start level2. Set initial position, load textures, etc
+static void setupPhase1(void);
+static void setupPhase2(void);
+static void inputHandlerLevel2(void); //Handle the input data according to the phase
+static void updateLevel2(void); //Move player and check limits of the world**(To do)
+static void physicsUpdateLevel2(void); //Detect and correct collisions according to its type
+static void renderLevel2(void); //Draw frame
+static void clearPhase1(void); //Clear Phase1
+static void clearLevel2(void); //Clear level
 //--------------------------------------
 
 #endif //IP1_2VA_LEVEL2_H
