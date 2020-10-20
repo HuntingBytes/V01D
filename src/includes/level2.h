@@ -8,27 +8,27 @@
 #include "bullet.h"
 
 typedef struct {
-    Texture2D *bg;
-    Collider2D *colliders;
-    size_t *colliders_length;
-    char *file_name;
-    char *sign_text;
-    bool transition;
-    bool sign_colliding;
-    bool ladder_colliding;
-    bool levelFinished;
-    float invert_factor;
-    float duration;
-    float alpha;
-    int frame_counter;
-    int current_ground;
-    float deltaTime;
+    Texture2D *bg; //Ponteiro para textura do fundo (cenario)
+    Collider2D *colliders; //Ponteiro para todos os colisores do cenario
+    size_t *colliders_length; //Quantidade de colisores existentes no cenario
+    char *file_name; //Nome do arquivo para a parte 1
+    char *sign_text; //Texto que deve ser mostrado na placa
+    bool transition; //Indica se esta na transicao da parte 1 para parte 2 (tela ficar clara)
+    bool sign_colliding; //Indica se o jogador colide com a placa
+    bool ladder_colliding; //Indica se o jogador colide com a escada
+    bool levelFinished; //Indica se o nivel foi terminado (Assim a main.c pode passar para o poximo)
+    float invert_factor; //Usado para a inversao dos controles na parte 1
+    float duration; //Indica a duracao da transicao
+    float alpha; //Usada no efeito de fade da transicao
+    int frame_counter; //Utilizada para as animacoes (quantos frames passaram)
+    int current_ground; //Usada para saber se o jogador saiu do chao (fazer ele cair)
+    float deltaTime; //Representa quanto tempo passou desde o ultimo "frame"
 }Level2;
 
-//Funções Nível --------------------------------
+//Funcoes Nivel --------------------------------
 static void startLevel2(void); //Start level2. Set initial position, load textures, etc
-static void setupPhase1(void);
-static void setupPhase2(void);
+static void setupPhase1(void); //Start/set phase 1
+static void setupPhase2(void); //Start/set phase 2
 static void inputHandlerLevel2(void); //Handle the input data according to the phase
 static void updateLevel2(void); //Move player and check limits of the world**(To do)
 static void physicsUpdateLevel2(void); //Detect and correct collisions according to its type

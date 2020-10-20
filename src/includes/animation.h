@@ -3,7 +3,7 @@
 
 #include "utils.h"
 
-//Funções -----------------------------------------------------------------------
+//Funcoes -----------------------------------------------------------------------
 void loadAnimation(Texture2D *texture, Animation *animation, AnimationType type);
 void moveAnimation(Player *player, int *frame_counter);
 void changeAnimationTo(Player *player, Animation *target);

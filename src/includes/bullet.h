@@ -3,7 +3,7 @@
 
 #include "utils.h"
 
-//Funções Bala ------------------------------------------
+//Funcoes Bala ------------------------------------------
 void setBulletDamage(Bullet *bullet, int damage);
 void setBulletDistance(Bullet *bullet, float distance);
 void setBulletTexture(Bullet *bullet, Texture2D *texture);

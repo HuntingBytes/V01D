@@ -7,54 +7,54 @@
 #include <string.h>
 #include <math.h>
 
-#define FPS 60
+#define FPS 60 //Define quantos fps o jogo deve rodar
 
-#define BLOCK_SIZE 48
-#define MAX_HEALTH 4
+#define BLOCK_SIZE 48 //Define o tamanho padrao de um tile do cenario
+#define MAX_HEALTH 4 //Define a vida maxima do jogador
 
-#define FONT_DIR "assets/fonts"
-#define PLAYER_DIR "assets/player"
-#define AUDIO_DIR "assets/audio"
-#define MAPS_DIR "assets/maps"
+#define FONT_DIR "assets/fonts" //Define a pasta das fontes
+#define PLAYER_DIR "assets/player" //Define a pasta dos assets do jogador
+#define AUDIO_DIR "assets/audio" //Define a pasta dos arquivos de som
+#define MAPS_DIR "assets/maps" //Define a pasta das imagens
 
-typedef enum {MENU = 0, LEVEL1, LEVEL2, LEVEL3, ENDING} Level;
-typedef enum {GROUND = 0, WALL, PLATFORM, TRIGGER_SIGN, TRIGGER_LADDER, TRIGGER_BULLET} ColliderType;
-typedef enum {IDLE = 0, WALK, JUMP, CLIMB, DIE} AnimationType;
+typedef enum {MENU = 0, LEVEL1, LEVEL2, LEVEL3, ENDING} Level; //Uma outra forma de representar os niveis (ex:. no lugar de 0, escrevemos MENU)
+typedef enum {GROUND = 0, WALL, PLATFORM, TRIGGER_SIGN, TRIGGER_LADDER, TRIGGER_BULLET} ColliderType; //Uma forma de diferenciar os diferentes tipos de colisores
+typedef enum {IDLE = 0, WALK, JUMP, CLIMB, DIE} AnimationType; //Uma forma de diferenciar as diferentes animacoes
 
 typedef struct {
-    AnimationType type;
-    int size_frame;
-    int n_sprites;
-    int current_frame;
-    int frame_speed;
+    AnimationType type; //Armazena qual o tipo da animacao
+    int size_frame; //Armazena o tamanho de um quadro
+    int n_sprites; //Armazena quantos quadros possui
+    int current_frame; //Armazena o quadro atual
+    int frame_speed; //Armazena a velocidade de animacao
 }Animation;
 
 typedef struct {
-    Rectangle collider;
-    ColliderType colliderType;
+    Rectangle collider; //Retangulo que delimita o colisor
+    ColliderType colliderType; //Tipo de colisor
 }Collider2D;
 
 typedef struct {
-    bool active;
-    int damage;
-    float distance, current_distance;
-    Texture2D *texture;
-    Collider2D collider;
-    Vector2 velocity;
+    bool active; //Indica se a bala esta ativada (i. e., foi atirada)
+    int damage; //Indica o dano que essa bala aplica
+    float distance, current_distance; //Armazena a distancia maxima e atual da bala
+    Texture2D *texture; //Armazena a textura da bala
+    Collider2D collider; //Armazena o colisor da bala
+    Vector2 velocity; //Armazena a velocidade da bala
 }Bullet;
 
 typedef struct {
-    bool idle, walking, jumping, climbing, onGround;
-    int health;
+    bool idle, walking, jumping, climbing, onGround; //Booleanos para checar uma informacao sobre o jogador
+    int health; //Quantidade de vida atual
     float dir; //-1 or 1 : Direction (1: Right, -1: Left)
-    Vector2 position, velocity;
-    Texture2D *texture;
-    Rectangle src_rect, collider_rect;
-    Bullet bullet;
-    Animation *current_animation;
+    Vector2 position, velocity; //Posicao e velocidade do jogador
+    Texture2D *texture; //Texura atual do jogador
+    Rectangle src_rect, collider_rect; //Retangulos usados para animacao e colisao
+    Bullet bullet; //Uma bala
+    Animation *current_animation; //Ponteiro para a animacao atual
 }Player;
 
-//Main Fases -----------
+//Main de cada Nivel ---------
 void mainMenu(void);
 void mainLevel1(void);
 void mainLevel2(void);

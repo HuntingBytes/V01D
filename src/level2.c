@@ -1,6 +1,6 @@
 #include "includes/level2.h"
 
-//Variáveis Externas
+//Variaveis Externas ------------ Essas variaveis ja foram declaradas e definidas na main.c, agora iremos utilizar elas sem precisar definir novamente
 extern const int screenWidth;
 extern const int screenHeight;
 extern Level currentLevel;
@@ -13,8 +13,9 @@ extern Animation player_animations[];
 extern Texture2D bullet_texture;
 //-------------------------------
 
-static Level2 *level;
+static Level2 *level; //Ponteiro para uma struct que possui diversas variaveis utilizadas nesse nivel
 
+//Funcao que vai ser chamada pela main.c quando estiver na fase 2
 void mainLevel2() {
     startLevel2();
     while (!level->levelFinished) {
@@ -27,6 +28,7 @@ void mainLevel2() {
     }
 }
 
+//Retorna um retangulo flipado no eixo x (Usado para desenha a textura olhando para outro sentido)
 static Rectangle flippedRectangle(Rectangle rect) {
     Rectangle result;
     result.x = rect.x;
@@ -36,6 +38,7 @@ static Rectangle flippedRectangle(Rectangle rect) {
     return  result;
 }
 
+//Inicia a parte 1
 static void setupPhase1(void) {
     //Creating File
     level->file_name = "load_textures.asm";
@@ -87,6 +90,7 @@ static void setupPhase1(void) {
                 "Talvez eu consiga acessar os modulos do jogo.";
 }
 
+//Inicia a parte 2
 static void setupPhase2(void) {
     //Free previous allocated memory and Unload Texture
     clearPhase1();
@@ -208,12 +212,14 @@ static void setupPhase2(void) {
                 "Eu preciso sair daqui...";
 }
 
+//Desenha os colisores na tela (debug-only)
 static void drawColliders(void) {
     for(int i = 0; i < *level->colliders_length; i++) {
         DrawRectangleLinesEx(level->colliders[i].collider, 2, RED);
     }
 }
 
+//Mostra uma mensagem na tela dentro de um retangulo
 static void showMessage(char *txt, float offset) {
     DrawTexture(*level->bg, 0, 0, Fade(BLACK, 0.6f));
     Rectangle signMessage = {0};
@@ -230,6 +236,7 @@ static void showMessage(char *txt, float offset) {
     DrawTextRec(font, txt, txtRect, 20.0f, 1.0f, true, WHITE);
 }
 
+//Inicia o nivel 2
 static void startLevel2() {
     level = malloc(sizeof(Level2));
     level->levelFinished = false;
@@ -244,6 +251,7 @@ static void startLevel2() {
     setupPhase1();
 }
 
+//Lida com os dados de entrada
 static void inputHandlerLevel2() {
     if(WindowShouldClose()) {
         level->levelFinished = true;
@@ -342,6 +350,7 @@ static void inputHandlerLevel2() {
     setPlayerVelocity(&player, (Vector2){vel_x, vel_y});
 }
 
+//Atualiza o que for necessario de acordo com os dados de entrada
 static void updateLevel2() {
     //If it is transitioning, return
     if(level->transition) return;
@@ -373,6 +382,7 @@ static void updateLevel2() {
     UpdatePlayerCamera(&camera, &player, (float)level->bg->width);
 }
 
+//Realiza a checagem de colisao e corrige essas colisoes
 static void physicsUpdateLevel2() {
     //If it is transitioning, return
     if(level->transition) return;
@@ -432,6 +442,7 @@ static void physicsUpdateLevel2() {
     }
 }
 
+//Desenha o frame atual na tela
 static void renderLevel2() {
     BeginDrawing();
     BeginMode2D(camera);
@@ -475,6 +486,7 @@ static void renderLevel2() {
     EndDrawing();
 }
 
+//Limpa o nivel 2 (Descarrega texturas, libera memoria, etc)
 static void clearLevel2() {
     if(level->levelFinished) {
         UnloadTexture(*level->bg);
@@ -482,6 +494,7 @@ static void clearLevel2() {
     }
 }
 
+//Limpa a parte 1 (Usada antes de iniciar a parte 2)
 static void clearPhase1() {
     UnloadTexture(*level->bg);
     free(level->bg);

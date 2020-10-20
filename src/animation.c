@@ -3,7 +3,7 @@
 extern Texture2D player_textures[];
 extern Animation player_animations[];
 
-//Animation Related
+//Faz a animaçao ir para o proximo frame/"imagem"
 void moveAnimation(Player *player, int *frame_counter) {
     if(*frame_counter >= (FPS/player->current_animation->frame_speed)) {
         *frame_counter = 0;
@@ -28,6 +28,7 @@ void moveAnimation(Player *player, int *frame_counter) {
     }
 }
 
+//Altera a animacao atual do jogador
 void changeAnimationTo(Player *player, Animation *target) {
     Texture2D *texture;
     switch (target->type) {
@@ -44,6 +45,7 @@ void changeAnimationTo(Player *player, Animation *target) {
     player->current_animation->current_frame = 0;
 }
 
+//Carrega/inicializa uma animacao (Define o valor de cada um dos mebros de sua struct)
 void loadAnimation(Texture2D *texture, Animation *animation, AnimationType type) {
     animation->type = type;
     animation->size_frame = texture->height;

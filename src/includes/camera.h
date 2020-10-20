@@ -3,7 +3,7 @@
 
 #include "utils.h"
 
-//Funções Câmera ------------------------------------------------------------
+//Funcoes Camera ------------------------------------------------------------
 void UpdatePlayerCamera(Camera2D *camera, Player *player, float screen_edge);
 void clampCameraToLimits(Camera2D *camera, float screen_edge);
 //---------------------------------------------------------------------------

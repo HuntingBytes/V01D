@@ -1,41 +1,42 @@
-#include "includes/utils.h"
-#include "includes/animation.h"
-#include "includes/player.h"
-#include "includes/bullet.h"
+#include "includes/utils.h" //Utils.h contem algumas estruturas/enum que estao sendo utilizadas na main (Player e Level)
+#include "includes/animation.h" //Contem algumas funcoes relacionadas com as animacoes do nivel 2 (Podem ser reaproveitadas para o nivel 3 depois)
+#include "includes/player.h" //Contem funcoes para alterar membros do Player (struct)
+#include "includes/bullet.h" //Contem funcoes relacionadas com a bala
 
-#define NUMBER_PLAYER_TEXTURES 5
+#define NUMBER_PLAYER_TEXTURES 5 //Quantidade de texturas a serem carregadas, podemos alterar se surgir uma nova
 
-//Variáveis do Jogo----------
-const int screenWidth = 640;
-const int screenHeight = 480;
-Level currentLevel;
-bool game_running;
+//Variaveis do Jogo----------
+const int screenWidth = 640; //Uma variavel global que guarda a largura da tela, ai nao precisamos definir outra
+const int screenHeight = 480; //variavel global que guarda a altura da tela
+Level currentLevel; //Um enum que armazena o nivel atual (MENU, LEVEL1, LEVEL2, LEVEL3, ENDING)
+bool game_running; //Booleano que indica se o jogo esta rodando
 //--------------------------
 
-//Variáveis Globais----
-Player player;
-Camera2D camera;
-Font font;
+//Variaveis Globais----
+Player player; //Struct para representar o jogador. Nao precisa ser usada em todas as fases
+Camera2D camera; //Camera global, assim nao precisamos ficar criando outras câmeras nos outros niveis
+Font font; //Fonte que vamos utilizar (nao precisa ser ela)
 //---------------------
 
 //Assets comuns ---------------------------------
-Texture2D player_textures[NUMBER_PLAYER_TEXTURES];
-Animation player_animations[NUMBER_PLAYER_TEXTURES];
-Texture2D bullet_texture;
+Texture2D player_textures[NUMBER_PLAYER_TEXTURES]; //Armazena todas as texturas do jogador, assim nao precisamos ficar carregando as mesmas texturas em niveis diferentes
+Animation player_animations[NUMBER_PLAYER_TEXTURES]; //Armazena todas as animacoes num vetor de struc Animation
+Texture2D bullet_texture; //Armazena a textura da bala
 //------------------------------------------------
 
-//Funções Gerais
-bool init(void);
-bool loadCommonResources(void);
-void initializePlayer(void);
-void close(void);
+//Funcoes Gerais
+bool init(void); //Funcao que inicializa a janela e algumas variaveis
+bool loadCommonResources(void); //Funcao que carrega as texturas do jogador, da bala, fonte e animacao
+void initializePlayer(void); //Funcao que inicializa a struct jogador
+void close(void); //Funcao que fecha a janela e descarrega as texturas usadas
 //---------------
 
 int main() {
-    if(!init() || !loadCommonResources()) return -1;
+    if(!init() || !loadCommonResources()) return -1; //Se nao foi possivel carregar as texturas/janelas, o jogo nem inicia
 
-    initializePlayer();
+    initializePlayer(); //Iniciar os valores de cada membro do jogador (struct)
 
+    //Se o jogo estiver rodando, roca a main() equivalente ao nivel atual
     while (game_running) {
             switch (currentLevel) {
                 case MENU:
@@ -58,6 +59,7 @@ int main() {
             }
     }
 
+    //Uma vez que o jogo nao esteja mais rodando, podemos fechar a janela
     close();
 
     return 0;
