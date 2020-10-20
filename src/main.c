@@ -4,6 +4,7 @@
 #include "includes/bullet.h" //Contem funcoes relacionadas com a bala
 
 #define NUMBER_PLAYER_TEXTURES 5 //Quantidade de texturas a serem carregadas, podemos alterar se surgir uma nova
+#define TEXT_SPEED 10
 
 //Variaveis do Jogo----------
 const int screenWidth = 640; //Uma variavel global que guarda a largura da tela, ai nao precisamos definir outra
@@ -29,6 +30,7 @@ bool init(void); //Funcao que inicializa a janela e algumas variaveis
 bool loadCommonResources(void); //Funcao que carrega as texturas do jogador, da bala, fonte e animacao
 void initializePlayer(void); //Funcao que inicializa a struct jogador
 void close(void); //Funcao que fecha a janela e descarrega as texturas usadas
+void showLevelName(void );
 //-------------------
 
 int main() {
@@ -38,6 +40,7 @@ int main() {
 
     //Se o jogo estiver rodando, roca a main() equivalente ao nivel atual
     while (game_running) {
+        showLevelName();
         switch (currentLevel) {
                 case MENU:
                     mainMenu();
@@ -123,4 +126,23 @@ void close() {
     UnloadTexture(bullet_texture);
     for(int i = 0; i < NUMBER_PLAYER_TEXTURES; i++) { UnloadTexture(player_textures[i]); }
     CloseWindow();
+}
+
+void showLevelName() {
+    int frame_counter = 0;
+    char txt[4][50] = {"Prologo", "Ato 1 - Onde?", "Ato 2 - O que?", "Ato 3 - Fim?"};
+    bool finished = false;
+    while (!finished) {
+        BeginDrawing();
+        ClearBackground(BLACK);
+        frame_counter++;
+        DrawText(TextSubtext(txt[currentLevel], 0, frame_counter / TEXT_SPEED),
+                 (screenWidth - MeasureText(txt[currentLevel], 32)) / 2, (screenHeight - MeasureText("A", 32)) / 2, 32,
+                 WHITE);
+        if (frame_counter / TEXT_SPEED > TextLength(txt[currentLevel]) + 2u) {
+            frame_counter = 0;
+            finished = true;
+        }
+        EndDrawing();
+    }
 }
