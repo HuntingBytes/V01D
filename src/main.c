@@ -133,7 +133,7 @@ void close() {
 
 void showLevelName() {
     int frame_counter = 0;
-    char txt[4][50] = {"Prologo", "Ato 1 - Onde?", "Ato 2 - O que?", "Ato 3 - Fim?"};
+    char txt[6][50] = {"Prologo", "Ato 1 - Onde?", "Ato 2 - O que?", "Ato 3 - Inicio do Fim?", "Ato 4 - Epilogo?", "Acabou."};
     bool finished = false;
     while (!finished) {
         BeginDrawing();

@@ -6,6 +6,8 @@ extern const int screenHeight;
 extern Level currentLevel;
 extern bool game_running;
 extern Camera2D camera;
+extern Texture2D player_textures[];
+extern Texture2D bullet_texture;
 
 void mainLevel3_2()
 {
@@ -18,17 +20,17 @@ void mainLevel3_2()
     //Texture2D background = LoadTexture(MAPS_DIR"/menu/menu_background.png");
 
     //loading assets
-    Texture2D spriteright = LoadTexture(PLAYER_DIR"/walk.png");
-    Texture2D spriteup = LoadTexture(PLAYER_DIR"/climb.png");
+    Texture2D spriteright = player_textures[WALK];
+    Texture2D spriteup = player_textures[CLIMB];
     Texture2D spriteleft = LoadTexture(PLAYER_DIR"/walk_left.png");
     Texture2D background_1 = LoadTexture(MAPS_DIR"/level3/phase2/final-2plat.png");
     Texture2D background_2 = LoadTexture(MAPS_DIR"/level3/phase2/final-1plat.png");
     Texture2D background_3 = LoadTexture(MAPS_DIR"/level3/phase2/final-0plat.png");
     Texture2D spriteJump_left = LoadTexture(PLAYER_DIR"/jump_left.png");
-    Texture2D spriteJump_right = LoadTexture(PLAYER_DIR"/jump.png");
-    Texture2D spritestopped_right = LoadTexture(PLAYER_DIR"/idle.png");
+    Texture2D spriteJump_right = player_textures[JUMP];
+    Texture2D spritestopped_right = player_textures[IDLE];
     Texture2D spritestopped_left = LoadTexture(PLAYER_DIR"/idle_left.png");
-    Texture2D bullet = LoadTexture(PLAYER_DIR"/bullet.png");
+    Texture2D bullet = bullet_texture;
 
     //increasing size of sprites
     spriteright.height=(int)(spriteright.height*2);
@@ -955,22 +957,14 @@ void mainLevel3_2()
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
-    UnloadTexture(spriteright);       // Texture unloading
+    // Texture unloading
     UnloadTexture(spriteleft);
-    UnloadTexture(spriteup);
     UnloadTexture(spriteJump_left);
-    UnloadTexture(spriteJump_right);
-    UnloadTexture(spritestopped_right);
     UnloadTexture(spritestopped_left);
     UnloadTexture(background_1);
     UnloadTexture(background_2);
     UnloadTexture(background_3);
-    UnloadTexture(bullet);
-
-
-
-
-
+    
     //--------------------------------------------------------------------------------------
     /*Final
 
