@@ -1,4 +1,5 @@
 #include "level3_phase1.h"
+#include "startPuzzle.h"
 
 extern const int screenWidth;
 extern const int screenHeight;
@@ -10,12 +11,13 @@ extern Texture2D tile;
 extern Texture2D player_textures[];
 extern Camera2D camera;
 extern Animation player_animations[];
+extern int v[];
 
 static Collider2D colliders[15];
 static int frame_counter = 0;
 static bool transition = false;
-static float invert_factor = -1.0f;
 static bool ladder_colliding = false;
+static bool puzzleOn = false;
 static int current_ground = 0;
 static int colliders_length = 15;
 static float duration = 3.0f;
@@ -46,7 +48,7 @@ void initLevel(){
     colliders[1].collider.x = 92;
     colliders[1].collider.height = (float)BLOCK_SIZE * 2.1f;
     colliders[1].collider.y = 189;
-    colliders[1].collider.width = (float)BLOCK_SIZE * 0.5f;
+    colliders[1].collider.width = (float)BLOCK_SIZE / 3.3;
     //Ground under platforms
     colliders[2].colliderType = GROUND;
     colliders[2].collider.x = 93;
@@ -68,19 +70,19 @@ void initLevel(){
     //Second platform (left to right)
     colliders[5].colliderType = PLATFORM;
     colliders[5].collider.x = 223;
-    colliders[5].collider.height = BLOCK_SIZE / 3.1;
+    colliders[5].collider.height = BLOCK_SIZE / 4.5;
     colliders[5].collider.y = 155;
     colliders[5].collider.width = (float)BLOCK_SIZE;
     //Third platform (left to right)
     colliders[6].colliderType = PLATFORM;
     colliders[6].collider.x = 285;
-    colliders[6].collider.height = BLOCK_SIZE / 3.1;
+    colliders[6].collider.height = BLOCK_SIZE / 4.5;
     colliders[6].collider.y = 210;
     colliders[6].collider.width = (float)BLOCK_SIZE;
     //Fourth platform (left to right)
     colliders[7].colliderType = PLATFORM;
     colliders[7].collider.x = 344;
-    colliders[7].collider.height = BLOCK_SIZE / 3.1;
+    colliders[7].collider.height = BLOCK_SIZE / 9.5;
     colliders[7].collider.y = 174;
     colliders[7].collider.width = (float)BLOCK_SIZE;
     //Wall right to ladder
@@ -91,10 +93,10 @@ void initLevel(){
     colliders[8].collider.width = BLOCK_SIZE / 3.0;
     //Ground on top of last wall
     colliders[9].colliderType = GROUND;
-    colliders[9].collider.x = 415;
+    colliders[9].collider.x = 416;
     colliders[9].collider.height = 4;
     colliders[9].collider.y = 168;
-    colliders[9].collider.width = BLOCK_SIZE / 2.4;
+    colliders[9].collider.width = BLOCK_SIZE / 2.8;
     //Right wall
     colliders[10].colliderType = WALL;
     colliders[10].collider.x = 592;
@@ -126,7 +128,7 @@ void initLevel(){
     colliders[14].collider.y = 336;
     colliders[14].collider.width = (float)BLOCK_SIZE * 2.0f;
 
-    setPlayerPosition(&player, (Vector2){0, (float) (screenHeight - (BLOCK_SIZE + player.texture->height))});
+    setPlayerPosition(&player, (Vector2){30, 170});
     setShoot(&player);
 
     player.onGround = false;
@@ -135,6 +137,10 @@ void initLevel(){
     player.walking = false;
     player.idle = true;
     player.dir = 1.0f;
+
+    random();
+    loadTextures();
+    initPieces();
 }
 
 void inputHandler(){
@@ -156,12 +162,12 @@ void inputHandler(){
 
     //Set velocity of player
     if(right_down) {
-        vel_x = 100.0f*deltaTime*invert_factor;
-        player.dir = 1.0f*invert_factor;
+        vel_x = 100.0f*deltaTime;
+        player.dir = 1.0f;
     }
     if(left_down) {
-        vel_x = -100.0f*deltaTime*invert_factor;
-        player.dir = -1.0f*invert_factor;
+        vel_x = -100.0f*deltaTime;
+        player.dir = -1.0f;
     }
     if((!left_down && !right_down) ||(left_down && right_down)) {
         vel_x = 0;
@@ -216,7 +222,7 @@ void inputHandler(){
             player.idle = false;
         }
         player.onGround = false;
-        vel_y = -300.0f*deltaTime;
+        vel_y = -225.0f*deltaTime;
     }
 
     //Bullet has been shot
@@ -230,6 +236,7 @@ void inputHandler(){
 }
 
 void update() {
+
     //If it is transitioning, return
     if(transition) return;
 
@@ -251,6 +258,12 @@ void update() {
     if(!player.onGround && !ladder_colliding) player.velocity.y += 10.0f*deltaTime;
 
     UpdatePlayerCamera(&camera, &player, (float)tile.width);
+}
+
+static void drawColliders() {
+    for(int i = 0; i < colliders_length; i++) {
+        DrawRectangleLinesEx(colliders[i].collider, 2, RED);
+    }
 }
 
 void physicsUpdate() {
@@ -284,11 +297,11 @@ void physicsUpdate() {
                 playerOnCollisionPlatform(&player, colliders[i].collider, collision_rect);
                 current_ground = i;
             }
-            //else if(colliders[i].colliderType == TRIGGER_SIGN) {
-            //    sign_colliding = true;
-           //}
             else if(colliders[i].colliderType == TRIGGER_LADDER) {
                 ladder_colliding = true;
+            }
+            else if(colliders[i].colliderType == TRIGGER_DOOR){
+                puzzleOn = true;
             }
         } else {
             if(colliders[i].colliderType == TRIGGER_LADDER) { ladder_colliding = false; }
@@ -312,43 +325,10 @@ void physicsUpdate() {
     }
 }
 
-void draw(){
+void draw (){
+    ClearBackground(WHITE);
+
     BeginDrawing();
-    //BeginMode2D(camera);
-
-    ClearBackground(WHITE);
-    DrawTexture(tile, 0, 0, WHITE);
-    //DrawTextureRec(*player.texture, player.src_rect, player.position, WHITE);
-    //DrawRectangleLinesEx(player.texture, 2, GOLD);
-    DrawRectangleLinesEx(colliders[1].collider, 2, MAGENTA);
-    /*
-    DrawTexture(playerTextures[IDLE], player.position.x, player.position.y, WHITE);
-    DrawRectangleLinesEx(colliders[0].collider, 2, LIME);
-    DrawRectangleLinesEx(colliders[1].collider, 2, MAGENTA);
-    DrawRectangleLinesEx(colliders[2].collider, 2, LIME);
-    DrawRectangleLinesEx(colliders[3].collider, 2, LIME);
-    DrawRectangleLinesEx(colliders[4].collider, 2, LIME);
-    DrawRectangleLinesEx(colliders[5].collider, 2, LIME);
-    DrawRectangleLinesEx(colliders[6].collider, 2, LIME);
-    DrawRectangleLinesEx(colliders[7].collider, 2, LIME);
-    DrawRectangleLinesEx(colliders[8].collider, 2, LIME);
-    DrawRectangleLinesEx(colliders[9].collider, 2, DARKGREEN);
-    DrawRectangleLinesEx(colliders[10].collider, 2, LIME);
-    DrawRectangleLinesEx(colliders[11].collider, 2, LIME);
-    DrawRectangleLinesEx(colliders[12].collider, 2, RED);
-    DrawRectangleLinesEx(colliders[13].collider, 2, RED);
-    DrawRectangleLinesEx(colliders[14].collider, 2, GOLD);
-     */
-    //callPuzzle();
-    //complete();
-
-    //EndMode2D();
-    EndDrawing();
-}
-
-void rendere (){
-    ClearBackground(WHITE);
-
     //Draw background
     DrawTexture(tile, 0, 0, WHITE);
 
@@ -363,7 +343,7 @@ void rendere (){
 
     //DrawText(TextFormat("(Vx, Vy): %.2f %.2f", player.velocity.x, player.velocity.y), (int)player.position.x, (int)player.position.y - 20, 12, BLUE);
     //DrawRectangleLinesEx(player.collider_rect, 2, RED);
-    //drawColliders();
+    drawColliders();
     //DrawRectangleLinesEx(player.bullet.collider.collider, 2, GREEN);
     //DrawFPS((int)(camera.target.x-camera.offset.x), (int)(camera.target.y-camera.offset.y));
 
@@ -381,4 +361,11 @@ void rendere (){
             }
         }
     }
+    if(puzzleOn == true){
+        callPuzzle();
+        if(complete()){
+            fim();
+        }
+    }
+    EndDrawing();
 }

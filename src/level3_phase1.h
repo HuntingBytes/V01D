@@ -54,7 +54,6 @@ void inputHandler(void); //Handle the input data according to the phase
 void update(void); //Move player and check limits of the world**(To do)
 void physicsUpdate(void); //Detect and correct collisions according to its type
 void draw(void); //Draw frame
-void rendere(void);
 void clearLevel(void); //Clear level
 
 void setPlayerHealth(Player *player, int value);

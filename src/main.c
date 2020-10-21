@@ -45,14 +45,15 @@ int main() {
     */
 
    initializePlayer();
-    initLevel();
+   initLevel();
    while (game_running)
     {
+        game_running = !WindowShouldClose();
         deltaTime = GetFrameTime();
         inputHandler();
         update();
         physicsUpdate();
-        rendere();
+        draw();
     }
 
     close();
