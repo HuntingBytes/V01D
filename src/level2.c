@@ -380,6 +380,11 @@ static void updateLevel2() {
     }
 
     UpdatePlayerCamera(&camera, &player, (float)level->bg->width);
+
+    if(player.position.x >= (float)level->bg->width - player.collider_rect.width) {
+        level->levelFinished = true;
+        currentLevel = LEVEL3_2;
+    }
 }
 
 //Realiza a checagem de colisao e corrige essas colisoes

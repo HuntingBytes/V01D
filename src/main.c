@@ -58,7 +58,7 @@ int main() {
                     mainLevel3_2();
                     break;
                 case ENDING:
-                    //mainEnding();
+                    mainEnding();
                     break;
                 default:
                     break;

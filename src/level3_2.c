@@ -9,8 +9,7 @@ extern Camera2D camera;
 extern Texture2D player_textures[];
 extern Texture2D bullet_texture;
 
-void mainLevel3_2()
-{
+void mainLevel3_2() {
     // Initialization
 
     //variable that control the game cicle
@@ -937,7 +936,8 @@ void mainLevel3_2()
         //string analysis
         if(strcmp("crocodilo",name)==0){
             level3_phase2_finished=true;
-        };
+            currentLevel = ENDING;
+        }
 
 
         EndDrawing();
@@ -964,53 +964,6 @@ void mainLevel3_2()
     UnloadTexture(background_1);
     UnloadTexture(background_2);
     UnloadTexture(background_3);
-    
+
     //--------------------------------------------------------------------------------------
-    /*Final
-
-    if(game_run==0){
-        const int screenWidthfinal = 640;
-        const int screenHeightfinal = 480;
-
-        InitWindow(screenWidth, screenHeight, "FINAL");
-
-        Texture2D backgroundfinal = LoadTexture("assets\\maps\\level3\\phase2\\EJECTED AMONG.png");
-        const char message[128] = "Wobbuffet was ejected.\n\n\nMoesiof\nGabriel do zap\nJohnnus\nJoao pedro\nLucas\nPudim\n\nPress('F')for exit.";
-
-        int framesCounterfinal = 0;
-
-        SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
-        //--------------------------------------------------------------------------------------
-
-        // Main game loop
-        while (!WindowShouldClose())    // Detect window close button or ESC key
-        {
-            // Update
-            //----------------------------------------------------------------------------------
-            framesCounterfinal++;
-            if(IsKeyPressed(KEY_F)){
-
-            }
-            //----------------------------------------------------------------------------------
-
-            // Draw
-            //----------------------------------------------------------------------------------
-            BeginDrawing();
-
-            ClearBackground(RAYWHITE);
-            DrawTexture(backgroundfinal,0,0,WHITE);
-            DrawText(TextSubtext(message, 0, framesCounterfinal/10), 210, 160, 20, WHITE);
-
-
-
-            EndDrawing();
-            //----------------------------------------------------------------------------------
-        }
-
-        // De-Initialization
-        //--------------------------------------------------------------------------------------
-        CloseWindow();
-    }
-    //------------
-     */
 }
