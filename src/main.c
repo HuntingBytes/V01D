@@ -55,7 +55,7 @@ int main() {
                     //mainLevel3_1();
                     break;
                 case LEVEL3_2:
-                //mainLevel3_2();
+                    mainLevel3_2();
                     break;
                 case ENDING:
                     //mainEnding();
