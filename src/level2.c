@@ -24,8 +24,8 @@ void mainLevel2() {
         updateLevel2();
         physicsUpdateLevel2();
         renderLevel2();
-        clearLevel2();
     }
+    clearLevel2();
 }
 
 //Retorna um retangulo flipado no eixo x (Usado para desenha a textura olhando para outro sentido)
@@ -238,7 +238,7 @@ static void showMessage(char *txt, float offset) {
 
 //Inicia o nivel 2
 static void startLevel2() {
-    level = malloc(sizeof(Level2));
+    level = (Level2 *) malloc(sizeof(Level2));
     level->levelFinished = false;
     level->transition = false;
     level->sign_colliding = false;
@@ -488,10 +488,9 @@ static void renderLevel2() {
 
 //Limpa o nivel 2 (Descarrega texturas, libera memoria, etc)
 static void clearLevel2() {
-    if(level->levelFinished) {
-        UnloadTexture(*level->bg);
-        free(level);
-    }
+    UnloadTexture(*level->bg);
+    free(level);
+    level = NULL;
 }
 
 //Limpa a parte 1 (Usada antes de iniciar a parte 2)

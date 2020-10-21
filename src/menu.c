@@ -28,7 +28,10 @@ void mainMenu() {
     Texture2D disk = LoadTexture(MAPS_DIR"/menu/disk.png");
     Texture2D pointerHand = LoadTexture(MAPS_DIR"/menu/pointer-hand-def.png");
     Texture2D hand = cursor;
-    
+
+    //Escondendo o Cursor para o restante do nivel
+    HideCursor();
+
     //Loop principal do jogo
     while(!fimMenu)
     {
@@ -79,7 +82,6 @@ void mainMenu() {
 
         ClearBackground(RAYWHITE);
 
-        HideCursor();
         DrawTexture(background, 0, 0, WHITE);
         DrawRectangleRec(entrada, colorEntrada);
         DrawRectangleRec(button, colorButton); 
@@ -88,7 +90,9 @@ void mainMenu() {
       
         EndDrawing();
     }
-    
+
+    //Volta a mostrar o cursos para os demais niveis
+    ShowCursor();
     UnloadTexture(background);
     UnloadTexture(disk);
     UnloadTexture(hand);
