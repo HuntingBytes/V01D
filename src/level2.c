@@ -100,6 +100,7 @@ static void setupPhase2(void) {
     clearLevel2();
 
     //Setup Player Health and Bullets
+    
 
     //Setup Enemy
     enemy_texture = LoadTexture(ENEMY_DIR"/enemy_idle.png");

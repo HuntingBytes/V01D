@@ -27,6 +27,15 @@ typedef enum {GROUND = 0, WALL, PLATFORM, TRIGGER_SIGN, TRIGGER_LADDER, TRIGGER_
 typedef enum {IDLE = 0, WALK, JUMP, CLIMB, DIE} AnimationType;
 
 
+
+typedef struct
+{
+    Rectangle bar_rect;
+    Vector2 position;
+    Texture2D *texture;
+}Bar;
+
+
 typedef struct {
     AnimationType type;
     int size_frame;
@@ -34,7 +43,6 @@ typedef struct {
     int current_frame;
     int frame_speed;
 }Animation;
-
 
 
 typedef struct {
@@ -49,6 +57,8 @@ typedef struct {
     Texture2D *texture;
     Collider2D collider;
     Vector2 velocity;
+
+
 }Bullet;
 
 typedef struct {
