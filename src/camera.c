@@ -8,6 +8,14 @@ void UpdatePlayerCamera(Camera2D *camera, Player *player, float screen_edge) {
     clampCameraToLimits(camera, screen_edge);
 }
 
+void UpdateIconPosition(Icon *icon, Camera2D *camera, Player *player)
+{
+    if(player->position.x > 0.5f*(float)screenWidth && player->position.x < 1600){
+        icon->position.x = player->position.x - 0.5f*(float)screenWidth + 5.0f;
+    }
+
+}
+
 void clampCameraToLimits(Camera2D *camera, float screen_edge) {
     if (camera->target.x - camera->offset.x < 0) {
         camera->target.x = camera->offset.x;

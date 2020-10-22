@@ -5,6 +5,8 @@ extern const int screenHeight;
 extern Player player;
 Enemy enemy;
 NPC npc;
+Icon health_icon;
+Icon bullet_icon;
 extern Camera2D camera;
 extern Font font;
 extern float deltaTime;
@@ -21,6 +23,7 @@ static char *file_name;
 static bool sign_colliding = false;
 static bool ladder_colliding = false;
 static bool enemy_initialized = false;
+static bool release_icons = false;
 
 //Transition Screen Variables
 static bool transition = false;
@@ -31,11 +34,13 @@ static float alpha = 1.0f;
 static float invert_factor = -1.0f;
 static int frame_counter = 0;
 
+//Enemy, NPC textures
 static Texture2D enemy_texture;
 static Texture2D npc_texture;
-static Texture2D player_health;
-static Texture2D player_bullets;
 
+//Icon Textures
+static Texture2D health_icon_tex;
+static Texture2D bullet_icon_tex;
 
 static Rectangle flippedRectangle(Rectangle rect) {
     Rectangle result;
@@ -45,8 +50,6 @@ static Rectangle flippedRectangle(Rectangle rect) {
     result.height = rect.height;
     return  result;
 }
-
-
 
 static void setupPhase1(void) {
     //Creating File
@@ -88,10 +91,10 @@ static void setupPhase1(void) {
 
 }
 
-
 static void setupPhase2(void) {
     //There is no sign colliding anymore
     sign_colliding = false;
+    release_icons = true;
 
     //Change invert_factor
     invert_factor = 1.0f;
@@ -99,8 +102,16 @@ static void setupPhase2(void) {
     //Free previous allocated memory and Unload Texture
     clearLevel2();
 
-    //Setup Player Health and Bullets
-    
+
+    //Setup Player Health and Bullets Icons
+    health_icon_tex = LoadTexture(PLAYER_DIR"/heart.png");
+    bullet_icon_tex = LoadTexture(PLAYER_DIR"/bullet.png");
+
+    //Setup Icon Attributes
+    Vector2 init_health_pos = {5.0f, 50.0f};
+    Vector2 init_bullet_pos = {5.0f, 90.0f};
+    setIcon(&health_icon, &health_icon_tex, init_health_pos);
+    setIcon(&bullet_icon, &bullet_icon_tex, init_bullet_pos);
 
     //Setup Enemy
     enemy_texture = LoadTexture(ENEMY_DIR"/enemy_idle.png");
@@ -108,6 +119,7 @@ static void setupPhase2(void) {
     setEnemyPosition(&enemy, (Vector2){1610.38f, 108.10f});
     setEnemyTexture(&enemy, &enemy_texture);
     enemy_initialized = true;
+
 
     //Setup NPC
     npc_texture = LoadTexture(NPC_DIR"/oldwoman/Old_woman.png");
@@ -369,7 +381,6 @@ void updateLevel2() {
     if(!player.onGround && !ladder_colliding) player.velocity.y += 10.0f*deltaTime;
 
 
-
     //Check if file has been deleted and change phase
     if(!phase_done && !FileExists(file_name)) {
         phase_done = true;
@@ -378,6 +389,8 @@ void updateLevel2() {
     }
 
     UpdatePlayerCamera(&camera, &player, (float)bg->width);
+    UpdateIconPosition(&health_icon, &camera, &player);
+    UpdateIconPosition(&bullet_icon, &camera, &player);
 }
 
 void physicsUpdateLevel2() {
@@ -494,14 +507,17 @@ void renderLevel2() {
         DrawTexture(*player.bullet.texture, (int)player.bullet.collider.collider.x, (int)player.bullet.collider.collider.y, WHITE);
     }
 
-    //Draw player's Health and Bullet sprite
-    //DrawTexture(*player_health, , , );
-
-    //DrawText(TextFormat("(Vx, Vy): %.2f %.2f", player.position.x, player.position.y), (int)player.position.x, (int)player.position.y - 20, 12, BLUE);
-    //DrawTexture(*player_bullets, , ,);
-
 
     DrawText(TextFormat("(Vx, Vy): %.2f %.2f", player.position.x, player.position.y), (int)player.position.x, (int)player.position.y - 20, 12, BLUE);
+
+    //DRAW PLAYER'S HEALTH AND BULLETS
+    if(release_icons)
+    {
+        DrawTextureRec(health_icon_tex, health_icon.icon_rect, health_icon.position,WHITE);
+        if(!player.bullet.active)   DrawTextureRec(bullet_icon_tex, bullet_icon.icon_rect, bullet_icon.position,WHITE);
+    }
+
+    //DrawText(TextFormat("(Vx, Vy): %.2f %.2f", player.position.x, player.position.y), (int)player.position.x, (int)player.position.y - 20, 12, BLUE);
 
 
     //DRAW ENEMY HEALTH

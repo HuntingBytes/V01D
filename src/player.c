@@ -125,7 +125,16 @@ void loadAnimation(Texture2D *texture, Animation *animation, AnimationType type)
     animation->frame_speed =  (int) ((float)animation->n_sprites*(1.5f));
 }
 
-void setNPCPosition(NPC *npc,Vector2 position)
+
+void setIcon(Icon *icon, Texture2D *texture, Vector2 position)
+{
+    icon->texture = texture;
+    icon->position = position;
+    icon->icon_rect = (Rectangle){0, 0, (float)texture->height, (float)texture->height};
+}
+
+
+void setNPCPosition(NPC *npc, Vector2 position)
 {
     npc->position = position;
     npc->collider_rect.x = position.x;

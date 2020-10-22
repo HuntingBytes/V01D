@@ -30,10 +30,10 @@ typedef enum {IDLE = 0, WALK, JUMP, CLIMB, DIE} AnimationType;
 
 typedef struct
 {
-    Rectangle bar_rect;
-    Vector2 position;
     Texture2D *texture;
-}Bar;
+    Vector2 position;
+    Rectangle icon_rect;
+}Icon;
 
 
 typedef struct {
@@ -109,6 +109,12 @@ void loadAnimation(Texture2D *texture, Animation *animation, AnimationType type)
 void moveAnimation(Player *player, int *frame_counter);
 void changeAnimationTo(Player *player, Animation *target);
 //----------------
+
+//Health and Bullet Icon Functions
+void setIcon(Icon *icon, Texture2D *texture, Vector2 position);
+void UpdateIconPosition(Icon *icon, Camera2D *camera, Player *player);
+
+
 
 //----------------Enemy related functions
 void setEnemyHealth(Enemy *enemy, Vector2 health_position);
