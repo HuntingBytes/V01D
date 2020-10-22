@@ -25,8 +25,7 @@ void enemyAttack(Enemy *enemy, Player *player)
     if(CheckCollisionRecs(enemy->collider_rect, player->collider_rect))
     {
         player->position.x = player->position.x - 30 * player->velocity.x;
-        printf("essa misera ta encostando aí\n");
-        //player->health--;
+        player->health--;
     }
 }
 

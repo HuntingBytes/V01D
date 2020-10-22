@@ -508,16 +508,18 @@ void renderLevel2() {
     }
 
 
+
     DrawText(TextFormat("(Vx, Vy): %.2f %.2f", player.position.x, player.position.y), (int)player.position.x, (int)player.position.y - 20, 12, BLUE);
 
     //DRAW PLAYER'S HEALTH AND BULLETS
     if(release_icons)
     {
-        DrawTextureRec(health_icon_tex, health_icon.icon_rect, health_icon.position,WHITE);
+        if(player.health >= 1)  DrawTextureRec(health_icon_tex, health_icon.icon_rect, health_icon.position,WHITE);
+        if(player.health >= 2)  DrawTextureRec(health_icon_tex, health_icon.icon_rect, (Vector2){health_icon.position.x + 3.0f, health_icon.position.y},WHITE);
+        if(player.health >= 3)  DrawTextureRec(health_icon_tex, health_icon.icon_rect, (Vector2){health_icon.position.x + 6.0f, health_icon.position.y},WHITE);
+        if(player.health == 4)  DrawTextureRec(health_icon_tex, health_icon.icon_rect, (Vector2){health_icon.position.x + 9.0f, health_icon.position.y} ,WHITE);
         if(!player.bullet.active)   DrawTextureRec(bullet_icon_tex, bullet_icon.icon_rect, bullet_icon.position,WHITE);
     }
-
-    //DrawText(TextFormat("(Vx, Vy): %.2f %.2f", player.position.x, player.position.y), (int)player.position.x, (int)player.position.y - 20, 12, BLUE);
 
 
     //DRAW ENEMY HEALTH
