@@ -33,11 +33,6 @@ static Rectangle flippedRectangle(Rectangle rect) {
 }
 
 void initLevel(){
-    camera.target = (Vector2) {0,0};
-    camera.offset = (Vector2) {0,0};
-    camera.zoom = 1.5f;
-    camera.rotation = 0.0f;
-
     //Starting ground
     colliders[0].colliderType = GROUND;
     colliders[0].collider.x = 0.0f;
@@ -358,20 +353,9 @@ void draw (){
 
     //DrawRectangleLinesEx(player.collider_rect, 2, RED);
     drawColliders();
-    //DrawFPS((int)(camera.target.x-camera.offset.x), (int)(camera.target.y-camera.offset.y));
 
     chestMessage();
-    //Transition (Maybe global variables instead?)
-    if(transition) {
-        DrawRectangle(0,0, screenWidth, screenHeight, Fade(WHITE, alpha));
-        duration -= 0.1f;
-        if(duration < 0.01f) {
-            alpha -= 0.01f;
-            if(alpha < 0.01f) {
-                transition = false;
-            }
-        }
-    }
+
     if(isPuzzleOn == true){
         printf("PORTA ");
         callPuzzle();

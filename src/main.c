@@ -3,8 +3,6 @@
 
 #define NUMBER_PLAYER_TEXTURES 5
 
-
-
 //Player
 Player player;
 //-------------
@@ -38,11 +36,6 @@ void close(void);
 
 int main() {
     if(!init() || !loadCommonResources()) return  -1;
-   /* random();
-    loadTextures();
-    loadAssets();
-    initPieces();
-    */
 
    initializePlayer();
    initLevel();

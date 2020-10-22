@@ -18,7 +18,7 @@ void setPlayerPosition(Player *player, Vector2 position) {
 void setPlayerTexture(Player *player, Texture2D *texture, Animation *animation) {
     player->texture = texture;
     player->src_rect.width = player->src_rect.height = (float)texture->height;
-    player->collider_rect.width = (float) texture -> height / 1.5;
+    player->collider_rect.width =  (float) texture -> height / 1.5f;
     player->collider_rect.height = (float)texture->height;
     player->current_animation = animation;
 }
