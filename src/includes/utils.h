@@ -16,6 +16,8 @@
 #define PLAYER_DIR "assets/player" //Define a pasta dos assets do jogador
 #define AUDIO_DIR "assets/audio" //Define a pasta dos arquivos de som
 #define MAPS_DIR "assets/maps" //Define a pasta das imagens
+#define ENEMY_DIR "assets/enemies"
+#define NPC_DIR "assets/npc"
 
 typedef enum {MENU = 0, LEVEL1, LEVEL2, LEVEL3_1, LEVEL3_2, ENDING} Level; //Uma outra forma de representar os niveis (ex:. no lugar de 0, escrevemos MENU)
 typedef enum {GROUND = 0, WALL, PLATFORM, TRIGGER_SIGN, TRIGGER_LADDER, TRIGGER_BULLET} ColliderType; //Uma forma de diferenciar os diferentes tipos de colisores

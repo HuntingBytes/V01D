@@ -1,4 +1,7 @@
 #include "includes/level2.h"
+#include "includes/npc.h"
+#include "includes/enemy.h"
+#include "includes/icon.h"
 
 //Variaveis Externas ------------ Essas variaveis ja foram declaradas e definidas na main.c, agora iremos utilizar elas sem precisar definir novamente
 extern const int screenWidth;
@@ -11,8 +14,22 @@ extern Font font;
 extern Texture2D player_textures[];
 extern Animation player_animations[];
 extern Texture2D bullet_texture;
-//-------------------------------
+//-------------------------COISAS ------
+Enemy enemy;
+NPC npc;
+Icon health_icon;
+Icon bullet_icon;
 
+static Texture2D enemy_texture;
+static Texture2D npc_texture;
+
+static Texture2D health_icon_tex;
+static Texture2D bullet_icon_tex;
+
+static bool enemy_initialized = false;
+static bool release_icons = false;
+
+//------------------------
 static Level2 *level; //Ponteiro para uma struct que possui diversas variaveis utilizadas nesse nivel
 
 //Funcao que vai ser chamada pela main.c quando estiver na fase 2
@@ -94,6 +111,32 @@ static void setupPhase1(void) {
 static void setupPhase2(void) {
     //Free previous allocated memory and Unload Texture
     clearPhase1();
+
+    //Release
+    release_icons = true;
+
+    //Setup Player Health and Bullets Icons
+    health_icon_tex = LoadTexture(PLAYER_DIR"/heart.png");
+    bullet_icon_tex = LoadTexture(PLAYER_DIR"/bullet.png");
+
+    //Setup Icon Attributes
+    Vector2 init_health_pos = {5.0f, 50.0f};
+    Vector2 init_bullet_pos = {5.0f, 90.0f};
+    setIcon(&health_icon, &health_icon_tex, init_health_pos);
+    setIcon(&bullet_icon, &bullet_icon_tex, init_bullet_pos);
+
+    //Setup Enemy
+    enemy_texture = LoadTexture(ENEMY_DIR"/enemy_idle.png");
+    setEnemyHealth(&enemy, (Vector2){1650.53f, 96.77f});
+    setEnemyPosition(&enemy, (Vector2){1610.38f, 108.10f});
+    setEnemyTexture(&enemy, &enemy_texture);
+    enemy_initialized = true;
+
+
+    //Setup NPC
+    npc_texture = LoadTexture(NPC_DIR"/oldwoman/Old_woman.png");
+    setNPCPosition(&npc, (Vector2) {1780.00f, ((float)screenHeight - (float)(BLOCK_SIZE + npc_texture.height))});
+    setNPCTexture(&npc, &npc_texture);
 
     //Dynamic Allocation - Phase 2
     level->bg = (Texture2D*) malloc(sizeof(Texture2D));
@@ -380,11 +423,10 @@ static void updateLevel2() {
     }
 
     UpdatePlayerCamera(&camera, &player, (float)level->bg->width);
+    UpdateIconPosition(&health_icon, &camera, &player);
+    UpdateIconPosition(&bullet_icon, &camera, &player);
 
-    if(player.position.x >= (float)level->bg->width - player.collider_rect.width) {
-        level->levelFinished = true;
-        currentLevel = LEVEL3_2;
-    }
+
 }
 
 //Realiza a checagem de colisao e corrige essas colisoes
@@ -402,6 +444,22 @@ static void physicsUpdateLevel2() {
     }
     if(player.bullet.collider.collider.x + player.bullet.collider.collider.width > (float)level->bg->width){
         player.bullet.active = false;
+    }
+
+
+//Player Collision NPC
+    if(CheckCollisionRecs(player.collider_rect, npc.collider_rect))
+    {
+        
+        level->levelFinished = true;
+        currentLevel = LEVEL3_2;
+
+    }
+
+//Player Collision Enemy
+    if(CheckCollisionRecs(player.collider_rect, enemy.collider_rect))
+    {
+        enemyAttack(&enemy, &player);
     }
 
     for(int i = 0; i < *level->colliders_length; i++) {
@@ -434,6 +492,13 @@ static void physicsUpdateLevel2() {
             if (CheckCollisionRecs(player.bullet.collider.collider, level->colliders[i].collider)) {
                 player.bullet.active = false;
             }
+            //Collision between Bullet and Enemy
+            if(CheckCollisionRecs(player.bullet.collider.collider, enemy.collider_rect)){
+                player.bullet.active = false;
+                player.bullet.collider.collider.x = 0.0f;
+                player.bullet.collider.collider.y = 0.0f;
+                enemy.current_health--;
+            }
         }
     }
 
@@ -461,10 +526,46 @@ static void renderLevel2() {
     if(player.dir < 0) { DrawTextureRec(*player.texture, flippedRectangle(player.src_rect), player.position, WHITE); }
     else { DrawTextureRec(*player.texture, player.src_rect, player.position, WHITE); }
 
+    //Draw enemy
+    if(enemy_initialized && enemy.current_health > 0)
+    {
+        DrawTextureRec(*enemy.texture, enemy.src_rect, enemy.position, WHITE);
+    }
+
     //If bullet has been shot, draw
     if(player.bullet.active) {
         DrawTexture(*player.bullet.texture, (int)player.bullet.collider.collider.x, (int)player.bullet.collider.collider.y, WHITE);
     }
+
+
+//DRAW PLAYER'S HEALTH AND BULLETS
+    if(release_icons)
+    {
+        if(player.health >= 1)  DrawTextureRec(health_icon_tex, health_icon.icon_rect, health_icon.position,WHITE);
+        if(player.health >= 2)  DrawTextureRec(health_icon_tex, health_icon.icon_rect, (Vector2){health_icon.position.x + 3.0f, health_icon.position.y},WHITE);
+        if(player.health >= 3)  DrawTextureRec(health_icon_tex, health_icon.icon_rect, (Vector2){health_icon.position.x + 6.0f, health_icon.position.y},WHITE);
+        if(player.health == 4)  DrawTextureRec(health_icon_tex, health_icon.icon_rect, (Vector2){health_icon.position.x + 9.0f, health_icon.position.y} ,WHITE);
+        if(!player.bullet.active)   DrawTextureRec(bullet_icon_tex, bullet_icon.icon_rect, bullet_icon.position,WHITE);
+    }
+
+    //DRAW ENEMY HEALTH
+    if(enemy.current_health == 5)   DrawCircle((int)enemy.health_position.x, (int)enemy.health_position.y, 25.0f, DARKGREEN);
+    if(enemy.current_health == 4)   DrawCircle((int)enemy.health_position.x, (int)enemy.health_position.y, 25.0f, GREEN);
+    if(enemy.current_health == 3)   DrawCircle((int)enemy.health_position.x, (int)enemy.health_position.y, 25.0f, ORANGE);
+    if(enemy.current_health == 2)   DrawCircle((int)enemy.health_position.x, (int)enemy.health_position.y, 25.0f, YELLOW);
+    if(enemy.current_health == 1)   DrawCircle((int)enemy.health_position.x, (int)enemy.health_position.y, 25.0f, RED);
+    //Draw NPC, remove enemy
+    if(enemy.current_health == 0 && enemy_initialized)
+    {
+        enemy.collider_rect.x = 0;
+        enemy.collider_rect.y = 0;
+        enemy.is_dead = true;
+        enemy_initialized = false;
+    }
+
+    if(enemy.is_dead)   DrawTexture(*npc.texture, (int)npc.position.x, (int)npc.position.y, WHITE);
+
+
 
     //DrawText(TextFormat("(Vx, Vy): %.2f %.2f", player.velocity.x, player.velocity.y), (int)player.position.x, (int)player.position.y - 20, 12, BLUE);
     //DrawRectangleLinesEx(player.collider_rect, 2, RED);
