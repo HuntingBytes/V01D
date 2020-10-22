@@ -555,8 +555,6 @@ static void renderLevel2() {
     if(enemy_initialized && enemy.current_health > 0)
     {
         DrawTextureRec(*enemy.texture, enemy.src_rect, enemy.position, WHITE);
-        printf("Roda: (%.2f, %.2f) + %d\n", enemy.position.x, enemy.position.y, enemy.texture->id);
-        fflush(stdout);
     }
 
     //If bullet has been shot, draw
