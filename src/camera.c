@@ -6,7 +6,7 @@ extern const int screenHeight;
 
 void UpdatePlayerCamera(Camera2D *camera, Player *player, float screen_edge) {
     camera->target.x = player->position.x;
-    camera->offset = (Vector2) {0.5f*(float)screenWidth, 0};
+    camera->offset = (Vector2) {1.0f*(float)screenWidth, 0};
     clampCameraToLimits(camera, screen_edge);
 }
 

@@ -17,9 +17,10 @@ static Collider2D colliders[15];
 static int frame_counter = 0;
 static bool transition = false;
 static bool ladder_colliding = false;
-static bool puzzleOn = false;
+static bool isPuzzleOn = false;
+static bool isNearChest = false;
 static int current_ground = 0;
-static int colliders_length = 15;
+static int colliders_length = 14;
 static float duration = 3.0f;
 static float alpha = 1.0f;
 static Rectangle flippedRectangle(Rectangle rect) {
@@ -48,7 +49,7 @@ void initLevel(){
     colliders[1].collider.x = 92;
     colliders[1].collider.height = (float)BLOCK_SIZE * 2.1f;
     colliders[1].collider.y = 189;
-    colliders[1].collider.width = (float)BLOCK_SIZE / 3.3;
+    colliders[1].collider.width = BLOCK_SIZE / 3.8;
     //Ground under platforms
     colliders[2].colliderType = GROUND;
     colliders[2].collider.x = 93;
@@ -64,25 +65,25 @@ void initLevel(){
     //First platform (left to right)
     colliders[4].colliderType = PLATFORM;
     colliders[4].collider.x = 143;
-    colliders[4].collider.height = BLOCK_SIZE / 3.1;
+    colliders[4].collider.height = BLOCK_SIZE / 5.0;
     colliders[4].collider.y = 184;
     colliders[4].collider.width = (float)BLOCK_SIZE;
     //Second platform (left to right)
     colliders[5].colliderType = PLATFORM;
     colliders[5].collider.x = 223;
-    colliders[5].collider.height = BLOCK_SIZE / 4.5;
+    colliders[5].collider.height = BLOCK_SIZE / 5.0;
     colliders[5].collider.y = 155;
     colliders[5].collider.width = (float)BLOCK_SIZE;
     //Third platform (left to right)
     colliders[6].colliderType = PLATFORM;
     colliders[6].collider.x = 285;
-    colliders[6].collider.height = BLOCK_SIZE / 4.5;
+    colliders[6].collider.height = BLOCK_SIZE / 5.0;
     colliders[6].collider.y = 210;
     colliders[6].collider.width = (float)BLOCK_SIZE;
     //Fourth platform (left to right)
     colliders[7].colliderType = PLATFORM;
     colliders[7].collider.x = 344;
-    colliders[7].collider.height = BLOCK_SIZE / 9.5;
+    colliders[7].collider.height = BLOCK_SIZE / 5.0;
     colliders[7].collider.y = 174;
     colliders[7].collider.width = (float)BLOCK_SIZE;
     //Wall right to ladder
@@ -90,7 +91,7 @@ void initLevel(){
     colliders[8].collider.x = 417;
     colliders[8].collider.height = (float)BLOCK_SIZE * 2.7f;
     colliders[8].collider.y = 172;
-    colliders[8].collider.width = BLOCK_SIZE / 3.0;
+    colliders[8].collider.width = BLOCK_SIZE / 3.2;
     //Ground on top of last wall
     colliders[9].colliderType = GROUND;
     colliders[9].collider.x = 416;
@@ -109,24 +110,19 @@ void initLevel(){
     colliders[11].collider.height = (float) BLOCK_SIZE;
     colliders[11].collider.y = (float)screenHeight - colliders[11].collider.height;
     colliders[11].collider.width = (float)BLOCK_SIZE * 12.4f;
-    //Right spikes
-    colliders[12].colliderType = TRIGGER_SPIKE;
-    colliders[12].collider.x = 361;
-    colliders[12].collider.height = BLOCK_SIZE / 3.1;
-    colliders[12].collider.y = 418;
-    colliders[12].collider.width = (float)BLOCK_SIZE;
-    //Left spikes
-    colliders[13].colliderType = TRIGGER_SPIKE;
-    colliders[13].collider.x = 223;
-    colliders[13].collider.height = BLOCK_SIZE / 3.1;
-    colliders[13].collider.y = 418;
-    colliders[13].collider.width = (float)BLOCK_SIZE;
+    //Chest under platforms
+    colliders[12].colliderType = TRIGGER_CHEST;
+    colliders[12].collider.x = 383;
+    colliders[12].collider.height = BLOCK_SIZE / 4.0;
+    colliders[12].collider.y = 276;
+    colliders[12].collider.width = BLOCK_SIZE / 2.0;
     //Door (triggers puzzle)
-    colliders[14].colliderType = TRIGGER_DOOR;
-    colliders[14].collider.x = 0;
-    colliders[14].collider.height = (float)BLOCK_SIZE * 2.0f;
-    colliders[14].collider.y = 336;
-    colliders[14].collider.width = (float)BLOCK_SIZE * 2.0f;
+    colliders[13].colliderType = TRIGGER_DOOR;
+    colliders[13].collider.x = 0;
+    colliders[13].collider.height = (float)BLOCK_SIZE * 2.0f;
+    colliders[13].collider.y = 336;
+    colliders[13].collider.width = (float)BLOCK_SIZE * 2.0f;
+
 
     setPlayerPosition(&player, (Vector2){30, 170});
     setShoot(&player);
@@ -222,7 +218,7 @@ void inputHandler(){
             player.idle = false;
         }
         player.onGround = false;
-        vel_y = -225.0f*deltaTime;
+        vel_y = -210.0f*deltaTime;
     }
 
     //Bullet has been shot
@@ -239,8 +235,6 @@ void update() {
 
     //If it is transitioning, return
     if(transition) return;
-
-    static bool phase_done = false;
 
     //Move player to next position := (position + velocity)
     movePlayer(&player);
@@ -300,18 +294,25 @@ void physicsUpdate() {
             else if(colliders[i].colliderType == TRIGGER_LADDER) {
                 ladder_colliding = true;
             }
-            else if(colliders[i].colliderType == TRIGGER_DOOR){
-                puzzleOn = true;
+            else if(colliders[i].colliderType == TRIGGER_CHEST) {
+                isNearChest = true;
+            }
+            else if(colliders[i].colliderType == TRIGGER_DOOR) {
+                isPuzzleOn = true;
             }
         } else {
             if(colliders[i].colliderType == TRIGGER_LADDER) { ladder_colliding = false; }
-            //if(colliders[i].colliderType == TRIGGER_SIGN) { sign_colliding = false; }
+
         }
         //Bullet Collisions
         if(colliders[i].colliderType != TRIGGER_LADDER) {
             if (CheckCollisionRecs(player.bullet.collider.collider, colliders[i].collider)) {
                 player.bullet.active = false;
             }
+        }
+        //Puzzle flag
+        if(colliders[i].colliderType != TRIGGER_DOOR) {
+            isPuzzleOn = false;
         }
     }
 
@@ -322,6 +323,20 @@ void physicsUpdate() {
         if(player.position.x > colliders[current_ground].collider.x + colliders[current_ground].collider.width) {
             player.onGround = false;
         }
+    }
+}
+
+void chestMessage(){
+    Rectangle rec = {170, 140, 300, 200};
+    if(isNearChest){
+        DrawRectangle(0, 0, screenWidth, screenHeight, Fade(BLACK, 0.5f));
+        DrawRectangleRec(rec, Fade(WHITE, 0.55f));
+        DrawRectangleLinesEx(rec, 3, BLACK);
+        DrawText("Boa tentativa, ", 180, 165, 35, BLACK);
+        DrawText("mas eu não sou ", 180, 205, 35, BLACK);
+        DrawText("uma porta...", 180, 240, 35, BLACK);
+        //Set chest flag to stop seeing text when far from it
+        isNearChest = false;
     }
 }
 
@@ -341,15 +356,11 @@ void draw (){
         DrawTexture(*player.bullet.texture, (int)player.bullet.collider.collider.x, (int)player.bullet.collider.collider.y, WHITE);
     }
 
-    //DrawText(TextFormat("(Vx, Vy): %.2f %.2f", player.velocity.x, player.velocity.y), (int)player.position.x, (int)player.position.y - 20, 12, BLUE);
     //DrawRectangleLinesEx(player.collider_rect, 2, RED);
     drawColliders();
-    //DrawRectangleLinesEx(player.bullet.collider.collider, 2, GREEN);
     //DrawFPS((int)(camera.target.x-camera.offset.x), (int)(camera.target.y-camera.offset.y));
 
-    //Sign
-    //if(sign_colliding) { showMessage(sign_text, 12.0f); }
-
+    chestMessage();
     //Transition (Maybe global variables instead?)
     if(transition) {
         DrawRectangle(0,0, screenWidth, screenHeight, Fade(WHITE, alpha));
@@ -361,7 +372,8 @@ void draw (){
             }
         }
     }
-    if(puzzleOn == true){
+    if(isPuzzleOn == true){
+        printf("PORTA ");
         callPuzzle();
         if(complete()){
             fim();

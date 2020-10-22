@@ -13,7 +13,7 @@
 #define PLAYER_DIR "assets/player"
 #define MAPS_DIR "assets/maps"
 
-typedef enum {GROUND = 0, WALL, PLATFORM, TRIGGER_SPIKE, TRIGGER_LADDER, TRIGGER_BULLET, TRIGGER_DOOR} ColliderType;
+typedef enum {GROUND = 0, WALL, PLATFORM, TRIGGER_SPIKE, TRIGGER_LADDER, TRIGGER_BULLET, TRIGGER_CHEST, TRIGGER_DOOR} ColliderType;
 typedef enum {IDLE = 0, WALK, JUMP, CLIMB, DIE} AnimationType;
 
 typedef struct {
@@ -54,6 +54,7 @@ void inputHandler(void); //Handle the input data according to the phase
 void update(void); //Move player and check limits of the world**(To do)
 void physicsUpdate(void); //Detect and correct collisions according to its type
 void draw(void); //Draw frame
+void chestMessage(void); //Exhibit chest message on screen
 void clearLevel(void); //Clear level
 
 void setPlayerHealth(Player *player, int value);
