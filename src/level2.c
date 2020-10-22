@@ -45,6 +45,32 @@ void mainLevel2() {
     clearLevel2();
 }
 
+static void resetPhase2(void) {
+    release_icons = true;
+    enemy_initialized = true;
+
+    setEnemyHealth(&enemy, (Vector2){1650.53f, 96.77f});
+    setEnemyPosition(&enemy, (Vector2){1610.38f, 108.10f});
+
+    player.onGround = false;
+    player.jumping = false;
+    player.climbing = false;
+    player.walking = false;
+    player.idle = true;
+    player.dir = 1.0f;
+
+    setPlayerPosition(&player, (Vector2){0, (float) (screenHeight - (BLOCK_SIZE + player.texture->height))});
+    changeAnimationTo(&player, &player_animations[IDLE]);
+    setShoot(&player);
+    setPlayerHealth(&player, MAX_HEALTH);
+
+    setIcon(&bullet_icon, bullet_icon.texture, (Vector2){5.0f, 90.0f});
+    setIcon(&health_icon, health_icon.texture, (Vector2){5.0f, 50.0f});
+
+    level->sign_colliding = false;
+    level->invert_factor = 1.0f;
+}
+
 //Retorna um retangulo flipado no eixo x (Usado para desenha a textura olhando para outro sentido)
 static Rectangle flippedRectangle(Rectangle rect) {
     Rectangle result;
@@ -126,7 +152,7 @@ static void setupPhase2(void) {
     setIcon(&bullet_icon, &bullet_icon_tex, init_bullet_pos);
 
     //Setup Enemy
-    enemy_texture = LoadTexture(ENEMY_DIR"/enemy_idle.png");
+    enemy_texture = LoadTexture(ENEMY_DIR"/idle.png");
     setEnemyHealth(&enemy, (Vector2){1650.53f, 96.77f});
     setEnemyPosition(&enemy, (Vector2){1610.38f, 108.10f});
     setEnemyTexture(&enemy, &enemy_texture);
@@ -422,11 +448,13 @@ static void updateLevel2() {
         setupPhase2();
     }
 
+    if(player.health <= 0 || player.position.y > (float) screenHeight) {
+        resetPhase2();
+    }
+
     UpdatePlayerCamera(&camera, &player, (float)level->bg->width);
     UpdateIconPosition(&health_icon, &camera, &player);
     UpdateIconPosition(&bullet_icon, &camera, &player);
-
-
 }
 
 //Realiza a checagem de colisao e corrige essas colisoes
@@ -446,17 +474,14 @@ static void physicsUpdateLevel2() {
         player.bullet.active = false;
     }
 
-
-//Player Collision NPC
-    if(CheckCollisionRecs(player.collider_rect, npc.collider_rect))
+    //Player Collision NPC
+    if(enemy.is_dead && CheckCollisionRecs(player.collider_rect, npc.collider_rect))
     {
-        
         level->levelFinished = true;
         currentLevel = LEVEL3_2;
-
     }
 
-//Player Collision Enemy
+    //Player Collision Enemy
     if(CheckCollisionRecs(player.collider_rect, enemy.collider_rect))
     {
         enemyAttack(&enemy, &player);
@@ -530,6 +555,8 @@ static void renderLevel2() {
     if(enemy_initialized && enemy.current_health > 0)
     {
         DrawTextureRec(*enemy.texture, enemy.src_rect, enemy.position, WHITE);
+        printf("Roda: (%.2f, %.2f) + %d\n", enemy.position.x, enemy.position.y, enemy.texture->id);
+        fflush(stdout);
     }
 
     //If bullet has been shot, draw
@@ -564,8 +591,6 @@ static void renderLevel2() {
     }
 
     if(enemy.is_dead)   DrawTexture(*npc.texture, (int)npc.position.x, (int)npc.position.y, WHITE);
-
-
 
     //DrawText(TextFormat("(Vx, Vy): %.2f %.2f", player.velocity.x, player.velocity.y), (int)player.position.x, (int)player.position.y - 20, 12, BLUE);
     //DrawRectangleLinesEx(player.collider_rect, 2, RED);
