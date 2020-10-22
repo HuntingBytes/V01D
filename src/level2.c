@@ -274,11 +274,14 @@ static void setupPhase2(void) {
     setShoot(&player);
     level->sign_colliding = false;
     level->invert_factor = 1.0f;
-
+    level->npc_colliding = false;
     level->sign_text = "As coisas voltaram ao normal...\n"
                 "Aquele arquivo devia estar trocando as texturas e a movimentacao.\n"
                 "Talvez seja uma boa ideia explorar, talvez eu encontre uma saida.\n"
                 "Eu preciso sair daqui...";
+    level->npc_text = "Nao se preocupe, voce esta perto do fim. \n"
+                      "No entanto, ainda lhe resta uma missao a ser feita.\n"
+                      "Siga em frente (Pressione o enter)";
 }
 
 //Desenha os colisores na tela (debug-only)
@@ -311,6 +314,7 @@ static void startLevel2() {
     level->levelFinished = false;
     level->transition = false;
     level->sign_colliding = false;
+    level->npc_colliding = false;
     level->ladder_colliding = false;
     level->invert_factor = -1.0f;
     level->duration = 3.0f;
@@ -477,9 +481,14 @@ static void physicsUpdateLevel2() {
     //Player Collision NPC
     if(enemy.is_dead && CheckCollisionRecs(player.collider_rect, npc.collider_rect))
     {
-        level->levelFinished = true;
-        currentLevel = LEVEL3_2;
+        level->npc_colliding = true;
+        if (IsKeyPressed(KEY_ENTER))
+        {
+            level->levelFinished = true;
+            currentLevel = LEVEL3_2;
+        }
     }
+    else level->npc_colliding = false;
 
     //Player Collision Enemy
     if(CheckCollisionRecs(player.collider_rect, enemy.collider_rect))
@@ -598,6 +607,7 @@ static void renderLevel2() {
 
     //Sign
     if(level->sign_colliding) { showMessage(level->sign_text, 12.0f); }
+    if(level->npc_colliding) { showMessage(level->npc_text, 12.0f); }
 
     //Transition (Maybe global variables instead?)
     if(level->transition) {
