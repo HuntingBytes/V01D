@@ -23,13 +23,13 @@ typedef struct {
 }PlayerLvl1;
 
 //Função para limitar movimento da câmera nas extremidades
-void clampCameraToLimitsLvl1(Camera2D *camera, float screen_edge) {
-    if (camera->target.x - camera->offset.x < 0) {
-        camera->target.x = camera->offset.x;
+void clampCameraToLimitsLvl1(Camera2D *camera1, float screen_edge) {
+    if (camera1->target.x - camera1->offset.x < 0) {
+        camera1->target.x = camera1->offset.x;
     }
 
-    if ((camera->target.x - camera->offset.x) + (float) screenWidth > screen_edge) {
-        camera->target.x = screen_edge - (float) screenWidth + camera->offset.x;
+    if ((camera1->target.x - camera1->offset.x) + (float) screenWidth > screen_edge) {
+        camera1->target.x = screen_edge - (float) screenWidth + camera1->offset.x;
     }
 }
 
@@ -53,10 +53,10 @@ void recColision(RecCollider recGlitch, RecCollider recRec, bool *boolRec){
 }
 
 //Função para atualizar a câmera
-void UpdatePlayerCameraLvl1(Camera2D *camera, PlayerLvl1 *player, float screen_edge) {
-    camera->target.x = player->position.x;
-    camera->offset = (Vector2) {0.5f*(float)screenWidth, 0};
-    clampCameraToLimitsLvl1(camera, screen_edge);
+void UpdatePlayerCameraLvl1(Camera2D *camera1, PlayerLvl1 *player, float screen_edge) {
+    camera1->target.x = player->position.x;
+    camera1->offset = (Vector2) {0.5f*(float)screenWidth, 0};
+    clampCameraToLimitsLvl1(camera1, screen_edge);
 }
 
 //Função Principal
@@ -216,7 +216,7 @@ void mainLevel1 ()
         //------------------------------------------------------
         if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT))
         {
-            glitch.position.x += velocidade;
+            glitch.position.x += (float)velocidade;
             jogador_parado = false;
             jogador_esquerda = false;
             if(player.id == jogador.id || player.id == jogadorParado.id) {
@@ -227,7 +227,7 @@ void mainLevel1 ()
 
         if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT))
         {
-            glitch.position.x -= velocidade;
+            glitch.position.x -= (float)velocidade;
             jogador_parado = false;
             jogador_esquerda = true;
             if(player.id == jogador.id || player.id == jogadorParado.id) {
@@ -238,7 +238,7 @@ void mainLevel1 ()
 
         if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP))
         {
-            glitch.position.y -= velocidade;
+            glitch.position.y -= (float)velocidade;
             jogador_parado = false;
             if(player.id == jogador.id || player.id == jogadorParado.id) {
                 player = jogador;
@@ -247,7 +247,7 @@ void mainLevel1 ()
 
         if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN))
         {
-            glitch.position.y += velocidade;
+            glitch.position.y += (float)velocidade;
             jogador_parado = false;
             if(player.id == jogador.id || player.id == jogadorParado.id) {
                 player = jogador;
@@ -277,13 +277,13 @@ void mainLevel1 ()
         if (glitch.position.y > 400) { glitch.position.y = 400; }
 
         //Criando os retângulos, propriamente
-        recBook.retang = (struct Rectangle){recBook.vetor.x, recBook.vetor.y, book.width, book.height};
-        recAviso.retang = (struct Rectangle){recAviso.vetor.x, recAviso.vetor.y, book.width, book.height};
-        recFalso1.retang = (struct Rectangle){recFalso1.vetor.x, recFalso1.vetor.y, book.width, book.height};
-        recBook1.retang = (struct Rectangle){recBook1.vetor.x, recBook1.vetor.y, book.width, book.height};
-        recFalso2.retang = (struct Rectangle){recFalso2.vetor.x, recFalso2.vetor.y, book.width, book.height};
-        recEasterEgg.retang = (struct Rectangle){recEasterEgg.vetor.x, recEasterEgg.vetor.y, book.width, book.height};
-        recBook2.retang = (struct Rectangle){recBook2.vetor.x, recBook2.vetor.y, book.width, book.height};
+        recBook.retang = (struct Rectangle){recBook.vetor.x, recBook.vetor.y, (float)book.width, (float)book.height};
+        recAviso.retang = (struct Rectangle){recAviso.vetor.x, recAviso.vetor.y, (float)book.width, (float)book.height};
+        recFalso1.retang = (struct Rectangle){recFalso1.vetor.x, recFalso1.vetor.y, (float)book.width, (float)book.height};
+        recBook1.retang = (struct Rectangle){recBook1.vetor.x, recBook1.vetor.y, (float)book.width, (float)book.height};
+        recFalso2.retang = (struct Rectangle){recFalso2.vetor.x, recFalso2.vetor.y, (float)book.width, (float)book.height};
+        recEasterEgg.retang = (struct Rectangle){recEasterEgg.vetor.x, recEasterEgg.vetor.y, (float)book.width, (float)book.height};
+        recBook2.retang = (struct Rectangle){recBook2.vetor.x, recBook2.vetor.y, (float)book.width, (float)book.height};
 
         recGlitch.retang = (struct Rectangle) {glitch.position.x, glitch.position.y, 71, 80};
 
@@ -328,13 +328,13 @@ void mainLevel1 ()
         if(contaFrameFundo > 60) {contaFrameFundo = 0;}
 
         //Desenhando Livros
-        DrawTexture(book, recBook.vetor.x, recBook.vetor.y, RED);
-        DrawTexture(book, recBook1.vetor.x, recBook1.vetor.y, GREEN);
-        DrawTexture(book, recBook2.vetor.x, recBook2.vetor.y, WHITE);
-        DrawTexture(book, recAviso.vetor.x, recAviso.vetor.y, SKYBLUE);
-        DrawTexture(book, recFalso1.vetor.x, recFalso1.vetor.y, YELLOW);
-        DrawTexture(book, recFalso2.vetor.x, recFalso2.vetor.y, YELLOW);
-        DrawTexture(book, recEasterEgg.vetor.x, recEasterEgg.vetor.y, DARKPURPLE);
+        DrawTexture(book, (int)recBook.vetor.x, (int)recBook.vetor.y, RED);
+        DrawTexture(book, (int)recBook1.vetor.x, (int)recBook1.vetor.y, GREEN);
+        DrawTexture(book, (int)recBook2.vetor.x, (int)recBook2.vetor.y, WHITE);
+        DrawTexture(book, (int)recAviso.vetor.x, (int)recAviso.vetor.y, SKYBLUE);
+        DrawTexture(book, (int)recFalso1.vetor.x, (int)recFalso1.vetor.y, YELLOW);
+        DrawTexture(book, (int)recFalso2.vetor.x, (int)recFalso2.vetor.y, YELLOW);
+        DrawTexture(book, (int)recEasterEgg.vetor.x, (int)recEasterEgg.vetor.y, DARKPURPLE);
 
         //Retângulos para Livro e Player, respectivamente(Apagar na versão final)
         //DrawRectangleLinesEx(recBook.retang, 5, ORANGE);
@@ -364,44 +364,44 @@ void mainLevel1 ()
         //If's para desenho das mensagens
         if(bool_Book == true)
         {
-            DrawRectangle(recBook.vetor.x - 25, 80, 270, 110, BLACK);
+            DrawRectangle((int)(recBook.vetor.x - 25.0f), 80, 270, 110, BLACK);
             DrawText("  Se estiver lendo isso,\nVocê está preso nessa\n     máquina Maldita!", 90, 100, 20, LIGHTGRAY);
         }
 
         if(bool_Book1 == true)
         {
-            DrawRectangle(recBook1.vetor.x - 30, 80, 240, 80, BLACK);
-            DrawText("Conserte os binários\n  se quiser avançar", recBook1.vetor.x - 20, 100, 20, LIGHTGRAY);
+            DrawRectangle((int)(recBook1.vetor.x - 30.0f), 80, 240, 80, BLACK);
+            DrawText("Conserte os binários\n  se quiser avançar", (int)(recBook1.vetor.x - 20.0f), 100, 20, LIGHTGRAY);
         }
 
         if(bool_Book2 == true)
         {
-            DrawRectangle(recBook2.vetor.x - 30, 80, 280, 60, BLACK);
-            DrawText("O valor correto é 0xA7", recBook2.vetor.x - 20, 100, 20, LIGHTGRAY);
+            DrawRectangle((int)(recBook2.vetor.x - 30.0f), 80, 280, 60, BLACK);
+            DrawText("O valor correto é 0xA7", (int)(recBook2.vetor.x - 20.0f), 100, 20, LIGHTGRAY);
         }
 
         if(bool_Book_Aviso == true)
         {
-            DrawRectangle(recAviso.vetor.x - 60, 80, 350, 60, BLACK);
-            DrawText("Amarelo não é uma cor confiável", recAviso.vetor.x - 50, 100, 20, LIGHTGRAY);
+            DrawRectangle((int)(recAviso.vetor.x - 60.0f), 80, 350, 60, BLACK);
+            DrawText("Amarelo não é uma cor confiável", (int)(recAviso.vetor.x - 50.0f), 100, 20, LIGHTGRAY);
         }
 
         if(bool_Book_Falso1 == true)
         {
-            DrawRectangle(recFalso1.vetor.x - 60, 80, 280, 80, BLACK);
-            DrawText("Informação importante\ntende a flutuar aqui", recFalso1.vetor.x - 50, 100, 20, LIGHTGRAY);
+            DrawRectangle((int)(recFalso1.vetor.x - 60.0f), 80, 280, 80, BLACK);
+            DrawText("Informação importante\ntende a flutuar aqui", (int)(recFalso1.vetor.x - 50.0f), 100, 20, LIGHTGRAY);
         }
 
         if(bool_Book_Falso2 == true)
         {
-            DrawRectangle(recFalso2.vetor.x - 60, 300, 280, 60, BLACK);
-            DrawText("Não há pastas suspeitas", recFalso2.vetor.x - 50, 320, 20, LIGHTGRAY);
+            DrawRectangle((int)(recFalso2.vetor.x - 60.0f), 300, 280, 60, BLACK);
+            DrawText("Não há pastas suspeitas", (int)(recFalso2.vetor.x - 50.0f), 320, 20, LIGHTGRAY);
         }
 
         if(bool_Easter_Egg == true)
         {
-            DrawRectangle(recEasterEgg.vetor.x - 60, 300, 280, 110, BLACK);
-            DrawText("Essa skin representa\no grande mestre\ndeste mundo louco", recEasterEgg.vetor.x - 50, 320, 20, LIGHTGRAY);
+            DrawRectangle((int)(recEasterEgg.vetor.x - 60.0f), 300, 280, 110, BLACK);
+            DrawText("Essa skin representa\no grande mestre\ndeste mundo louco", (int)(recEasterEgg.vetor.x - 50.0f), 320, 20, LIGHTGRAY);
             if(jogador_esquerda == false) { player = easterEgg; }
             else {player = easterEggEsquerda;}
             pericles = true;
@@ -415,13 +415,13 @@ void mainLevel1 ()
                 text_rec1 = player;
             } else{text_rec1 = periclesParado;}
 
-            DrawTexture(text_rec1, recrec1.vetor.x -15, recrec1.vetor.y -15, WHITE);
+            DrawTexture(text_rec1, (int)(recrec1.vetor.x -15.0f), (int)(recrec1.vetor.y -15.0f), WHITE);
             if(text_rec1.id == num0.id) {boolEnd1 = true;}
             else {boolEnd1 = false;}
             if(player.id != easterEgg.id || player.id != easterEggEsquerda.id)
             player = jogador;
         }
-        else {DrawTexture(text_rec1, recrec1.vetor.x -15, recrec1.vetor.y -15, WHITE);}
+        else {DrawTexture(text_rec1, (int)(recrec1.vetor.x -15.0f), (int)(recrec1.vetor.y -15.0f), WHITE);}
 
         if(bool_rec2 == true && player.id != jogador.id && player.id != jogadorParado.id)
         {
@@ -430,12 +430,12 @@ void mainLevel1 ()
                 text_rec2 = player;
             } else{text_rec2 = periclesParado;}
 
-            DrawTexture(text_rec2, recrec2.vetor.x -15, recrec2.vetor.y -15, WHITE);
+            DrawTexture(text_rec2, (int)(recrec2.vetor.x -15.0f), (int)(recrec2.vetor.y -15.0f), WHITE);
             if(text_rec2.id == num0.id) {boolEnd2 = true;}
             else {boolEnd2 = false;}
             player = jogador;
         }
-        else {DrawTexture(text_rec2, recrec2.vetor.x -15, recrec2.vetor.y -15, WHITE);}
+        else {DrawTexture(text_rec2, (int)(recrec2.vetor.x -15.0f), (int)(recrec2.vetor.y -15.0f), WHITE);}
 
         if(bool_rec3 == true && player.id != jogador.id && player.id != jogadorParado.id)
         {
@@ -444,12 +444,12 @@ void mainLevel1 ()
                 text_rec3 = player;
             } else{text_rec3 = periclesParado;}
 
-            DrawTexture(text_rec3, recrec3.vetor.x -15, recrec3.vetor.y -15, WHITE);
+            DrawTexture(text_rec3, (int)(recrec3.vetor.x -15.0f), (int)(recrec3.vetor.y -15.0f), WHITE);
             if(text_rec3.id == num1.id) {boolEnd3 = true;}
             else {boolEnd3 = false;}
             player = jogador;
         }
-        else {DrawTexture(text_rec3, recrec3.vetor.x -15, recrec3.vetor.y -15, WHITE);}
+        else {DrawTexture(text_rec3, (int)(recrec3.vetor.x -15.0f), (int)(recrec3.vetor.y -15.0f), WHITE);}
 
         if(bool_rec4 == true && player.id != jogador.id && player.id != jogadorParado.id)
         {
@@ -458,12 +458,12 @@ void mainLevel1 ()
                 text_rec4 = player;
             } else{text_rec4 = periclesParado;}
 
-            DrawTexture(text_rec4, recrec4.vetor.x -15, recrec4.vetor.y -15, WHITE);
+            DrawTexture(text_rec4, (int)(recrec4.vetor.x -15.0f), (int)(recrec4.vetor.y -15.0f), WHITE);
             if(text_rec4.id == num1.id) {boolEnd4 = true;}
             else {boolEnd4 = false;}
             player = jogador;
         }
-        else {DrawTexture(text_rec4, recrec4.vetor.x -15, recrec4.vetor.y -15, WHITE);}
+        else {DrawTexture(text_rec4, (int)(recrec4.vetor.x -15.0f), (int)(recrec4.vetor.y -15.0f), WHITE);}
 
         //Desenhando jogador com animação
         if(player.id == jogador.id && jogador_parado == false && jogador_esquerda == false) {DrawTextureRec(jogador, frameRec, glitch.position, WHITE); } //Andando pra Direita
@@ -475,8 +475,8 @@ void mainLevel1 ()
         if(player.id == easterEgg.id && jogador_esquerda == false) {DrawTextureRec(easterEgg, frameRecPericles, glitch.position, WHITE); } //Andando pra Direita
         if(player.id == easterEggEsquerda.id && jogador_esquerda == true) {DrawTextureRec(easterEggEsquerda, frameRecPericlesEsquerda, glitch.position, WHITE); } //Andando pra Esquerda
 
-        if(player.id != jogador.id && player.id != jogadorParado.id && pericles == false) { DrawTexture(player, glitch.position.x, glitch.position.y, WHITE);} //Qualquer outro
-        DrawTexture(serializador, recSerializador.retang.x - 15, recSerializador.retang.y - 15, WHITE);
+        if(player.id != jogador.id && player.id != jogadorParado.id && pericles == false) { DrawTexture(player, (int)glitch.position.x, (int)glitch.position.y, WHITE);} //Qualquer outro
+        DrawTexture(serializador, (int)(recSerializador.retang.x - 15.0f), (int)(recSerializador.retang.y - 15.0f), WHITE);
 
         EndMode2D();
 

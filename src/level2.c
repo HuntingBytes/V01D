@@ -393,10 +393,9 @@ static void inputHandlerLevel2() {
             player.walking = false;
         }
 
-        if(!upper_down && !lower_down) {
+        if(player.onGround) {
             player.climbing = false;
         }
-
     } else {
         player.climbing = false;
     }

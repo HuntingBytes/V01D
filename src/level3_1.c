@@ -1,5 +1,4 @@
 #include "includes/level3_1.h"
-#include "includes/utils.h"
 
 //Variaveis Externas ------------
 extern const int screenWidth;
@@ -63,69 +62,69 @@ static void initLevel() {
     //Starting ground
     level->colliders[0].colliderType = GROUND;
     level->colliders[0].collider.x = 0.0f;
-    level->colliders[0].collider.height = BLOCK_SIZE / 3.1;
-    level->colliders[0].collider.y = 193;
-    level->colliders[0].collider.width = BLOCK_SIZE * 1.9;
+    level->colliders[0].collider.height = BLOCK_SIZE / 3.1f;
+    level->colliders[0].collider.y = 193.0f;
+    level->colliders[0].collider.width = BLOCK_SIZE * 1.9f;
     //Ladder
     level->colliders[1].colliderType = TRIGGER_LADDER;
-    level->colliders[1].collider.x = 92;
+    level->colliders[1].collider.x = 92.0f;
     level->colliders[1].collider.height = (float)BLOCK_SIZE * 2.1f;
-    level->colliders[1].collider.y = 189;
+    level->colliders[1].collider.y = 189.0f;
     level->colliders[1].collider.width = (float)BLOCK_SIZE / 3.8f;
     //Ground under platforms
     level->colliders[2].colliderType = GROUND;
-    level->colliders[2].collider.x = 93;
-    level->colliders[2].collider.height = BLOCK_SIZE / 3.1;
-    level->colliders[2].collider.y = 289;
+    level->colliders[2].collider.x = 93.0f;
+    level->colliders[2].collider.height = BLOCK_SIZE / 3.1f;
+    level->colliders[2].collider.y = 289.0f;
     level->colliders[2].collider.width = (float)BLOCK_SIZE * 6.8f;
     //Wall left to the ladder
     level->colliders[3].colliderType = WALL;
-    level->colliders[3].collider.x = 82;
+    level->colliders[3].collider.x = 82.0f;
     level->colliders[3].collider.height = (float) BLOCK_SIZE * 1.7f;
-    level->colliders[3].collider.y = 208;
+    level->colliders[3].collider.y = 208.0f;
     level->colliders[3].collider.width =  BLOCK_SIZE / 5.0;
     //First platform (left to right)
     level->colliders[4].colliderType = PLATFORM;
-    level->colliders[4].collider.x = 143;
-    level->colliders[4].collider.height = BLOCK_SIZE / 4.5;
-    level->colliders[4].collider.y = 184;
+    level->colliders[4].collider.x = 143.0f;
+    level->colliders[4].collider.height = BLOCK_SIZE / 4.5f;
+    level->colliders[4].collider.y = 184.0f;
     level->colliders[4].collider.width = (float)BLOCK_SIZE;
     //Second platform (left to right)
     level->colliders[5].colliderType = PLATFORM;
-    level->colliders[5].collider.x = 223;
-    level->colliders[5].collider.height = BLOCK_SIZE / 4.5;
-    level->colliders[5].collider.y = 155;
+    level->colliders[5].collider.x = 223.0f;
+    level->colliders[5].collider.height = BLOCK_SIZE / 4.5f;
+    level->colliders[5].collider.y = 155.0f;
     level->colliders[5].collider.width = (float)BLOCK_SIZE;
     //Third platform (left to right)
     level->colliders[6].colliderType = PLATFORM;
-    level->colliders[6].collider.x = 285;
-    level->colliders[6].collider.height = BLOCK_SIZE / 9.0;
-    level->colliders[6].collider.y = 210;
+    level->colliders[6].collider.x = 285.0f;
+    level->colliders[6].collider.height = BLOCK_SIZE / 9.0f;
+    level->colliders[6].collider.y = 210.0f;
     level->colliders[6].collider.width = (float)BLOCK_SIZE;
     //Fourth platform (left to right)
     level->colliders[7].colliderType = PLATFORM;
-    level->colliders[7].collider.x = 344;
-    level->colliders[7].collider.height = BLOCK_SIZE / 5.0;
-    level->colliders[7].collider.y = 174;
+    level->colliders[7].collider.x = 344.0f;
+    level->colliders[7].collider.height = BLOCK_SIZE / 5.0f;
+    level->colliders[7].collider.y = 174.0f;
     level->colliders[7].collider.width = (float)BLOCK_SIZE;
     //Wall right to ladder
     level->colliders[8].colliderType = WALL;
-    level->colliders[8].collider.x = 417;
+    level->colliders[8].collider.x = 417.0f;
     level->colliders[8].collider.height = (float)BLOCK_SIZE * 2.7f;
-    level->colliders[8].collider.y = 172;
-    level->colliders[8].collider.width = BLOCK_SIZE / 3.2;
+    level->colliders[8].collider.y = 172.0f;
+    level->colliders[8].collider.width = BLOCK_SIZE / 3.2f;
     //Ground on top of last wall
     level->colliders[9].colliderType = GROUND;
-    level->colliders[9].collider.x = 418;
-    level-> colliders[9].collider.height = 4;
-    level->colliders[9].collider.y = 168;
-    level->colliders[9].collider.width = BLOCK_SIZE / 2.8;
+    level->colliders[9].collider.x = 418.0f;
+    level-> colliders[9].collider.height = 4.0f;
+    level->colliders[9].collider.y = 168.0f;
+    level->colliders[9].collider.width = BLOCK_SIZE / 2.8f;
     //Right wall
     level->colliders[10].colliderType = WALL;
-    level->colliders[10].collider.x = 592;
+    level->colliders[10].collider.x = 592.0f;
     level->colliders[10].collider.height = (float)BLOCK_SIZE * 6.0f;
-    level->colliders[10].collider.y = 145;
-    level->colliders[10].collider.width = BLOCK_SIZE / 3.0;
+    level->colliders[10].collider.y = 145.0f;
+    level->colliders[10].collider.width = BLOCK_SIZE / 3.0f;
     //Lower ground
     level->colliders[11].colliderType = GROUND;
     level->colliders[11].collider.x = 0.0f;
@@ -134,18 +133,18 @@ static void initLevel() {
     level->colliders[11].collider.width = (float)BLOCK_SIZE * 12.4f;
     //Chest under platforms
     level->colliders[12].colliderType = TRIGGER_CHEST;
-    level->colliders[12].collider.x = 383;
-    level->colliders[12].collider.height = BLOCK_SIZE / 4.0;
-    level->colliders[12].collider.y = 276;
-    level->colliders[12].collider.width = BLOCK_SIZE / 2.0;
+    level->colliders[12].collider.x = 383.0f;
+    level->colliders[12].collider.height = BLOCK_SIZE / 4.0f;
+    level->colliders[12].collider.y = 276.0f;
+    level->colliders[12].collider.width = BLOCK_SIZE / 2.0f;
     //Door (triggers puzzle)
     level->colliders[13].colliderType = TRIGGER_DOOR;
-    level->colliders[13].collider.x = 0;
+    level->colliders[13].collider.x = 0.0f;
     level->colliders[13].collider.height = (float)BLOCK_SIZE * 2.0f;
-    level->colliders[13].collider.y = 336;
+    level->colliders[13].collider.y = 336.0f;
     level->colliders[13].collider.width = (float)BLOCK_SIZE * 2.0f;
 
-    setPlayerPosition(&player, (Vector2) {30, 170});
+    setPlayerPosition(&player, (Vector2) {30.0f, 170.0f});
     setShoot(&player);
 
     player.onGround = false;
@@ -236,10 +235,9 @@ static void inputHandler(){
             player.walking = false;
         }
 
-        if(!upper_down && !lower_down) {
+        if(player.onGround) {
             player.climbing = false;
         }
-
     } else {
         player.climbing = false;
     }
