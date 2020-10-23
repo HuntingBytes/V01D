@@ -95,6 +95,13 @@ static void setupPhase1(void) {
     *level->colliders_length = 3;
     *level->bg = LoadTexture(MAPS_DIR"/level2/phase1/final.png");
 
+    //Caso não carregue o cenário, termina o jogo
+    if(level->bg->id <= 0) {
+        level->levelFinished = true;
+        game_running = false;
+        return;
+    }
+
     //Ground
     level->colliders[0].colliderType = GROUND;
     level->colliders[0].collider.x = 0.0f;
@@ -170,6 +177,13 @@ static void setupPhase2(void) {
     level->colliders_length = (size_t*) malloc(sizeof(size_t));
     *level->colliders_length = 13; //4 Ground 2 Triggers 7 Platform = 13
     *level->bg = LoadTexture(MAPS_DIR"/level2/phase2/final.png");
+
+    //Garantindo que todas texturas foram carregadas
+    if(level->bg->id <= 0 || npc_texture.id <= 0 || enemy_texture.id <= 0 || health_icon_tex.id <= 0 || bullet_icon_tex.id <= 0) {
+        level->levelFinished = true;
+        game_running = false;
+        return;
+    }
 
     //Ground Left
     level->colliders[0].colliderType = GROUND;

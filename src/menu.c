@@ -29,6 +29,13 @@ void mainMenu() {
     Texture2D pointerHand = LoadTexture(MAPS_DIR"/menu/pointer-hand-def.png");
     Texture2D hand = cursor;
 
+    //Garantindo que todas texturas foram carregadas. Caso não, termina o jogo
+    if(background.id <= 0 || cursor.id <= 0 || disk.id <= 0 || pointerHand.id <= 0) {
+        fimMenu = true;
+        game_running = false;
+        return;
+    }
+
     //Escondendo o Cursor para o restante do nivel
     HideCursor();
 

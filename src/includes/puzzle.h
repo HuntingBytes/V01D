@@ -19,7 +19,7 @@ typedef struct {
 void allocatePuzzle(void);
 void deallocatePuzzle(void);
 bool complete(void);
-void loadTextures(void);
+bool loadTextures(void);
 void callPuzzle(void);
 void checkPieces(void);
 void checkMouse(void);

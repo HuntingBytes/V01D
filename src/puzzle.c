@@ -20,7 +20,8 @@ void deallocatePuzzle() {
     puzzle = NULL;
 }
 
-void loadTextures() {
+//Atualização para booleano, assim sabemos se carregou tudo
+bool loadTextures() {
     puzzle->mascara = LoadTexture(MAPS_DIR"/level3/phase1/final.png");
     puzzle->pieces[puzzle->v[0]] = LoadTexture(PUZZLE_DIR"/01.jpg");
     puzzle->pieces[puzzle->v[1]] = LoadTexture(PUZZLE_DIR"/02.jpg");
@@ -28,6 +29,14 @@ void loadTextures() {
     puzzle->pieces[puzzle->v[3]] = LoadTexture(PUZZLE_DIR"/04.jpg");
     puzzle->pieces[puzzle->v[4]] = LoadTexture(PUZZLE_DIR"/05.jpg");
     puzzle->pieces[puzzle->v[5]] = LoadTexture(PUZZLE_DIR"/06.jpg");
+
+    if(puzzle->mascara.id <= 0) return false;
+
+    for(int i = 0; i < 6; i++) {
+        if(puzzle->pieces[i].id <= 0) return false;
+    }
+
+    return true;
 }
 
 void initPieces() {

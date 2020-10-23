@@ -39,7 +39,6 @@ void mainLevel3_1() {
         update();
         physicsUpdate();
         draw();
-
     }
 
     clearLevel();
@@ -58,6 +57,13 @@ static void initLevel() {
     level->colliders_length = (size_t*) malloc(sizeof(size_t));
     *level->colliders_length = 14;
     *level->bg = LoadTexture(MAPS_DIR"/level3/phase1/final.png");
+
+    //Caso não carregue o cenário, termina o jogo
+    if(level->bg->id <= 0) {
+        level->levelFinished = true;
+        game_running = false;
+        return;
+    }
 
     //Starting ground
     level->colliders[0].colliderType = GROUND;
@@ -167,7 +173,12 @@ static void initLevel() {
 
     allocatePuzzle();
     random();
-    loadTextures();
+    //Caso texturas não carreguem, termina o jogo
+    if(!loadTextures()) {
+        game_running = false;
+        level->levelFinished = true;
+        return;
+    }
     initPieces();
 }
 
