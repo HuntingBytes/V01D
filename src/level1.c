@@ -137,6 +137,16 @@ void mainLevel1 ()
     Texture2D num0 = LoadTexture(MAPS_DIR"/level1/0.png");
     Texture2D num1 = LoadTexture(MAPS_DIR"/level1/1.png");
 
+    bool playerNotLoaded = (jogador.id <= 0 || jogadorEsquerda.id <= 0 || jogadorParado.id <= 0 || jogadorParadoEsquerda.id <= 0);
+    bool scenarioNotLoaded = (texture.id <= 0 || texture2.id <= 0 || texture3.id <= 0 || texture4.id <= 0 || texture5.id <= 0 || book.id <= 0 || num0.id <= 0 || num1.id <= 0);
+    bool periclaoNotLoaded = (easterEgg.id <= 0 || easterEggEsquerda.id <= 0 || periclesParado.id <= 0);
+
+    if(playerNotLoaded || scenarioNotLoaded || periclaoNotLoaded) {
+        lvl1_End = true;
+        game_running = false;
+        return;
+    }
+
     Texture2D serializador;
     Texture2D text_rec1, text_rec2, text_rec3, text_rec4;
 
