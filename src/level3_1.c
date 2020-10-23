@@ -163,6 +163,9 @@ static void initLevel() {
     level->invert_factor = 1.0f;
     level->frame_counter = 0;
 
+    //Sobrescrevendo o a largura do colisor
+    player.collider_rect.width /= 1.5f;
+
     allocatePuzzle();
     random();
     loadTextures();
@@ -375,8 +378,8 @@ static void draw() {
         DrawTexture(*player.bullet.texture, (int)player.bullet.collider.collider.x, (int)player.bullet.collider.collider.y, WHITE);
     }
 
-    drawColliders();
-    DrawRectangleLinesEx(player.collider_rect, 2, LIME);
+    //drawColliders();
+    //DrawRectangleLinesEx(player.collider_rect, 2, LIME);
     //DrawFPS((int)(camera.target.x-camera.offset.x), (int)(camera.target.y-camera.offset.y));
 
     chestMessage();

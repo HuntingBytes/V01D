@@ -46,7 +46,7 @@ int main() {
                     mainMenu();
                     break;
                 case LEVEL1:
-                   //mainLevel1();
+                   mainLevel1();
                     break;
                 case LEVEL2:
                     mainLevel2();

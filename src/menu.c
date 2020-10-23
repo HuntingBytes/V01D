@@ -74,7 +74,7 @@ void mainMenu() {
         {
             colorButton = GREEN;
             colorEntrada = BLANK;
-            currentLevel = LEVEL2;
+            currentLevel = LEVEL1;
             fimMenu = true;
         }
 

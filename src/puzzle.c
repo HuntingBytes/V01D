@@ -161,7 +161,5 @@ bool complete() {
 }
 
 void fim () {
-    //deallocatePuzzle();
-    DrawRectangle(0, 0, 640, 480, RAYWHITE);
-    DrawText("DALE DALE DALE", 160, 220, 30, BLACK);
+    deallocatePuzzle();
 }
