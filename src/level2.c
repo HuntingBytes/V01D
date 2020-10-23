@@ -485,7 +485,7 @@ static void physicsUpdateLevel2() {
         if (IsKeyPressed(KEY_ENTER))
         {
             level->levelFinished = true;
-            currentLevel = LEVEL3_2;
+            currentLevel = LEVEL3_1;
         }
     }
     else level->npc_colliding = false;

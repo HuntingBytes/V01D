@@ -18,9 +18,10 @@
 #define MAPS_DIR "assets/maps" //Define a pasta das imagens
 #define ENEMY_DIR "assets/enemies"
 #define NPC_DIR "assets/npc"
+#define PUZZLE_DIR "assets/puzzle"
 
 typedef enum {MENU = 0, LEVEL1, LEVEL2, LEVEL3_1, LEVEL3_2, ENDING} Level; //Uma outra forma de representar os niveis (ex:. no lugar de 0, escrevemos MENU)
-typedef enum {GROUND = 0, WALL, PLATFORM, TRIGGER_SIGN, TRIGGER_LADDER, TRIGGER_BULLET} ColliderType; //Uma forma de diferenciar os diferentes tipos de colisores
+typedef enum {GROUND = 0, WALL, PLATFORM, TRIGGER_SIGN, TRIGGER_LADDER, TRIGGER_BULLET, TRIGGER_CHEST, TRIGGER_DOOR} ColliderType; //Uma forma de diferenciar os diferentes tipos de colisores
 typedef enum {IDLE = 0, WALK, JUMP, CLIMB, DIE} AnimationType; //Uma forma de diferenciar as diferentes animacoes
 
 typedef struct {

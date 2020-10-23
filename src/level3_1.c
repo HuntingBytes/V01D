@@ -71,7 +71,7 @@ static void initLevel() {
     level->colliders[1].collider.x = 92;
     level->colliders[1].collider.height = (float)BLOCK_SIZE * 2.1f;
     level->colliders[1].collider.y = 189;
-    level->colliders[1].collider.width = (float)BLOCK_SIZE / 3.3f;
+    level->colliders[1].collider.width = (float)BLOCK_SIZE / 3.8f;
     //Ground under platforms
     level->colliders[2].colliderType = GROUND;
     level->colliders[2].collider.x = 93;
@@ -87,7 +87,7 @@ static void initLevel() {
     //First platform (left to right)
     level->colliders[4].colliderType = PLATFORM;
     level->colliders[4].collider.x = 143;
-    level->colliders[4].collider.height = BLOCK_SIZE / 3.1;
+    level->colliders[4].collider.height = BLOCK_SIZE / 4.5;
     level->colliders[4].collider.y = 184;
     level->colliders[4].collider.width = (float)BLOCK_SIZE;
     //Second platform (left to right)
@@ -99,13 +99,13 @@ static void initLevel() {
     //Third platform (left to right)
     level->colliders[6].colliderType = PLATFORM;
     level->colliders[6].collider.x = 285;
-    level->colliders[6].collider.height = BLOCK_SIZE / 4.5;
+    level->colliders[6].collider.height = BLOCK_SIZE / 9.0;
     level->colliders[6].collider.y = 210;
     level->colliders[6].collider.width = (float)BLOCK_SIZE;
     //Fourth platform (left to right)
     level->colliders[7].colliderType = PLATFORM;
     level->colliders[7].collider.x = 344;
-    level->colliders[7].collider.height = BLOCK_SIZE / 9.5;
+    level->colliders[7].collider.height = BLOCK_SIZE / 5.0;
     level->colliders[7].collider.y = 174;
     level->colliders[7].collider.width = (float)BLOCK_SIZE;
     //Wall right to ladder
@@ -113,10 +113,10 @@ static void initLevel() {
     level->colliders[8].collider.x = 417;
     level->colliders[8].collider.height = (float)BLOCK_SIZE * 2.7f;
     level->colliders[8].collider.y = 172;
-    level->colliders[8].collider.width = BLOCK_SIZE / 3.0;
+    level->colliders[8].collider.width = BLOCK_SIZE / 3.2;
     //Ground on top of last wall
     level->colliders[9].colliderType = GROUND;
-    level->colliders[9].collider.x = 416;
+    level->colliders[9].collider.x = 418;
     level-> colliders[9].collider.height = 4;
     level->colliders[9].collider.y = 168;
     level->colliders[9].collider.width = BLOCK_SIZE / 2.8;
@@ -375,10 +375,8 @@ static void draw() {
         DrawTexture(*player.bullet.texture, (int)player.bullet.collider.collider.x, (int)player.bullet.collider.collider.y, WHITE);
     }
 
-    //DrawText(TextFormat("(Vx, Vy): %.2f %.2f", player.velocity.x, player.velocity.y), (int)player.position.x, (int)player.position.y - 20, 12, BLUE);
-    //DrawRectangleLinesEx(player.collider_rect, 2, RED);
     drawColliders();
-    //DrawRectangleLinesEx(player.bullet.collider.collider, 2, GREEN);
+    DrawRectangleLinesEx(player.collider_rect, 2, LIME);
     //DrawFPS((int)(camera.target.x-camera.offset.x), (int)(camera.target.y-camera.offset.y));
 
     chestMessage();
@@ -387,9 +385,9 @@ static void draw() {
         callPuzzle();
         if(complete()){
             fim();
-            //level->isPuzzleOn = false;
-            //level->levelFinished = true;
-            //currentLevel = LEVEL3_2; AQUI TA COMENTADO-------------------------------------------
+            level->isPuzzleOn = false;
+            level->levelFinished = true;
+            currentLevel = LEVEL3_2;
         }
     }
     EndDrawing();
