@@ -1,4 +1,6 @@
 #include "raylib.h"
+#include "puzzle.h"
+#include "utils.h"
 
 const int screenWidth = 640;
 const int screenHeight = 480;
@@ -18,11 +20,19 @@ void close(void);
 int main() {
     if(!init()) return  -1; 
     loadAssets();
+    allocatePuzzle();
+    random();
+    loadTextures();
+    initPieces();
 
     while (game_running)
     {
+
         inputHandler();
         update();
+        if(complete()){
+            fim();
+        }
     }
 
     close();
@@ -47,7 +57,8 @@ void update() {
     BeginDrawing();
     ClearBackground(RAYWHITE);
     DrawTexture(tile, 0, 0, WHITE);
-    DrawTexture(player_asset, 10, 145, WHITE);
+    //DrawTexture(player_asset, 10, 145, WHITE);
+    callPuzzle();
     EndDrawing();
 }
 
