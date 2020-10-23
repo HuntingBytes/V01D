@@ -32,6 +32,19 @@ void mainLevel3_2() {
     Texture2D spritestopped_left = LoadTexture(PLAYER_DIR"/idle_left.png");
     Texture2D bullet = bullet_texture;
 
+    //Garantindo que todas texturas foram carregadas. Caso não, termina o jogo
+    if(spriteright.id <= 0 || spriteup.id <= 0 || spriteleft.id <= 0 || background_1.id <= 0 || background_2.id <= 0 || background_3.id <= 0 || spriteJump_left.id <= 0 || spriteJump_right.id <= 0) {
+        level3_phase2_finished = true;
+        game_running = false;
+        return;
+    }
+
+    if(spritestopped_right.id <= 0 || spritestopped_left.id <= 0 || bullet.id <= 0) {
+        level3_phase2_finished = true;
+        game_running = false;
+        return;
+    }
+
     //increasing size of sprites
     spriteright.height = (int) (spriteright.height * 2);
     spriteright.width = (int) (spriteright.width * 2);
@@ -743,7 +756,6 @@ void mainLevel3_2() {
         if (bulletOn) {
             DrawTexture(bullet, (int) bullet_position.x, (int) bullet_position.y, WHITE);
         }
-        //
 
         //draw damage broken recs
         if (damage_broken_rec1 == true) {
@@ -776,8 +788,6 @@ void mainLevel3_2() {
                 if (((FramesCounter_Enigma) % 2) == 0)
                     DrawText("_", (int) textBox.x + 8 + (int) MeasureText(name, 40), (int) textBox.y + 12, 40, MAROON);
             }
-
-
         }
 
         //string analysis
