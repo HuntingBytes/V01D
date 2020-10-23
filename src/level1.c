@@ -121,7 +121,7 @@ void mainLevel1 ()
     Texture2D texture2 = LoadTexture(MAPS_DIR"/level1/background3.png");
     Texture2D texture3 = LoadTexture(MAPS_DIR"/level1/background4.png");
     Texture2D texture4 = LoadTexture(MAPS_DIR"/level1/background5.png");
-    Texture2D texture5 = LoadTexture(MAPS_DIR"/evel/background6.png");
+    Texture2D texture5 = LoadTexture(MAPS_DIR"/level1/background6.png");
     int contaFrameFundo = 0;
 
     //inicialização das demais texturas
