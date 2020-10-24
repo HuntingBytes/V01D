@@ -15,8 +15,7 @@ bool game_running; //Booleano que indica se o jogo esta rodando
 
 //Variaveis Globais----
 Player player; //Struct para representar o jogador. Nao precisa ser usada em todas as fases
-Camera2D camera; //Camera global, assim nao precisamos ficar criando outras câmeras nos outros niveis
-Font font; //Fonte que vamos utilizar (nao precisa ser ela)
+Camera2D camera; //Camera global, assim nao precisamos ficar criando outras cï¿½meras nos outros niveis
 //---------------------
 
 //Assets comuns ---------------------------------
@@ -40,7 +39,9 @@ int main() {
 
     //Se o jogo estiver rodando, roca a main() equivalente ao nivel atual
     while (game_running) {
-        showLevelName();
+        if(currentLevel != MENU && currentLevel != ENDING) {
+            showLevelName();
+        }
         switch (currentLevel) {
                 case MENU:
                     mainMenu();
@@ -84,8 +85,6 @@ bool init() {
 }
 
 bool loadCommonResources() {
-    font = LoadFont(FONT_DIR"/Unipix.ttf");
-
     player_textures[IDLE] = LoadTexture(PLAYER_DIR"/idle.png");
     player_textures[WALK] = LoadTexture(PLAYER_DIR"/walk.png");
     player_textures[JUMP] = LoadTexture(PLAYER_DIR"/jump.png");
@@ -93,7 +92,6 @@ bool loadCommonResources() {
     player_textures[DIE] = LoadTexture(PLAYER_DIR"/death.png");
     bullet_texture = LoadTexture(PLAYER_DIR"/bullet.png");
 
-    if(font.texture.id <= 0) return  false;
     if(bullet_texture.id <= 0) return false;
     for(int i = IDLE; i < NUMBER_PLAYER_TEXTURES; i++) {
         if(player_textures[i].id <= 0) {return false;}
@@ -125,7 +123,6 @@ void initializePlayer() {
 }
 
 void close() {
-    UnloadFont(font);
     UnloadTexture(bullet_texture);
     for(int i = 0; i < NUMBER_PLAYER_TEXTURES; i++) { UnloadTexture(player_textures[i]); }
     CloseWindow();
@@ -133,7 +130,7 @@ void close() {
 
 void showLevelName() {
     int frame_counter = 0;
-    char txt[6][50] = {"Prologo", "Ato 1 - Onde?", "Ato 2 - O que?", "Ato 3 - Inicio do Fim?", "Ato 4 - Epilogo?", "Acabou."};
+    char txt[6][50] = {"Prologo", "Ato 1 - Onde?", "Ato 2 - O que?", "Ato 3 - Inicio do Fim?", "Ato 4 - Epilogo?", "Fim."};
     bool finished = false;
     while (!finished) {
         BeginDrawing();

@@ -33,7 +33,7 @@ void movePlayer(Player *player) {
     player->collider_rect.y = player->position.y;
 }
 
-//Obtém a ultima posicao do jogador antes da ultima movimentacao
+//Obtem a ultima posicao do jogador antes da ultima movimentacao
 Vector2 lastPositionPlayer(Player *player) {
     return (Vector2) {player->position.x - player->velocity.x, player->position.y - player->velocity.y};
 }
