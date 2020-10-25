@@ -290,7 +290,7 @@ static void setupPhase2(void) {
     level->npc_colliding = false;
     level->sign_text = "As coisas voltaram ao normal...\n"
                        "Aquele arquivo devia estar trocando as texturas e a movimentação.\n"
-                       "Talvez seja uma boa ideia explorar, talvez eu encontre uma saóda.\n"
+                       "Talvez seja uma boa ideia explorar, talvez eu encontre uma saída.\n"
                        "Eu definitivamente preciso encontrar uma saída.";
     level->npc_text = "Não se preocupe, voce esté perto do fim.\n"
                       "No entanto, ainda lhe resta uma missão a ser feita.\n"
