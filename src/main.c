@@ -76,7 +76,7 @@ bool init() {
     InitWindow(screenWidth, screenHeight, "Teste");
     SetTargetFPS(FPS);
     game_running = true;
-    currentLevel = LEVEL3_2;
+    currentLevel = MENU;
     camera.target = (Vector2) {0,0};
     camera.offset = (Vector2) {0,0};
     camera.zoom = 1.0f;
