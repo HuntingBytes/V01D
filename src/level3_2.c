@@ -463,6 +463,8 @@ void mainLevel3_2() {
 
                 trackposition.y -= 2.0f;//going to up
 
+                immediately_previous_position.y = trackposition.y + 2.0f;//saving the before of the trackposition
+
                 if (framesCounter >= (60 / framesSpeed))//doing the sprite animation
                 {
                     framesCounter = 0;
@@ -487,7 +489,7 @@ void mainLevel3_2() {
 
                 trackposition.y += 2.0f; //going to down
 
-
+                immediately_previous_position.y = trackposition.y - 2.0f;//saving the before of the trackposition
 
                 if (framesCounter >= (60 / framesSpeed)) //doing the sprite animation
                 {
@@ -529,7 +531,6 @@ void mainLevel3_2() {
                 if ((trackposition.x < 623 && trackposition.x > 618) &&
                     (trackposition.y < 160 && trackposition.y > 72)) {//bug of rec2 collision
                     trackposition.x = 623;
-
                 }
 
                 trackposition.x -= 2.0f;//going to left
@@ -719,7 +720,6 @@ void mainLevel3_2() {
         // Draw
         //----------------------------------------------------------------------------------
         BeginDrawing();
-
         BeginMode2D(camera);
 
         ClearBackground(GetColor(0x052c46ff));
@@ -795,7 +795,6 @@ void mainLevel3_2() {
             level3_phase2_finished = true;
             currentLevel = ENDING;
         }
-
 
         EndDrawing();
         EndMode2D();
