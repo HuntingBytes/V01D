@@ -10,7 +10,6 @@ extern Level currentLevel;
 extern bool game_running;
 extern Player player;
 extern Camera2D camera;
-extern Font font;
 extern Texture2D player_textures[];
 extern Animation player_animations[];
 extern Texture2D bullet_texture;
@@ -95,7 +94,7 @@ static void setupPhase1(void) {
     *level->colliders_length = 3;
     *level->bg = LoadTexture(MAPS_DIR"/level2/phase1/final.png");
 
-    //Caso n�o carregue o cen�rio, termina o jogo
+    //Caso nao carregue o cenario, termina o jogo
     if(level->bg->id <= 0) {
         level->levelFinished = true;
         game_running = false;
@@ -134,10 +133,10 @@ static void setupPhase1(void) {
     player.idle = true;
     player.dir = 1.0f;
 
-    level->sign_text = "Hm... Eu nao sei muito bem o que esta acontecendo.\n"
-                "Talvez tenha algo errado com o jogo.\n"
-                "Sera que algo esta corrompendo as texturas?\n"
-                "Talvez eu consiga acessar os modulos do jogo.";
+    level->sign_text = "Hm... Eu não sei muito bem o que está acontecendo.\n"
+                       "Talvez tenha algo errado com o jogo.\n"
+                       "Será que algo esta corrompendo as texturas?\n"
+                       "Acho que eu consigo acessar os módulos do jogo e resolver isso.";
 }
 
 //Inicia a parte 2
@@ -290,12 +289,13 @@ static void setupPhase2(void) {
     level->invert_factor = 1.0f;
     level->npc_colliding = false;
     level->sign_text = "As coisas voltaram ao normal...\n"
-                "Aquele arquivo devia estar trocando as texturas e a movimentacao.\n"
-                "Talvez seja uma boa ideia explorar, talvez eu encontre uma saida.\n"
-                "Eu preciso sair daqui...";
-    level->npc_text = "Nao se preocupe, voce esta perto do fim. \n"
-                      "No entanto, ainda lhe resta uma missao a ser feita.\n"
-                      "Siga em frente (Pressione o enter)";
+                       "Aquele arquivo devia estar trocando as texturas e a movimentação.\n"
+                       "Talvez seja uma boa ideia explorar, talvez eu encontre uma saída.\n"
+                       "Eu definitivamente preciso encontrar uma saída.";
+    level->npc_text = "Não se preocupe, voce esté perto do fim.\n"
+                      "No entanto, ainda lhe resta uma missão a ser feita.\n"
+                      "Siga em frente!\n\n"
+                      "(Pressione Enter para prosseguir)";
 }
 
 //Desenha os colisores na tela (debug-only)
@@ -319,7 +319,7 @@ static void showMessage(char *txt, float offset) {
     txtRect.height = signMessage.height - 2.0f*offset;
     txtRect.x = signMessage.x + offset;
     txtRect.y = signMessage.y + offset;
-    DrawTextRec(font, txt, txtRect, 20.0f, 1.0f, true, WHITE);
+    DrawTextRec(GetFontDefault(), txt, txtRect, 20.0f, 1.0f, true, WHITE);
 }
 
 //Inicia o nivel 2

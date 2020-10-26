@@ -12,8 +12,7 @@ typedef struct {
     Texture2D *bg; //Ponteiro para textura do fundo (cenario)
     Collider2D *colliders; //Ponteiro para todos os colisores do cenario
     size_t *colliders_length; //Quantidade de colisores existentes no cenario
-    char *file_name; //Nome do arquivo para a parte 1
-    char *sign_text; //Texto que deve ser mostrado na placa
+    char *chest_text; //Texto que deve ser mostrado na placa
     bool ladder_colliding; //Indica se o jogador colide com a escada
     bool levelFinished; //Indica se o nivel foi terminado (Assim a main.c pode passar para o poximo)
     bool isPuzzleOn;
