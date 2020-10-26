@@ -168,6 +168,13 @@ static void initLevel() {
     level->invert_factor = 1.0f;
     level->frame_counter = 0;
 
+    //Texto exibido ao encostar no baú
+    level->chest_text = "Boa tentativa,\n"
+                        "mas a saída está\n"
+                        "em outro lugar e com\n"
+                        "uma chave que não\n"
+                        "quer ser resolvida... ";
+
     //Sobrescrevendo o a largura do colisor
     player.collider_rect.width /= 1.5f;
 
@@ -262,7 +269,7 @@ static void inputHandler(){
             player.idle = false;
         }
         player.onGround = false;
-        vel_y = -225.0f*level->deltaTime;
+        vel_y = -210.0f*level->deltaTime;
     }
 
     //Bullet has been shot
@@ -361,11 +368,9 @@ void chestMessage(){
     Rectangle rec = {170, 140, 300, 200};
     if(level->isNearChest == true){
         DrawRectangle(0, 0, screenWidth, screenHeight, Fade(BLACK, 0.5f));
-        DrawRectangleRec(rec, Fade(WHITE, 0.55f));
+        DrawRectangleRec(rec, Fade(GRAY, 0.7f));
         DrawRectangleLinesEx(rec, 3, BLACK);
-        DrawText("Boa tentativa, ", 180, 165, 35, BLACK);
-        DrawText("mas eu não sou ", 180, 205, 35, BLACK);
-        DrawText("uma porta...", 180, 240, 35, BLACK);
+        DrawText(level->chest_text, 180, 155, 23, WHITE);
         //Set chest flag to stop seeing text when far from it
         level->isNearChest = false;
     }
