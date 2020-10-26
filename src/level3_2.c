@@ -163,8 +163,8 @@ void mainLevel3_2() {
     bool cyclebullet_left = false;
     bool damage_broken_rec1 = false;
     bool damage_broken_rec2 = false;
-    int life_of_broken_rec1 = 5;
-    int life_of_broken_rec2 = 3;
+    int life_of_broken_rec1 = 4;
+    int life_of_broken_rec2 = 2;
 
     // Main game loop
     while (!level3_phase2_finished) {
@@ -725,7 +725,7 @@ void mainLevel3_2() {
         ClearBackground(GetColor(0x052c46ff));
 
         //selecting backgrounds according to broken recs
-        if (life_of_broken_rec1 > 0 && life_of_broken_rec2 == 3) {
+        if (life_of_broken_rec1 > 0 && life_of_broken_rec2 == 2) {
             DrawTexture(background_1, (int) 0.f, (int) 0.f, WHITE);
         } else if (life_of_broken_rec1 == 0 && life_of_broken_rec2 > 0) {
             broken_rec1 = RECNULL;
@@ -733,6 +733,7 @@ void mainLevel3_2() {
         } else if (life_of_broken_rec1 == 0 && life_of_broken_rec2 == 0) {
             broken_rec2 = RECNULL;
             DrawTexture(background_3, (int) 0.f, (int) 0.f, WHITE);
+            DrawText("\t\t\t\t\t\t\tCesar\nfoi um grande imperador.",150,150,6,LIGHTGRAY);
         }
 
         //draw correct texture
