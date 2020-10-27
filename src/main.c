@@ -98,7 +98,7 @@ int main() {
 }
 
 bool init() {
-    InitWindow(screenWidth, screenHeight, "Teste");
+    InitWindow(screenWidth, screenHeight, "V01D");
     SetTargetFPS(FPS);
     game_running = true;
     currentLevel = MENU;
