@@ -4,7 +4,6 @@
 #include "includes/bullet.h" //Contem funcoes relacionadas com a bala
 
 #define NUMBER_PLAYER_TEXTURES 5 //Quantidade de texturas a serem carregadas, podemos alterar se surgir uma nova
-#define TEXT_SPEED 10
 
 //Variaveis do Jogo----------
 const int screenWidth = 640; //Uma variavel global que guarda a largura da tela, ai nao precisamos definir outra
@@ -32,6 +31,32 @@ void close(void); //Funcao que fecha a janela e descarrega as texturas usadas
 void showLevelName(void );
 //-------------------
 
+//Texto dos Niveis---------------------------------
+static const char txt[6][300] = {"Que sorte achar esse computador velho no sótão.\n"
+                                 "Acho que é esse computador que meu pai fala tanto quando pergunto da adolescência dele.\n"
+                                 "Será que isso ainda funciona?\n"
+                                 "Vou tentar ligar.",
+                                 "Opa, deu certo.\n"
+                                 "Consegui ligar esse troço.\n"
+                                 "Hã?\n"
+                                 "Que tela estranha a desse computador, o brilho deve estar muito for-.\n"
+                                 "Ué, que lugar é esse?\n"
+                                 "Cheio de 0 e 1 por toda parte.\n"
+                                 "Onde diabos eu estou?",
+                                 "Consegui!\n"
+                                 "Resolver esse binários foi um pouco mais difícil do que eu achei que seria.\n"
+                                 "Tenho que continuar agora.\n"
+                                 "Hum, eu estou me movendo pra frente mas estou voltando, será que isso é um bug no sistema desse jogo?",
+                                 "Não esperava ter que deletar arquivos pra resolver uma fase como aquelas, muito menos enfrentar um boss como aqueles.\n"
+                                 "Esse mundo é bem cheio de puzzles.\n"
+                                 "Espero que os próximos desafios sejam mais tranquilos.",
+                                 "Ato 4 - Epilogo?",
+                                 "Fim do jogo."};
+
+static int n_line_break[6] = {4, 7, 4, 3, 1, 1};
+static int txt_speed[6] = {5, 4, 5, 5, 5, 5};
+//------------------------------------------------
+
 int main() {
     if(!init() || !loadCommonResources()) return -1; //Se nao foi possivel carregar as texturas/janelas, o jogo nem inicia
 
@@ -39,7 +64,7 @@ int main() {
 
     //Se o jogo estiver rodando, roca a main() equivalente ao nivel atual
     while (game_running) {
-        if(currentLevel != MENU && currentLevel != ENDING) {
+        if(currentLevel != LEVEL3_2) {
             showLevelName();
         }
         switch (currentLevel) {
@@ -129,23 +154,42 @@ void close() {
 }
 
 void showLevelName() {
+    int LENGTH = (int) TextLength(txt[currentLevel]);
+    int TEXT_SPEED = txt_speed[currentLevel];
     int frame_counter = 0;
-    char txt[6][50] = {"Prologo", "Ato 1 - Onde?", "Ato 2 - O que?", "Ato 3 - Inicio do Fim?", "Ato 4 - Epilogo?", "Fim."};
     bool finished = false;
+
+    float x_offset = 30;
+    float width = (float)screenWidth - 2*x_offset;
+    float n_line = 3.0f + (float)n_line_break[currentLevel] + (float)MeasureText(txt[currentLevel], 24)/width;
+    float y_offset = ((float)screenHeight - 2*n_line*(float)MeasureText("A", 24))/2.0f;
+    float height = (float)screenHeight - 2*y_offset;
+
+    Rectangle txt_rect = (Rectangle) {x_offset,
+                                      y_offset,
+                                      width,
+                                      height};
+
+    if(currentLevel == ENDING) {
+        txt_rect.x = (float)(screenWidth - MeasureText(txt[currentLevel], 24)) / 2.0f;
+        txt_rect.y = (float)(screenHeight - MeasureText("A", 32)) / 2.0f;
+    }
+
     while (!finished) {
-        BeginDrawing();
-        ClearBackground(BLACK);
-        frame_counter++;
-        DrawText(TextSubtext(txt[currentLevel], 0, frame_counter / TEXT_SPEED),
-                 (screenWidth - MeasureText(txt[currentLevel], 32)) / 2, (screenHeight - MeasureText("A", 32)) / 2, 32,
-                 WHITE);
-        if (frame_counter / TEXT_SPEED > TextLength(txt[currentLevel]) + 2u) {
-            frame_counter = 0;
-            finished = true;
-        }
         if(WindowShouldClose()) {
             game_running = false;
             return;
+        }
+        BeginDrawing();
+        ClearBackground(BLACK);
+        frame_counter++;
+        DrawTextRec(GetFontDefault(),
+                    TextSubtext(txt[currentLevel], 0,frame_counter / TEXT_SPEED),
+                    txt_rect, 24.0f, 1.0f, true, WHITE);
+
+        if (frame_counter / TEXT_SPEED > LENGTH + 2) {
+            frame_counter = 0;
+            finished = true;
         }
         EndDrawing();
     }

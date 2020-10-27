@@ -41,6 +41,7 @@ void mainLevel3_1() {
         draw();
     }
 
+    fim();
     clearLevel();
 }
 
@@ -401,7 +402,6 @@ static void draw() {
     if(level->isPuzzleOn == true){
         callPuzzle();
         if(complete()){
-            fim();
             level->isPuzzleOn = false;
             level->levelFinished = true;
             currentLevel = LEVEL3_2;
