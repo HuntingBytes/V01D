@@ -2,8 +2,7 @@
 
 ## :mag_right: Introdução ao Projeto
 
-Esse projeto foi concebido como critério de aprovação na disciplina *Introdução à Programação* da UFRPE, ministrada pelo Professor 
-Péricles Miranda.
+A idealização e criação do jogo V01D surgiu, a princípio, da necessidade única de um critério de aprovação na cadeira de Introdução à Programação I, ministrada pelo professor Péricles Barbosa Cunha de Miranda no 1º período do curso de Bacharelado em Ciência da Computação na Universidade Federal Rural de Pernambuco. O decorrer do processo de execução nos mostrou, no entanto, que esse projeto estava longe de ser apenas um método avaliativo de uma disciplina. Graças a ele pudemos criar um ambiente propício para o desenvolvimento de uma equipe, entender melhor as demandas de criação dessa área e proporcionar aos jogadores uma experiência desafiadora e divertida. Nossos agradecimentos ao professor Péricles Miranda pela oportunidade que nos foi dada e a você, jogador, por também fazer parte desse projeto.
 
 
 ## :book: Resumo
@@ -25,7 +24,7 @@ Será preciso resolver os enigmas do jogo para voltar à realidade.
 
 Antes de poder executar o jogo, será preciso:
 
-1. Baixar os arquivos-> [V01D download](https://github.com/moesio-f/V01D/archive/master.zip)
+1. Baixar os arquivos -> [V01D download](https://github.com/moesio-f/V01D/releases)
 2. Extraí-los
 3. Rodar a aplicação V01D
 
