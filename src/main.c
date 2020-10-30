@@ -75,7 +75,7 @@ int main() {
                    mainLevel1();
                     break;
                 case LEVEL2:
-                    mainLevel2();
+                   mainLevel2();
                     break;
                 case LEVEL3_1:
                     mainLevel3_1();
