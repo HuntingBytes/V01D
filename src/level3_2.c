@@ -818,6 +818,5 @@ void mainLevel3_2() {
     UnloadTexture(background_1);
     UnloadTexture(background_2);
     UnloadTexture(background_3);
-
     //--------------------------------------------------------------------------------------
 }
