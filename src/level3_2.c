@@ -763,24 +763,20 @@ void mainLevel3_2() {
             life_of_broken_rec1--;
             DrawRectangle(720, 166, 50, 13, RED);
             damage_broken_rec1 = false;
-
         }
         if (damage_broken_rec2 == true) {
             life_of_broken_rec2--;
             DrawRectangle(1021, 166, 50, 13, RED);
             damage_broken_rec2 = false;
-
         }
 
         //enigma draw decisions
         if (CheckCollisionRecs(trackposition, lever)) {
 
-
             DrawRectangleLinesEx(textBox, 4, LIGHTGRAY);
 
 
             DrawText(name, (int) textBox.x + 5, (int) textBox.y + 8, 40, MAROON);
-
 
 
             if (letterCount < MAX_INPUT_CHARS) {
