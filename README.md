@@ -2,7 +2,7 @@
 
 ![](https://github.com/moesio-f/V01D/blob/master/.github/trailer.gif)
 
-[![Apresentação no Youtube](http://img.youtube.com/vi/<VIhKoEdiUeY>/maxresdefault.jpg)](https://www.youtube.com/watch?v=VIhKoEdiUeY)
+[![Apresentação no Youtube](http://img.youtube.com/vi/VIhKoEdiUeY/0.jpg)](https://www.youtube.com/watch?v=VIhKoEdiUeY)
 
 ## :mag_right: Introdução ao Projeto
 
